@@ -1,4 +1,4 @@
-# pyQec
+# What is pyQec
 The Library of Quantum Error Correction
 
 This Library conclude the components:
