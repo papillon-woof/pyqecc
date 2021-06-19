@@ -23,5 +23,6 @@ class SC(CODE):
         return L
 
     # hard decision
-    def syndrome_dec(self,p):
+    def syndrome_dec(self,e):
+        self.H = 
         return E
