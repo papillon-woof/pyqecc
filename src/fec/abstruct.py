@@ -8,13 +8,15 @@ class CODE(metaclass=ABCMeta):
         self._k = self.n
         self._R = self.k/self.n
 
-    @abstractmethod
-    def encode(self,u,**param):
-        pass
+    #量子情報ビット
+    @property
+    def get_enc_circ(self):
+        return self.enc_circuit
 
-    @abstractmethod
-    def decode(self,llr,**param):
-        pass
+    #シンドロームと確率分布を受け取る．
+    @property
+    def get_dec_circ(self):
+        return self.dec_circuit
 
     @property
     def n(self):
