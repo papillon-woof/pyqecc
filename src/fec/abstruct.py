@@ -31,6 +31,10 @@ class CODE(metaclass=ABCMeta):
         return self._R
 
     @property
+    def L(self):
+        return self._L
+
+    @property
     def name(self):
         return self._name
 
