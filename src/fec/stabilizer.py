@@ -2,7 +2,7 @@ import numpy as np
 from .abstruct import *
 from ..util import *
 class SC(CODE):
-    def __init__(self,n,k,H='random',T=None,L=None):
+    def __init__(self,n,k,H='random',T=None,L=None,P=None,iid=True):
         self._name = "stabilizer"
         self._n = n
         self._k = k
@@ -16,6 +16,15 @@ class SC(CODE):
 
         self.enc_circuit = None
         self.dec_circuit = None
+        self._P = self.set_P(P)
+        self.ML_decoding_qubit_limit = 15
+
+    def set_P(self,P,iid=True):
+        if iid and P is not None:
+            self._P=np.array([P.tolist()]*self.n)
+        else:
+            self._P = P
+
 
     #量子情報ビット
     def get_enc_circ(self):
@@ -25,21 +34,12 @@ class SC(CODE):
     def get_dec_circ(self):
         return self.dec_circuit
 
-    # soft decision
-    def ml_dec(self,p):
-        return L
-
-    # soft decision
-    def rn_dec(self,p):
-        return L
-
     # hard decision
     def get_syndrome(self,e):
         return symplex_binary_inner_product(self._H,e)
 
     def get_T(self,ind):
         T = np.zeros(2*self.n,dtype='i1')
-        #print(T,self.T[1],self.n - self.k)
         for i in range(self.n - self.k):
             T+=(ind[i]*self.T[i])
         return np.mod(T,2)
@@ -59,21 +59,14 @@ class SC(CODE):
     def in_S(self,b):
         return sum(gaussjordan(np.c_[self._H.T,b])[self.n-self.k+1,:])!=0 or sum(b)==0
 
-    def hard_decode(self,e):
-        s = symplex_binary_inner_product(self._H,e)
-        ee = np.zeros(2*self.n,dtype='i1')
-        for i in range(self.n-self.k):
-            ee=s[i]*self._T[i]+ee
-        #print(s,ee,111)
-        ee = np.mod(ee,2)
-        return ee
+    def hard_decode(self,syndrome):
+        T = self.get_T(syndrome)
+        return T
 
-    def ML_decode(self,P,T,limit=15,iid=True):
-        if iid:
-            P=np.array([P.tolist()]*self.n)
-
+    def ML_decode(self,syndrome):
         #decoding_metric: メトリック．受信語と通信路情報から計算する．
-        if self.n>limit:
+        T = self.get_T(syndrome)
+        if self.n>self.ML_decoding_qubit_limit:
             ValueError("Error: The qubit n ="+str(self.n)+" is limited because of a large decoding complexity. You can change the qubit limit.")
 
         #Lについてビット全探索
@@ -86,30 +79,30 @@ class SC(CODE):
             for si in range(2 ** (self.n-self.k)):
                 S = self.get_S(si)
                 E = T^S^L
-                #print(self.get_syndrome(E),self.get_syndrome(T))
-                #exit()
-                #print(T,S,L,E)
 
                 #E = ()のうち，確率を入力
                 Ptmp = 1
-                #print(E)
                 for ei in range(self.n):
-                    #ind=(1&(E[ei]^E[ei+self.n]))+(1<<(1&(E[ei]&E[ei+self.n])))
                     ind=E[ei]+2*E[ei+self.n]
-                    #print(ind,E[ei],E[ei+self.n])
-                    #print(E[ei],ei,E,ind,1&(E[ei]^E[ei+self.n]),(1<<(1&(E[ei]&E[ei+self.n]))))
-                    #print(li,ei,ind,E[ei],E[ei+self.n],1<<(1&E[ei]&E[ei+self.n]),1&(E[ei]^E[ei+self.n]))
-                    #print("e",E,(1&(E[ei]^E[ei+self.n])),(1<<(1&(E[ei]&E[ei+self.n]))),ei,ind,P[ei][ind],P)
-                    Ptmp*=P[ei][ind]
-                print(E,T,S,L,Ptmp)
+                    Ptmp*=self.P[ei][ind]
                 P_L[li]+=Ptmp
-        print(P_L)
-        l_ind = np.argmax(P_L[li])
+        l_ind = np.argmax(P_L)
+        #print(P_L)
         L = np.zeros(2*self.n,dtype='i1')
-        for lj in range(2**self.k):
-            L+=(((l_ind>>lj)&1)*self.L[lj])
-        print(L)
-        return L
+        for lj in range(2*self.k):
+            L+=(((l_ind>>(2*self.k-1-lj))&1)*self.L[lj])
+        return L^T
+
+    def decode(self,syndrome,mode='HD'):
+        if mode=="ML":
+            EE = self.ML_decode(syndrome)
+        elif mode=="HD":
+            EE = self.hard_decode(syndrome)
+        return EE
+
+    @property
+    def P(self):
+        return self._P
 
     def __str__(self):
         output = ""
