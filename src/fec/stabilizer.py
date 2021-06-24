@@ -66,6 +66,7 @@ class SC(CODE):
     def ML_decode(self,syndrome):
         #decoding_metric: メトリック．受信語と通信路情報から計算する．
         T = self.get_T(syndrome)
+        #print(111111,syndrome,T,self.get_syndrome(T))
         if self.n>self.ML_decoding_qubit_limit:
             ValueError("Error: The qubit n ="+str(self.n)+" is limited because of a large decoding complexity. You can change the qubit limit.")
 
@@ -79,7 +80,8 @@ class SC(CODE):
             for si in range(2 ** (self.n-self.k)):
                 S = self.get_S(si)
                 E = T^S^L
-
+                if 0==sum(E - np.array([0,0 ,0 ,0 ,0 ,1 ,0 ,0 ,0,0])):
+                    print(T,S,L)
                 #E = ()のうち，確率を入力
                 Ptmp = 1
                 for ei in range(self.n):
@@ -87,10 +89,12 @@ class SC(CODE):
                     Ptmp*=self.P[ei][ind]
                 P_L[li]+=Ptmp
         l_ind = np.argmax(P_L)
-        #print(P_L)
+        ##print(P_L)
         L = np.zeros(2*self.n,dtype='i1')
         for lj in range(2*self.k):
-            L+=(((l_ind>>(2*self.k-1-lj))&1)*self.L[lj])
+            L+=(((l_ind>>(lj))&1)*self.L[lj])
+
+        print("L,LT,T",self.get_syndrome(L),self.get_syndrome(L^T),self.get_syndrome(T))
         return L^T
 
     def decode(self,syndrome,mode='HD'):
