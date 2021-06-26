@@ -1,4 +1,5 @@
 import numpy as np
+from ..channel import *
 def BLER(myqec,monte=10000):
     result = []
     d =10
