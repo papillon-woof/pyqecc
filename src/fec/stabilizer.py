@@ -57,7 +57,9 @@ class SC(CODE):
         return np.mod(L,2)
 
     def in_S(self,b):
-        return sum(gaussjordan(np.c_[self._H.T,b])[self.n-self.k+1,:])!=0 or sum(b)==0
+        #print(np.append(self.H,b).reshape(self.n-self.k+1,2*self.n))
+        #print(gaussjordan(np.append(self.H,b).reshape(self.n-self.k+1,2*self.n)))
+        return sum(gaussjordan(np.append(self.H,b).reshape(self.n-self.k+1,2*self.n))[self.n-self.k])==0
 
     def hard_decode(self,syndrome):
         T = self.get_T(syndrome)
@@ -80,8 +82,8 @@ class SC(CODE):
             for si in range(2 ** (self.n-self.k)):
                 S = self.get_S(si)
                 E = T^S^L
-                if 0==sum(E - np.array([0,0 ,0 ,0 ,0 ,1 ,0 ,0 ,0,0])):
-                    print(T,S,L)
+                #if 0==sum(E - np.array([0,0 ,0 ,0 ,0 ,1 ,0 ,0 ,0,0])):
+                #    print(T,S,L)
                 #E = ()のうち，確率を入力
                 Ptmp = 1
                 for ei in range(self.n):
@@ -94,7 +96,7 @@ class SC(CODE):
         for lj in range(2*self.k):
             L+=(((l_ind>>(lj))&1)*self.L[lj])
 
-        print("L,LT,T",self.get_syndrome(L),self.get_syndrome(L^T),self.get_syndrome(T))
+        #print("L,LT,T",self.get_syndrome(L),self.get_syndrome(L^T),self.get_syndrome(T))
         return L^T
 
     def decode(self,syndrome,mode='HD'):

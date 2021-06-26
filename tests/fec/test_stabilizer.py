@@ -17,3 +17,4 @@ def test_toy():
     assert 0==sum(c.get_syndrome(c.get_L(1)) - np.zeros(4,dtype='i1'))
     assert 0==sum(c.get_syndrome(c.get_L(2)) - np.zeros(4,dtype='i1'))
     assert 0==sum(c.get_syndrome(c.get_L(3)) - np.zeros(4,dtype='i1'))
+    
