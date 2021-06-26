@@ -1,16 +1,10 @@
 # What is pyQec
-The Library of Quantum Error Correction
+量子誤り訂正のライブラリです．  
 
-This Library conclude the components:
+本ライブラリには以下が含まれています．
 ## Quantum Error Correction Code
-This component include a function of generating quantum circuit on qiskit
 - Stabilizer Code
-- CSS code
-- Toric code
-- Quantum LDPC code
-- Quantum polar code
-- Toy code (5-q code, 7-q code)
-- Concatenated code
+- Toy code (5-q code, 7-q(STEANE) code)
 
 ## decoder
 - syndrome decoding (stabilizer)
@@ -19,4 +13,3 @@ This component include a function of generating quantum circuit on qiskit
 
 ## Channel Model
 - depolarizing chanel
-- XZ channel
