@@ -1,15 +1,26 @@
 # What is pyQec
-量子誤り訂正のライブラリです．  
+pyQec is quantum error correction code (QECC) library. This library mainly provide a decoding algorithm for QECC.  
+The QECC is needed to overcome the quantum noise arising from time evolution, which cannot avoid in principle, the imperfections quantum circuit and channel.   
 
-本ライブラリには以下が含まれています．
+# Contents
 ## Quantum Error Correction Code
+### basic code and toys
 - Stabilizer Code
 - Toy code (5-q code, 7-q(STEANE) code)
 
+### Construction of QECC from classical code
+- (Future) quantum LDPC code
+- (Future) quantum polar code
+- concatenated code
+
+### Construction QECC from classical physics
+- Topological code (Toric, colar)
+
 ## decoder
 - syndrome decoding (stabilizer)
-- group decoding (toric code)
+- renormalize group decoding (toric code)
 - SC decoder (SC decoder)
 
 ## Channel Model
-- depolarizing chanel
+- depolarizing channel
+- (Future) Pauli channel

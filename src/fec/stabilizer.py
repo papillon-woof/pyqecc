@@ -25,7 +25,6 @@ class SC(CODE):
         else:
             self._P = P
 
-
     #量子情報ビット
     def get_enc_circ(self):
         return self.enc_circuit
