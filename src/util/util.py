@@ -55,9 +55,3 @@ def gaussjordan(X, change=0):
     if change:
         return A, P
     return A
-
-
-
-X = np.array([[1,0,1,0],[1,0,0,0],[1,1,1,1]])
-b = np.array([1,1,0]).T
-XX = np.c_[X,b]
