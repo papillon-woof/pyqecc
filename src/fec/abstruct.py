@@ -8,16 +8,12 @@ class CODE(metaclass=ABCMeta):
         self._k = self.n
         self._R = self.k/self.n
 
-    #量子情報ビット
+    '''
+    #未実装
     @property
-    def get_enc_circ(self):
-        return self.enc_circuit
-
-    #シンドロームと確率分布を受け取る．
-    @property
-    def get_dec_circ(self):
-        return self.dec_circuit
-
+    def enc_circ(self):
+        return self._enc_circuit
+    '''
     @property
     def n(self):
         return self._n
@@ -29,18 +25,6 @@ class CODE(metaclass=ABCMeta):
     @property
     def R(self):
         return self._R
-
-    @property
-    def L(self):
-        return self._L
-
-    @property
-    def T(self):
-        return self._T
-
-    @property
-    def H(self):
-        return self._H
 
     @property
     def name(self):

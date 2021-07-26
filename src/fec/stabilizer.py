@@ -25,14 +25,6 @@ class SC(CODE):
         else:
             self._P = P
 
-    #量子情報ビット
-    def get_enc_circ(self):
-        return self.enc_circuit
-
-    #シンドロームと確率分布を受け取る．
-    def get_dec_circ(self):
-        return self.dec_circuit
-
     # hard decision
     def get_syndrome(self,e):
         return symplex_binary_inner_product(self._H,e)
@@ -108,6 +100,18 @@ class SC(CODE):
     @property
     def P(self):
         return self._P
+
+    @property
+    def L(self):
+        return self._L
+
+    @property
+    def T(self):
+        return self._T
+
+    @property
+    def H(self):
+        return self._H
 
     def __str__(self):
         output = ""

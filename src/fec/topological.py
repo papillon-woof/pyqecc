@@ -2,7 +2,7 @@ import numpy as np
 from .abstruct import *
 from ..util import *
 
-def TORIC(SC):
+class TORIC(SC):
     def __init__(self,n,k,G='random',T=None,L=None,P=None,iid=True):
         #H is replesentation for graph into adjacent matrix:
         self._G = G
@@ -22,5 +22,6 @@ def TORIC(SC):
         self.dec_circuit = None
         self._P = self.set_P(P)
         self.ML_decoding_qubit_limit = 15
-
+        
     def decoder(self,H):
+        pass
