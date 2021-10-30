@@ -14,6 +14,7 @@ class CODE(metaclass=ABCMeta):
     def enc_circ(self):
         return self._enc_circuit
     '''
+
     @property
     def n(self):
         return self._n
