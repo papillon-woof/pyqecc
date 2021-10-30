@@ -11,3 +11,6 @@ def depolarizing_noise(n,p):
     e[n+z]=1 #Z
     e[y] = 1;e[n+y] = 1 #Z
     return e
+
+def amplitude_damping(n,p):
+    pass
