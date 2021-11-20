@@ -1,30 +1,28 @@
 import numpy as np
 from ..channel import *
-def BLER(myqec,monte=1000,err_stop=1000):
-    result = []
-    d =10
-    input_BER = [0.5,0.4,0.3,0.2,0.1,0.05,0.01,0.05,0.01,0.005,0.001,0.0005,0.0001]
-    #input_BER = [1/3]
-    n = myqec.n
-    for p in input_BER:
+def BLER(myQECC,MONTE=1000,ERR_STOP=1000,PHYSICAL_ERROR_PROB=[0.5,0.4,0.3,0.2,0.1,0.05,0.01,0.05,0.01,0.005,0.001,0.0005,0.0001],DEBUG=False):
+    RESULTS = {}
+    RESULTS['LOGICAL_ERROR_PROB'] = []
+    RESULTS['PHYSICAL_ERROR_PROB'] = PHYSICAL_ERROR_PROB
+    n = myQECC.n
+    for p in PHYSICAL_ERROR_PROB:
         ble = 0
-        myqec.set_P(np.array([1-p,p/3,p/3,p/3]))
-        for mc in range(1,monte+1):
-            #e = one_bit_channel(n,1)
-            e = depolarizing_noise(n,p)
-            syndrome = myqec.get_syndrome(e)
-            ee = myqec.decode(syndrome)
-            #print(e,ee)
-            for i in range(len(myqec.L)):
-                if not myqec.in_S(e^ee):
+        myQECC.set_P(np.array([1-p,p/3,p/3,p/3]))
+        for mc in range(1,MONTE+1):
+            E = depolarizing_noise(n,p)
+            syndrome = myQECC.get_syndrome(E)
+            EE = myQECC.decode(syndrome)
+            for i in range(len(myQECC.L)):
+                if not myQECC.in_S(E^EE):
                     ble+=1
                     break
             print("p",p,"誤り確率:",mc,ble/mc)
-            if ble>err_stop:
+            if ble>ERR_STOP:
                 break
-        result.append(ble/mc)
+        RESULTS['BLER'].append(ble/mc)
         if ble/mc==0:
             break
-    print(input_BER)
-    print(result)
-    return input_BER,result
+    if DEBUG:
+        print('PHYSICAL_ERROR_PROB',PHYSICAL_ERROR_PROB)
+        print('LOGICAL_ERROR_PROB',RESULTS['LOGICAL_ERROR_PROB'])
+    return RESULTS
