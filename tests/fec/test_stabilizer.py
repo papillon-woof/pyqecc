@@ -23,3 +23,8 @@ def test_five():
     c = FIVE()
     for i in range(15):
         assert arr2int(c.get_syndrome(c.get_T(int2arr(i,4))))==i
+
+def test_STEANE():
+    c = STEANE()
+    for i in range(64):
+        assert arr2int(c.get_syndrome(c.get_T(int2arr(i,6))))==i

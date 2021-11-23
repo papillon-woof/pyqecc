@@ -1,9 +1,5 @@
-import numpy as np
 from src import *
-c = STEANE()
-for i in range(2 ** 6):
-    print(c.get_T(int2arr(i,6)))
-
-n = 100000
-print(BLER(STEANE(mode='ML'),monte=10000))
-print(BLER(STEANE(mode='ML'),monte=10000))
+MONTE = 10000
+DEPOLARIZING_PROB=[0.5,0.45,0.4,0.35,0.3,0.25,0.2,0.15,0.1,0.05,0.01,0.005,0.001]
+print(dec_sim(STEANE(mode='HD'),DEPOLARIZING_PROB=DEPOLARIZING_PROB,MONTE=MONTE))
+print(dec_sim(STEANE(mode='ML'),DEPOLARIZING_PROB=DEPOLARIZING_PROB,MONTE=MONTE))

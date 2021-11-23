@@ -8,7 +8,7 @@ def depolarizing_noise(n,p):
     y_pos = np.intersect1d(np.where(r<2*p/3)[0], np.where(r>p/3)[0])
     E[x_pos]=1 #X
     E[n+z_pos]=1 #Z
-    E[x_pos] = 1;E[n+z_pos] = 1 #Y
+    E[y_pos] = 1;E[n+y_pos] = 1 #Y
     return E
 
 def one_bit_noise(n,p):

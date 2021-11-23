@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 from src.channel import *
 def test_depolarizing():
-    np.random.seed=1
+    np.random.seed=0
     n = 100000
     for p in [0.01,0.1,0.2]:
         e = depolarizing_noise(n,p)
