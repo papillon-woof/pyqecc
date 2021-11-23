@@ -11,10 +11,11 @@ def depolarizing_noise(n,p):
     E[x_pos] = 1;E[n+z_pos] = 1 #Y
     return E
 
-def amplitude_damping(n,p):
-    pass
-
 def one_bit_noise(n,p):
     E = np.zeros(2*n,dtype='i1')
     E[np.random.randint(0,n,1)]=1
     return E
+
+def amplitude_damping(n,p):
+    pass
+
