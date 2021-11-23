@@ -3,11 +3,9 @@ from .abstruct import *
 from ..util import *
 class SC(CODE):
     def __init__(self,n,k,H='random',T=None,L=None,P=None,iid=True,mode='HD'):
-        self._name = "stabilizer"
-        self._n = n
-        self._k = k
-        self._R = self._k/self._n
+        super().__init__(n,k)
         self._mode = mode
+        self._name = "stabilizer"
         if H in ['random']:
             pass
         else:
@@ -18,7 +16,6 @@ class SC(CODE):
         self.enc_circuit = None
         self.dec_circuit = None
         self._P = self.set_P(P)
-        print(self._P)
         self.ML_decoding_qubit_limit = 15
 
     def set_P(self,P,iid=True):
@@ -27,15 +24,8 @@ class SC(CODE):
         else:
             self._P = P
 
-    # hard decision
     def get_syndrome(self,e):
         return symplex_binary_inner_product(self._H,e)
-
-    def _get_T(self,ind):
-        T = np.zeros(2*self.n,dtype='i1')
-        for i in range(self.n - self.k):
-            T+=(ind[i]*self.T[i])
-        return np.mod(T,2)
 
     def get_T(self,ind):
         return self.T[arr2int(ind)]
@@ -55,11 +45,11 @@ class SC(CODE):
     def in_S(self,b):
         return sum(gaussjordan(np.append(self.H,b).reshape(self.n-self.k+1,2*self.n))[self.n-self.k])==0
 
-    def _in_S(self,b):
-        for i in range(self.n-self.k):
-            if symplex_binary_inner_product(self.H[i],b)==1:
-                return False
-        return True
+    #def _in_S(self,b):
+    #    for i in range(self.n-self.k):
+    #        if symplex_binary_inner_product(self.H[i],b)==1:
+    #            return False
+    #    return True
 
     def hard_decode(self,syndrome):
         T = self.get_T(syndrome)

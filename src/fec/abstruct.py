@@ -3,9 +3,9 @@ import numpy as np
 
 class CODE(metaclass=ABCMeta):
     _name = ""
-    def __init__(self,**param):
-        self._n = 1
-        self._k = self.n
+    def __init__(self,n,k):
+        self._n = n
+        self._k = k
         self._R = self.k/self.n
 
     '''
