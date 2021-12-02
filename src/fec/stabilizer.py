@@ -1,6 +1,7 @@
 import numpy as np
 from .abstruct import *
 from ..util import *
+
 class SC(CODE):
     def __init__(self,n,k,H='random',T=None,L=None,P=None,iid=True,mode='HD'):
         super().__init__(n,k)
@@ -11,7 +12,7 @@ class SC(CODE):
         else:
             self._H = H
         self._T = T
-        self._L = L
+        self._L = L #商: kbit目 あまり0 X あまり1 Z
 
         self.enc_circuit = None
         self.dec_circuit = None
@@ -45,18 +46,21 @@ class SC(CODE):
     def in_S(self,b):
         return sum(gaussjordan(np.append(self.H,b).reshape(self.n-self.k+1,2*self.n))[self.n-self.k])==0
 
-    #def _in_S(self,b):
-    #    for i in range(self.n-self.k):
-    #        if symplex_binary_inner_product(self.H[i],b)==1:
-    #            return False
-    #    return True
+    def set_LUT(self):
+        self.LUT = {}
+        for i in range(2 ** (self.n - self.k)):
+            self.LUT[i] = self.ML_decode(int2arr(i,(self.n - self.k)))
 
     def hard_decode(self,syndrome):
         T = self.get_T(syndrome)
         return T
 
-    def ML_decode(self,syndrome):
+    def ML_decode(self,syndrome,**param):
         #decoding_metric: メトリック．受信語と通信路情報から計算する．
+        if "return_logical_error_probability" in param:
+            self.return_logical_error_probability = param["return_logical_error_probability"]
+        else:
+            self.return_logical_error_probability = False  
         T = self.get_T(syndrome)
         if self.n>self.ML_decoding_qubit_limit:
             ValueError("Error: The qubit n ="+str(self.n)+" is limited because of a large decoding complexity. You can change the qubit limit.")
@@ -79,12 +83,19 @@ class SC(CODE):
         L = np.zeros(2*self.n,dtype='i1')
         for lj in range(2*self.k):
             L+=(((l_ind>>(lj))&1)*self.L[lj])
-
+        print(P_L,l_ind,L)
+        if self.return_logical_error_probability:
+            return L^T,P_L
         return L^T
-
-    def decode(self,syndrome):
+    def LUT_decode(self,syndrome):
+        return self.LUT(syndrome)
+    def decode(self,syndrome,**param):
         if self._mode=="ML":
             EE = self.ML_decode(syndrome)
+        if self._mode=="ML_LUT":
+            if self.LUT == {}:
+                self.set_LUT()
+            EE = self.LUT_decode(syndrome)
         elif self._mode=="HD":
             EE = self.hard_decode(syndrome)
         return EE
@@ -104,6 +115,11 @@ class SC(CODE):
     @property
     def H(self):
         return self._H
+
+    @property
+    def LUT(self):
+        return self._LUT
+
 
     def __str__(self):
         output = ""
