@@ -3,6 +3,10 @@ from .abstruct import *
 from ..util import *
 
 class SC(CODE):
+    '''
+    Lの仕様．全部で2^k個の要素がある．L[01001]は54321量子ビット目の0: Xi, 1: Ziに相当する論理演算子．
+    l,t(\beta),sで表現する？
+    '''
     def __init__(self,n,k,H='random',T=None,L=None,P=None,iid=True,mode='HD'):
         super().__init__(n,k)
         self._mode = mode
@@ -29,7 +33,7 @@ class SC(CODE):
         return symplex_binary_inner_product(self._H,e)
 
     def get_T(self,ind):
-        return self.T[arr2int(ind)]
+        return self.T[arr2int(ind)] #LUTでの計算? BPでの計算もあり?LDPCについて学ぶ．
 
     def get_S(self,ind):
         S = np.zeros(2*self.n,dtype='i1')
@@ -89,6 +93,7 @@ class SC(CODE):
         return L^T
     def LUT_decode(self,syndrome):
         return self.LUT(syndrome)
+    
     def decode(self,syndrome,**param):
         if self._mode=="ML":
             EE = self.ML_decode(syndrome)
