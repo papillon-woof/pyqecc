@@ -19,7 +19,7 @@ def STEANE(mode='ML_LUT'):
 def FIVE(mode='HD'):
     H = np.array([[1,0,0,1,0,0,1,1,0,0],[0,1,0,0,1,0,0,1,1,0],[1,0,1,0,0,0,0,0,1,1],[0,1,0,1,0,1,0,0,0,1]],dtype='i1')
     T = {0:np.array([0,0,0,0,0,0,0,0,0,0]),1:np.array([1,0,0,0,0,0,0,0,0,0]),8:np.array([0,1,0,0,0,0,0,0,0,0]),12:np.array([0,0,1,0,0,0,0,0,0,0]),6:np.array([0,0,0,1,0,0,0,0,0,0]),3:np.array([0,0,0,0,1,0,0,0,0,0]),10:np.array([0,0,0,0,0,1,0,0,0,0]),5:np.array([0,0,0,0,0,0,1,0,0,0]),2:np.array([0,0,0,0,0,0,0,1,0,0]),9:np.array([0,0,0,0,0,0,0,0,1,0]),4:np.array([0,0,0,0,0,0,0,0,0,1]),11:np.array([1,0,0,0,0,1,0,0,0,0]),13:np.array([0,1,0,0,0,0,1,0,0,0]),14:np.array([0,0,1,0,0,0,0,1,0,0]),15:np.array([0,0,0,1,0,0,0,0,1,0]),7:np.array([0,0,0,0,1,0,0,0,0,1])}
-    L = np.array([[1,1,1,1,1,0,0,0,0,0],[0,0,0,0,0,1,1,1,1,1]],dtype='i1')
+    L = np.array([[[1,1,1,1,1,0,0,0,0,0],[0,0,0,0,0,1,1,1,1,1]]],dtype='i1')
     sc = SC(5,1,H=H,T=T,L=L,mode=mode)
     sc._name = "FIVE_CODE"
     return sc
@@ -27,7 +27,7 @@ def FIVE(mode='HD'):
 def BIT_FLIP(mode='HD'):
     H = np.array([[0,0,0,1,1,0],[0,0,0,0,1,1]],dtype='i1')
     T = {0:np.array([0,0,0,0,0,0]),1:np.array([0,0,0,1,0,0]),2:np.array([0,0,0,0,0,1]),3:np.array([0,0,0,0,1,0])}
-    L = [np.array([1,1,1,0,0,0],dtype='i1'),np.array([0,0,0,1,1,1],dtype='i1')]
+    L = np.array([[[1,1,1,0,0,0],[0,0,0,1,1,1]]],dtype='i1')
     sc = SC(3,1,H=H,T=T,L=L,mode=mode)
     sc._name = "BIT_FLIP_CODE"
     return sc
@@ -35,7 +35,7 @@ def BIT_FLIP(mode='HD'):
 def PHASE_FLIP(mode='HD'):
     H = np.array([[1,1,0,0,0,0],[0,1,1,0,0,0]],dtype='i1')
     T = {0:np.array([0,0,0,0,0,0]),1:np.array([1,0,0,0,0,0]),2:np.array([0,0,1,0,0,0]),3:np.array([0,1,0,0,0,0])}
-    L = [np.array([1,1,1,0,0,0],dtype='i1'),np.array([0,0,0,1,1,1],dtype='i1')]
+    L = np.array([[[1,1,1,0,0,0],[0,0,0,1,1,1]]],dtype='i1')
     sc = SC(3,1,H=H,T=T,L=L,mode=mode)
     sc._name = "PHASE_FLIP_FLIP_CODE"
     return sc
