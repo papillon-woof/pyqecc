@@ -4,24 +4,20 @@ from ..util import *
 
 class SC(CODE):
     '''
-    Lの仕様．全部で2^k個の要素がある．L[01001]は54321量子ビット目の0: Xi, 1: Ziに相当する論理演算子．
-    l,t(\beta),sで表現する？
     '''
+    NAME = "stabilizer code"
+    USAGE = "Text"
     def __init__(self,n,k,H='random',T=None,L=None,P=None,iid=True,mode='HD'):
         super().__init__(n,k)
         self._mode = mode
-        self._name = "stabilizer"
-        if H in ['random']:
-            pass
-        else:
-            self._H = H
+        self._H = H
         self._T = T
-        self._L = L #商: kbit目 あまり0 X あまり1 Z
-
-        self.enc_circuit = None
-        self.dec_circuit = None
+        self._L = L
         self._P = self.set_P(P)
+        self._LUT = {}
         self.ML_decoding_qubit_limit = 15
+        #self.enc_circuit = None
+        #self.dec_circuit = None
 
     def set_P(self,P,iid=True):
         if iid and P is not None:
@@ -41,19 +37,29 @@ class SC(CODE):
             S+=(((ind>>i)&1)*self.H[i])
         return np.mod(S,2)
 
-    def get_L(self,ind):
+    def get_L(self,alpha):
+        '''
+        alpha
+        [LX1,LX2,LX3,...,LX(n-k)|LZ1,LZ2,LZ3,...,LZ(n-k)]
+        '''
+        #print(type(alpha))
+        if type(alpha)!=np.array:
+            alpha = int2arr(alpha,2*self.k)
         L = np.zeros(2*self.n,dtype='i1')
-        for i in range(2*self.k):
-            L+=(((ind>>i)&1)*self.L[i])
+        #LX or LZ
+        for i in range(2):
+            # each qubits
+            for j in range(self.k):
+                #print(i*(self.k)+j,alpha,self.L[j][i])
+                L+=alpha[i*(self.k)+j]*self.L[j][i]
         return np.mod(L,2)
 
     def in_S(self,b):
         return sum(gaussjordan(np.append(self.H,b).reshape(self.n-self.k+1,2*self.n))[self.n-self.k])==0
 
     def set_LUT(self):
-        self.LUT = {}
         for i in range(2 ** (self.n - self.k)):
-            self.LUT[i] = self.ML_decode(int2arr(i,(self.n - self.k)))
+            self._LUT[i] = self.ML_decode(int2arr(i,(self.n - self.k)))
 
     def hard_decode(self,syndrome):
         T = self.get_T(syndrome)
@@ -64,15 +70,13 @@ class SC(CODE):
         if "return_logical_error_probability" in param:
             self.return_logical_error_probability = param["return_logical_error_probability"]
         else:
-            self.return_logical_error_probability = False  
+            self.return_logical_error_probability = False
         T = self.get_T(syndrome)
         if self.n>self.ML_decoding_qubit_limit:
             ValueError("Error: The qubit n ="+str(self.n)+" is limited because of a large decoding complexity. You can change the qubit limit.")
-
         #Lについてビット全探索
-        P_L = np.zeros(4**self.k)
-        for li in range(4 ** self.k):
-            SUM_P = np.zeros(4)
+        P_L = np.zeros(2**(2*self.k))
+        for li in range(2 ** (2*self.k)):
             L = self.get_L(li)
             #Sについてビット全探索
             for si in range(2 ** (self.n-self.k)):
@@ -80,20 +84,18 @@ class SC(CODE):
                 E = L^T^S
                 Ptmp = 1
                 for ei in range(self.n):
-                    ind=E[ei]+2*E[ei+self.n]
+                    ind=E[ei]+(E[ei+self.n]<<1)
                     Ptmp*=self.P[ei][ind]
                 P_L[li]+=Ptmp
         l_ind = np.argmax(P_L)
-        L = np.zeros(2*self.n,dtype='i1')
-        for lj in range(2*self.k):
-            L+=(((l_ind>>(lj))&1)*self.L[lj])
-        print(P_L,l_ind,L)
+        L = self.get_L(l_ind)
         if self.return_logical_error_probability:
             return L^T,P_L
         return L^T
+
     def LUT_decode(self,syndrome):
-        return self.LUT(syndrome)
-    
+        return self.LUT[arr2int(syndrome)]
+
     def decode(self,syndrome,**param):
         if self._mode=="ML":
             EE = self.ML_decode(syndrome)
@@ -128,8 +130,8 @@ class SC(CODE):
 
     def __str__(self):
         output = ""
-        output+="codename        :"+str(self.name)+"\n"
-        output+="n               : "+str(self.n)+"\n"
-        output+="k               : "+str(self.k)+"\n"
+        output+="NAME            :"+str(self.name)+"\n"
+        output+="N               : "+str(self.n)+"\n"
+        output+="K               : "+str(self.k)+"\n"
         output+="R               : "+str(self.R)+"\n"
         return output

@@ -2,5 +2,5 @@ from src import *
 MONTE = 100000
 #DEPOLARIZING_PROB=[0.25,0.2,0.15,0.1,0.05,0.01,0.005,0.001]
 DEPOLARIZING_PROB=[0.01,0.001,0.0001]
-myQECC = CONC([[FIVE(mode='ML')],[FIVE(mode='ML'),FIVE(mode='ML'),FIVE(mode='ML'),FIVE(mode='ML'),FIVE(mode='ML')]])
+myQECC = STEANE()
 print(dec_sim(myQECC,PROB=DEPOLARIZING_PROB,MONTE=MONTE))
