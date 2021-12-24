@@ -31,10 +31,12 @@ class SC(CODE):
     def get_T(self,ind):
         return self.T[arr2int(ind)] #LUTでの計算? BPでの計算もあり?LDPCについて学ぶ．
 
-    def get_S(self,ind):
+    def get_S(self,ind_list):
         S = np.zeros(2*self.n,dtype='i1')
+        if type(ind_list) == int:
+            ind_list = int2arr(ind_list,self.n - self.k)
         for i in range(self.n-self.k):
-            S+=(((ind>>i)&1)*self.H[i])
+            S+=ind_list[i]*self.H[i]
         return np.mod(S,2)
 
     def get_L(self,alpha):
@@ -42,16 +44,14 @@ class SC(CODE):
         alpha
         [LX1,LX2,LX3,...,LX(n-k)|LZ1,LZ2,LZ3,...,LZ(n-k)]
         '''
-        #print(type(alpha))
-        if type(alpha)!=np.array:
+        print(111,alpha)
+        if type(alpha)==int:
             alpha = int2arr(alpha,2*self.k)
         L = np.zeros(2*self.n,dtype='i1')
         #LX or LZ
         for i in range(2):
-            # each qubits
             for j in range(self.k):
-                #print(i*(self.k)+j,alpha,self.L[j][i])
-                L+=alpha[i*(self.k)+j]*self.L[j][i]
+                L+=alpha[i*self.k+j]*self.L[j][i]
         return np.mod(L,2)
 
     def in_S(self,b):

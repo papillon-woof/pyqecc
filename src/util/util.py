@@ -7,6 +7,8 @@ def arr2int(arr):
         results+=2**(lengths-i-1)*arr[i]
     return results
 def int2arr(i,k):
+    if type(i)==list:
+        ValueError("i is list!")
     results = []
     for ind in range(k):
         results.append(i>>(k-ind-1)&1)

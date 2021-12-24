@@ -43,43 +43,43 @@ class CombCode(SC):
             raise ValueError("Length of beta is not matched number of stabilizer basis. Please check the length of beta.")
         T = np.zeros(2*self.n)
         nind = self.n #シフトして，部分回復演算子を求めるため，後ろから求める．
-        ind = 0
+        ind = self.n - self.k
+        print("beta",beta)
         for c in reversed(self.code_instances):
-            print(self.n,nind,nind-2*c.n,nind-c.n)
-            T_child = c.get_T(beta[ind:ind+c.n-c.k]) #後ろの要素符号のインスタンスを取得
+            T_child = c.get_T(beta[ind-(c.n-c.k):ind]) #後ろの要素符号のインスタンスを取得
+            print("T",T_child)
             T[nind-c.n:nind] = T_child[:c.n]#Xを代入
             T[nind-c.n+self.n:nind+self.n] = T_child[c.n:2*c.n]#Zを代入．
             nind -= c.n
             ind = c.n-c.k #nだけシフトし，次の要素符号のTを取り出す準備
         return T
-    
-    # #2 ** kだけ必要なので，オーバーライドして減らす．
-    # def get_L(self,ind):
-    #     L = np.zeros(2*self.n)
-    #     nind = self.n
-    #     #後ろから代入
-    #     for c in reversed(self.code_instances):
-    #         L_child = c.get_L(ind&(2 ** c.n - 1))
-    #         L[nind-2*c.n:nind-c.n] = L_child[:c.n]#Xを代入
-    #         L[nind-c.n:nind] = L_child[c.n:2*c.n]#Zを代入
-    #         nind -= c.n
-    #         ind = ind>>c.n #nだけシフトし，次の要素符号のTを取り出す準備
-    #     return L
 
     #2 ** kだけ必要なので，オーバーライドして減らす．
     def get_L(self,alpha):
         L = np.zeros(2*self.n)
-        nkind = self.n - self.k
-        nind = self.n
-        if len(alpha) != 2 * (self.n - self.k):
+        kind = 0
+        nind = 0
+        '''
+        alpha
+        [LX1,LX2,LX3,...,LX(n-k)|LZ1,LZ2,LZ3,...,LZ(n-k)]
+        '''
+        if type(alpha)==list:
+            alpha = np.array(alpha)
+        if type(alpha)==int:
+            alpha = int2arr(alpha,2*self.k)
+        if len(alpha) != 2 * self.k:
             raise ValueError("Length of alpha is not matched number of stabilizer basis. Please check the length of alpha.")
         #後ろから代入
         for c in self.code_instances:
-            L_child = c.get_L(np.c_[alpha[nkind:nkind+c.n-c.k],alpha[self.n - self.k + nkind:self.n - self.k + nkind+c.n-c.k]])
+            print(kind,c.n,c.k,alpha[kind:kind+c.k],alpha[self.k + kind:self.k + kind+c.k])
+            L_child = c.get_L(np.concatenate([alpha[kind:kind+c.k],alpha[self.k + kind:self.k + kind+c.k]]))
+            print("a",alpha,L_child, kind)
+            print(self.code_instances)
             L[nind:nind+c.n] = L_child[:c.n]#Xを代入
-            L[self.n + nkind:self.n + nkind+c.n] = L_child[c.n:2*c.n]#Zを代入
-            nkind += c.n - c.k
+            L[self.n + nind:self.n + nind+c.n] = L_child[c.n:2*c.n]#Zを代入
+            kind += c.k
             nind += c.n
+        print(L)
         return L
 
     @property
@@ -101,7 +101,7 @@ class CombCode(SC):
     @property
     def iid(self):
         return self._iid
-    
+
 #SのうちXだったらLxに拡張.e.g. XZIZX=LxLzILzLx\in 25ビット
 
 class ConcCode(SC):
@@ -127,17 +127,18 @@ class ConcCode(SC):
         super().__init__(self.n_sum[self.conc_length-1],self.k_sum[0])
 
     def calc_grobal_H(self):
-        H = np.zeros(self.n-self.k,self.n)
+        H = np.zeros(self.n-self.k,2*self.n)
         count = 0
         for c in self.code_instances:
             for h in c.H:
                 for hi in h[:c.n]:
+                    alpha = np.zeros(2*c.k)
                     if 1==hi:
-                        H[count] = c.L[hi] #Lを格納．例えば，繰り返し符号ならL[0]=XXX，
+                        H[count] = c.get_L[hi] #Lを格納．例えば，繰り返し符号ならL[0]=XXX，
                     H[count]
                 count += 1 # 全体のHの行数をカウント
-            for k in range(self.code_instances[l].k):
-                self.code_instances[l].L[k]
+            for k in range(c.k):
+                c.L[k]
             H.append()
 
     def BP_decode(self,s):
