@@ -12,7 +12,7 @@ def int2arr(i,k):
     results = []
     for ind in range(k):
         results.append(i>>(k-ind-1)&1)
-    return np.array(results)
+    return np.array(results,dtype='i1')
 def symplex_binary_inner_product(a,b):
     n = a.T.shape[0]//2
     z = np.zeros((n,n),dtype='i1')

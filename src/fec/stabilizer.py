@@ -7,15 +7,15 @@ class SC(CODE):
     '''
     NAME = "stabilizer code"
     USAGE = "Text"
+    ML_DECODING_QUBITS_LIMIT = 15
     def __init__(self,n,k,H='random',T=None,L=None,P=None,iid=True,mode='HD'):
         super().__init__(n,k)
         self._mode = mode
-        self._H = H
+        self._H = H.astype('i1')
         self._T = T
         self._L = L
         self._P = self.set_P(P)
         self._LUT = {}
-        self.ML_decoding_qubit_limit = 15
         #self.enc_circuit = None
         #self.dec_circuit = None
 
@@ -44,9 +44,12 @@ class SC(CODE):
         alpha
         [LX1,LX2,LX3,...,LX(n-k)|LZ1,LZ2,LZ3,...,LZ(n-k)]
         '''
-        print(111,alpha)
-        if type(alpha)==int:
+        if type(alpha)==list:
+            alpha = np.array(alpha)
+        if type(alpha)==int or type(alpha)==np.int64:
             alpha = int2arr(alpha,2*self.k)
+        if len(alpha) != 2 * self.k:
+            raise ValueError("Length of alpha is not matched number of stabilizer basis. Please check the length of alpha.")
         L = np.zeros(2*self.n,dtype='i1')
         #LX or LZ
         for i in range(2):
@@ -63,7 +66,7 @@ class SC(CODE):
 
     def hard_decode(self,syndrome):
         T = self.get_T(syndrome)
-        return T
+        return T.astype("i1")
 
     def ML_decode(self,syndrome,**param):
         #decoding_metric: メトリック．受信語と通信路情報から計算する．
@@ -72,7 +75,7 @@ class SC(CODE):
         else:
             self.return_logical_error_probability = False
         T = self.get_T(syndrome)
-        if self.n>self.ML_decoding_qubit_limit:
+        if self.n>self.ML_DECODING_QUBITS_LIMIT:
             ValueError("Error: The qubit n ="+str(self.n)+" is limited because of a large decoding complexity. You can change the qubit limit.")
         #Lについてビット全探索
         P_L = np.zeros(2**(2*self.k))
@@ -126,7 +129,6 @@ class SC(CODE):
     @property
     def LUT(self):
         return self._LUT
-
 
     def __str__(self):
         output = ""

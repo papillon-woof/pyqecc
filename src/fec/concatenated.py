@@ -11,7 +11,9 @@ class CombCode(SC):
     [000011|000000]
     '''
     NAME = "COMBOLUTION_CODE"
-    def __init__(self,code_instances,Interleaver={},iid=True):
+    def __init__(self,code_instances,Interleaver={},iid=True,mode='ML'):
+        self._mode = mode
+        self._L = None
         self._iid = iid
         self.conc_length = len(code_instances) #連結符号の長さ
         self._code_instances = code_instances
@@ -22,7 +24,7 @@ class CombCode(SC):
             self._k += c.k
         self._R = self.k/self.n
         # Stabilizer
-        self._H = np.zeros((self.n-self.k,2*self.n))
+        self._H = np.zeros((self.n-self.k,2*self.n),dtype='i1')
         nind = 0
         nkind = 0
         for c in self.code_instances:
@@ -31,7 +33,6 @@ class CombCode(SC):
                 self._H[nkind][self.n+nind:self.n+nind+c.n] = h[c.n:2*c.n]#Z
                 nkind += 1
             nind += c.n
-        print(self._H)    
 
     def get_T(self,beta):
         '''
@@ -41,13 +42,11 @@ class CombCode(SC):
         '''
         if len(beta) != self.n - self.k:
             raise ValueError("Length of beta is not matched number of stabilizer basis. Please check the length of beta.")
-        T = np.zeros(2*self.n)
+        T = np.zeros(2*self.n,dtype='i1')
         nind = self.n #シフトして，部分回復演算子を求めるため，後ろから求める．
         ind = self.n - self.k
-        print("beta",beta)
         for c in reversed(self.code_instances):
             T_child = c.get_T(beta[ind-(c.n-c.k):ind]) #後ろの要素符号のインスタンスを取得
-            print("T",T_child)
             T[nind-c.n:nind] = T_child[:c.n]#Xを代入
             T[nind-c.n+self.n:nind+self.n] = T_child[c.n:2*c.n]#Zを代入．
             nind -= c.n
@@ -56,7 +55,7 @@ class CombCode(SC):
 
     #2 ** kだけ必要なので，オーバーライドして減らす．
     def get_L(self,alpha):
-        L = np.zeros(2*self.n)
+        L = np.zeros(2*self.n,dtype='i1')
         kind = 0
         nind = 0
         '''
@@ -65,21 +64,17 @@ class CombCode(SC):
         '''
         if type(alpha)==list:
             alpha = np.array(alpha)
-        if type(alpha)==int:
+        if type(alpha)==int or type(alpha)==np.int64:
             alpha = int2arr(alpha,2*self.k)
         if len(alpha) != 2 * self.k:
             raise ValueError("Length of alpha is not matched number of stabilizer basis. Please check the length of alpha.")
         #後ろから代入
         for c in self.code_instances:
-            print(kind,c.n,c.k,alpha[kind:kind+c.k],alpha[self.k + kind:self.k + kind+c.k])
             L_child = c.get_L(np.concatenate([alpha[kind:kind+c.k],alpha[self.k + kind:self.k + kind+c.k]]))
-            print("a",alpha,L_child, kind)
-            print(self.code_instances)
             L[nind:nind+c.n] = L_child[:c.n]#Xを代入
             L[self.n + nind:self.n + nind+c.n] = L_child[c.n:2*c.n]#Zを代入
             kind += c.k
             nind += c.n
-        print(L)
         return L
 
     @property
@@ -101,6 +96,7 @@ class CombCode(SC):
     @property
     def iid(self):
         return self._iid
+    
 
 #SのうちXだったらLxに拡張.e.g. XZIZX=LxLzILzLx\in 25ビット
 

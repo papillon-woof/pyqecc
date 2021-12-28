@@ -10,7 +10,6 @@ def STEANE(mode='ML_LUT'):
     for i in range(8):
         for j in range(8):
             T[8*j+i]=TX[i]+TZ[j]
-    # L [qbits][LX=0 or LZ=1][X|Z]
     L = np.array([[[1,1,1,1,1,1,1,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,1,1,1,1,1,1,1]]],dtype='i1')
     sc = SC(N,K,H=H,T=T,L=L,mode=mode)
     sc._name = "STEANE_CODE"
