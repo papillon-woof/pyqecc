@@ -20,7 +20,7 @@ def dec_sim(
     n = myQECC.n
     for p in PROB:
         ble = 0
-        myQECC.set_bit_wise_p(np.array([1-p,p/3,p/3,p/3]))
+        myQECC.set_bitwise_p(np.array([1-p,p/3,p/3,p/3]))
         for mc in range(1,MONTE+1):
             E = channel(n,p,CHANNEL_MODEL=CHANNEL_MODEL)
             syndrome = myQECC.get_syndrome(E)

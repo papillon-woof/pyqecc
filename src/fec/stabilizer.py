@@ -27,32 +27,36 @@ class SC(CODE):
         self._L = L
         self._iid = iid
         self.BITWISE = BITWISE
-        if self.ML_DECODING_QUBITS_LIMIT<self.n:
-            print("The num. of qubit exceed ML_DECODING_QUBITS_LIMIT.")
-            self.BITWISE = True
-        if self.BITWISE:
-            self._bit_wise_p = self.set_bit_wise_p(P)
-            self._block_wise_p = False # By approximate the bitwise probability.
-        else:
-            self._bit_wise_p = False
-            self._block_wise_p = self.set_block_wise_p(P)
+        self.set_error_probability(P)
         self._LUT = {}
         #self.enc_circuit = None
         #self.dec_circuit = None
-
-    def set_block_wise_p(self,block_wise_p,iid=False):
-        if iid:
-            if type(block_wise_p) == list:
-                self._block_wise_p=np.array([block_wise_p for i in range(self.n)])
+    def set_error_probability(self,P):
+        if not P is None:
+            if self.BITWISE:
+                self.set_bitwise_p(P)
+                if self.ML_DECODING_QUBITS_LIMIT<self.n:
+                    print("The num. of qubit exceed ML_DECODING_QUBITS_LIMIT.")
+                    self._blockwise_p = False
+                else:
+                    self.set_blockwise_p(bitwise_to_blockwise_probability(P)) # By approximate the bitwise probability.
             else:
-                self._block_wise_p=np.array([block_wise_p.tolist() for i in range(self.n)])
-        else:
-            self._block_wise_p = block_wise_p
-    def set_bit_wise_p(self,bit_wise_p,iid=True):
+                self.set_blockwise_p(P)
+                self.set_bitwise_p(bitwise_to_blockwise_probability(P))
+
+    def set_blockwise_p(self,blockwise_p,iid=False):
         if iid:
-            self._bit_wise_p = np.array([bit_wise_p for i in range(self.n)])
+            if type(blockwise_p) == list:
+                self._blockwise_p=np.array([blockwise_p for i in range(self.n)])
+            else:
+                self._blockwise_p=np.array([blockwise_p.tolist() for i in range(self.n)])
         else:
-            self._bit_wise_p = bit_wise_p
+            self._blockwise_p = blockwise_p
+    def set_bitwise_p(self,bitwise_p,iid=True):
+        if iid:
+            self._bitwise_p = np.array([bitwise_p for i in range(self.n)])
+        else:
+            self._bitwise_p = bitwise_p
 
     def get_syndrome(self,e):
         return symplex_binary_inner_product(self._H,e)
@@ -73,16 +77,11 @@ class SC(CODE):
         alpha
         [LX1,LX2,LX3,...,LX(n-k)|LZ1,LZ2,LZ3,...,LZ(n-k)]
         '''
-        if type(alpha)==list:
-            alpha = np.array(alpha)
-        if type(alpha)==int or type(alpha)==np.int64:
-            alpha = int2arr(alpha,2*self.k)
-        if len(alpha) != 2 * self.k:
-            raise ValueError("Length of alpha is not matched number of stabilizer basis. Please check the length of alpha.")
+        alpha = any2arr(alpha,X_AND_Z*self.k)
         L = np.zeros(2*self.n,dtype='i1')
         #LX or LZ
-        for i in range(2):
-            for j in range(self.k):
+        for j in range(self.k):
+            for i in range(X_AND_Z):
                 L^=alpha[i*self.k+j]*self.L[j][i]
         return np.mod(L,2)
 
@@ -97,15 +96,18 @@ class SC(CODE):
         T = self.get_T(syndrome)
         return T.astype("i1")
 
-    def get_error_probability(self,E):
+    def get_error_probability_old(self,E):
         error_probability = 1
         if self.BITWISE:
             for ei in range(self.n):
                 ind=E[ei]+(E[ei+self.n]<<1)
-                error_probability*=self.bit_wise_p[ei][ind]
+                error_probability*=self.bitwise_p[ei][ind]
             return error_probability
         else:
-            return self.block_wise_p[arr2int(E)]
+            return self.blockwise_p[arr2int(E)]
+
+    def get_error_probability(self,E):
+        return self.blockwise_p[arr2int(E)]
 
     def ML_decode(self,syndrome,**param):
         #decoding_metric: メトリック．受信語と通信路情報から計算する．
@@ -113,15 +115,15 @@ class SC(CODE):
             self.return_logical_error_probability = param["return_logical_error_probability"]
         else:
             self.return_logical_error_probability = False
+        
         if self.n>self.ML_DECODING_QUBITS_LIMIT:
-            ValueError("Error: The qubit n ="+str(self.n)+" is limited because of a large decoding complexity. You can change the qubit limit.")
+            raise ValueError("Error: The qubit n ="+str(self.n)+" is limited because of a large decoding complexity. You can change the qubit limit.")
 
         T = self.get_T(syndrome)
         logical_error_probability = np.zeros(2**(2*self.k))
-        #Lについてビット全探索
+        #L,Sについてビット全探索
         for lind in range(2 ** (2*self.k)):
             L = self.get_L(lind)
-            #Sについてビット全探索
             for sind in range(2 ** (self.n-self.k)):
                 S = self.get_S(sind)
                 E = L^T^S
@@ -132,40 +134,11 @@ class SC(CODE):
             return L^T,logical_error_probability
         return L^T
 
-    def ML_decode_old(self,syndrome,**param):
-        #decoding_metric: メトリック．受信語と通信路情報から計算する．
-        if "return_logical_error_probability" in param:
-            self.return_logical_error_probability = param["return_logical_error_probability"]
-        else:
-            self.return_logical_error_probability = False
-        T = self.get_T(syndrome)
-        if self.n>self.ML_DECODING_QUBITS_LIMIT:
-            ValueError("Error: The qubit n ="+str(self.n)+" is limited because of a large decoding complexity. You can change the qubit limit.")
-        #Lについてビット全探索
-        P_L = np.zeros(2**(2*self.k))
-        for li in range(2 ** (2*self.k)):
-            L = self.get_L(li)
-            #Sについてビット全探索
-            for si in range(2 ** (self.n-self.k)):
-                S = self.get_S(si)
-                E = L^T^S
-                Ptmp = 1
-                #print(1,self.n,self.P)
-                for ei in range(self.n):
-                    ind=E[ei]+(E[ei+self.n]<<1)
-                    Ptmp*=self.P[ei][ind]
-                P_L[li]+=Ptmp
-        l_ind = np.argmax(P_L)
-        L = self.get_L(l_ind)
-        if self.return_logical_error_probability:
-            return L^T,P_L
-        return L^T
-
     def LUT_decode(self,syndrome):
         return self.LUT[arr2int(syndrome)]
 
     def decode(self,syndrome,mode=False,**param,):
-        if mode:
+        if not mode is False:
             self._mode = mode
         if self._mode=="ML":
             EE = self.ML_decode(syndrome,**param)
@@ -178,12 +151,12 @@ class SC(CODE):
         return EE
 
     @property
-    def block_wise_p(self):
-        return self._block_wise_p
+    def blockwise_p(self):
+        return self._blockwise_p
 
     @property
-    def bit_wise_p(self):
-        return self._bit_wise_p
+    def bitwise_p(self):
+        return self._bitwise_p
 
     @property
     def L(self):
@@ -205,10 +178,15 @@ class SC(CODE):
     def iid(self):
         return self._iid
 
+    @property
+    def mode(self):
+        return self._mode
+
     def __str__(self):
         output = ""
         output+="NAME            :"+str(self.name)+"\n"
         output+="N               : "+str(self.n)+"\n"
         output+="K               : "+str(self.k)+"\n"
         output+="R               : "+str(self.R)+"\n"
+        output+="DECODING_MODE   : "+str(self.mode)+"\n"
         return output

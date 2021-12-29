@@ -11,8 +11,7 @@ class CombCode(SC):
     [000011|000000]
     '''
     NAME = "COMBOLUTION_CODE"
-    def __init__(self,code_instances,Interleaver={},iid=True,mode='ML',BITWISE = False):
-        self._mode = mode
+    def __init__(self,code_instances,Interleaver={},P=None,iid=True,mode='ML',BITWISE = True):
         self.conc_length = len(code_instances) #連結符号の長さ
         self._code_instances = code_instances
         self._n = sum([c.n for c in self.code_instances])
@@ -27,7 +26,7 @@ class CombCode(SC):
                 self._H[nkind][self.n+nind:self.n+nind+c.n] = h[c.n:2*c.n]#Z
                 nkind += 1
             nind += c.n
-        super().__init__(self.n,self.k,self._H,BITWISE = BITWISE,iid = iid)
+        super().__init__(self.n,self.k,self._H,P=P,BITWISE = BITWISE,iid = iid,mode=mode)
 
     def get_T(self,beta):
         '''
@@ -53,17 +52,12 @@ class CombCode(SC):
         L = np.zeros(2*self.n,dtype='i1')
         kind = 0
         nind = 0
-        '''
-        alpha
-        [LX1,LX2,LX3,...,LX(n-k)|LZ1,LZ2,LZ3,...,LZ(n-k)]
-        '''
         if type(alpha)==list:
             alpha = np.array(alpha)
         if type(alpha)==int or type(alpha)==np.int64:
             alpha = int2arr(alpha,2*self.k)
         if len(alpha) != 2 * self.k:
             raise ValueError("Length of alpha is not matched number of stabilizer basis. Please check the length of alpha.")
-        #後ろから代入
         for c in self.code_instances:
             L_child = c.get_L(np.concatenate([alpha[kind:kind+c.k],alpha[self.k + kind:self.k + kind+c.k]]))
             L[nind:nind+c.n] = L_child[:c.n]#Xを代入
@@ -76,28 +70,11 @@ class CombCode(SC):
     def code_instances(self):
         return self._code_instances
 
-    @property
-    def code_num(self):
-        return self._code_num
-
-    @property
-    def n_sum(self):
-        return self._n
-
-    @property
-    def k_sum(self):
-        return self._k
-
-    @property
-    def iid(self):
-        return self._iid
-    
-
 #SのうちXだったらLxに拡張.e.g. XZIZX=LxLzILzLx\in 25ビット
 
 class ConcCode(SC):
     NAME = "CONCATENATED_CODE"
-    def __init__(self,code_instances,interleaver={},iid=True,BITWISE = False):
+    def __init__(self,code_instances,interleaver={},P=None,iid=True,BITWISE = True):
         '''
         array(SC): code_instances, dict: Interleaver, boolean: IID
         code_instances: 符号が格納．
@@ -108,21 +85,16 @@ class ConcCode(SC):
         Interleaver: ビット間のインタリーバ．任意の量子ビットの配列で設定したいとき，インタリーブする．形式は転置行列で書く．
         例: Interleaver = {1:T1,2:T2}
         '''
-        self._iid = iid # i.i.dかどうか．
         self._code_depth = len(code_instances) #連接符号の長さ
         self._code_instances = code_instances
         for d in range(0,self._code_depth-1):
             if self._code_instances[d+1].k != self._code_instances[d].n:
-                ValueError("Error:codelength mismatched")
-        super().__init__(self._code_instances[self.conc_length-1].n,self._code_instances[0].k)
+                raise ValueError("Error:codelength mismatched")
         self.H_depth = {}
-        self._H = self.calc_grobal_H()
+        super().__init__(self._code_instances[self.conc_length-1].n,self._code_instances[0].k,H=self.calc_grobal_H(),P=P,iid = iid,BITWISE = BITWISE,mode = 'HD')
 
     def get_L(self,alpha):
-        if type(alpha)==list:
-            alpha = np.array(alpha)
-        if type(alpha)==int or type(alpha)==np.int64:
-            alpha = int2arr(alpha,2*self.k)
+        alpha = any2arr(alpha,2*self.k)
         if len(alpha) != 2 * self.k:
             raise ValueError("Length of alpha is not matched number of stabilizer basis. Please check the length of alpha.")
         L0 = self.code_instances[0].get_L(alpha)
@@ -191,9 +163,11 @@ class ConcCode(SC):
         return H0
 
     def decode(self,syndrome,**param):
-        super().decode(syndrome,syndrome,**param)
+        self._mode = "BP"
         if "BP"==self.mode:
             EE=self.BP_decode(syndrome)
+        else:
+            EE = super().decode(syndrome,**param)
         return EE
 
     def BP_decode(self,syndrome):
@@ -202,26 +176,20 @@ class ConcCode(SC):
         input: syndrome
         output: L^T
         '''
-        if self.iid:
-            P_L = np.zeros((self.n,4)) # 独立同一
-        else:
-            ValueError("N/A: non-i.i.d")
-            P_L = np.zeros((4 ** self.n)) # 非独立同一
 
         # Estimation for Logical error
-        P = P_L
+        P = self.bitwise_p
         for d in reversed(range(self._code_depth)):
             c1 = self.code_instances[d]
             beta1 = np.zeros(c1.n - c1.k,dtype='i1')
             for mother_ind,follower_ind in self.H_depth[d].items():
                 beta1[follower_ind]=syndrome[mother_ind]
-            c1.set_block_wise_p(P)
+            c1.set_error_probability(P)
             L0,P = c1.decode(beta1,mode="ML",return_logical_error_probability=True)
         for d in range(self._code_depth-1):
             c0 = self.code_instances[d]
             c1 = self.code_instances[d+1]
             L1 = np.zeros(2*c1.n,dtype='i1')
-            nind = 0
             for i in range(c0.n):
                 for x_or_z in range(2):
                     if 1==L0[c0.n*x_or_z+i]:

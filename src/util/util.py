@@ -1,5 +1,7 @@
 import numpy as np
 
+X_AND_Z = 2
+
 def arr2int(arr):
     results=0
     lengths = len(arr)
@@ -69,17 +71,39 @@ def gaussjordan(X, change=0):
         return A, P
     return A
 
+def any2arr(i,k):
+    if type(i) == int:
+        return int2arr(i,k)
+    if type(i) == list:
+        return np.array(i,dtype="i1")
+    if type(i) == np.int64 or type(i) == np.int32 or type(i) == np.int16 or type(i) == np.int8:
+        return int2arr(i,k)
+    return i
+
 def bitwise_to_blockwise_probability(bitwise_probability):
     '''
     Input: np.array[qubit_number][4]
     Output: np.array[2 ** (2 * qubit_number)]
     '''
-    #blockwise_probability = np.zeros((2 ** (2 * bitwise_probability.shape[0])))
-    #for ind in range(2 ** (2 * bitwise_probability.shape[0])):
-    #    ind_list = int2arr(ind,2 * bitwise_probability)
-    #    blockwise_probability[ind] = bitwise_probability[][]
+    n = bitwise_probability.shape[0]
+    blockwise_probability = np.ones((2 ** (2 * n)))
+    for ind in range(2 ** (2 * n)):
+        ind_list = int2arr(ind, 2 * n)
+        for ei in range(n):
+            i=(ind_list[ei]<<1)+ind_list[ei+n]
+            blockwise_probability[ind]*=bitwise_probability[ei][i]
+    return blockwise_probability
 
-def blockwise_to_bitwise_probability(p):
+def blockwise_to_bitwise_probability(blockwise_probability):
     '''
-    Input: p: p
+    Input: np.array[2 ** (2 * qubit_number)]
+    Output: np.array[qubit_number][4]
     '''
+    n = int(np.log2(blockwise_probability.shape[0]))//2
+    bitwise_probability = np.zeros((n,4))
+    for ind in range(len(blockwise_probability)):
+        ind_list = int2arr(ind, 2 * n)
+        for ei in range(n):
+            i=(ind_list[ei]<<1)+ind_list[ei+n]
+            bitwise_probability[ei][i] += blockwise_probability[ind]
+    return bitwise_probability
