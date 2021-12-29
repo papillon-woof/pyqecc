@@ -50,7 +50,7 @@ class CombCode(SC):
             T[nind-c.n:nind] = T_child[:c.n]#Xを代入
             T[nind-c.n+self.n:nind+self.n] = T_child[c.n:2*c.n]#Zを代入．
             nind -= c.n
-            ind = c.n-c.k #nだけシフトし，次の要素符号のTを取り出す準備
+            ind -= c.n-c.k #nだけシフトし，次の要素符号のTを取り出す準備
         return T
 
     #2 ** kだけ必要なので，オーバーライドして減らす．
@@ -116,34 +116,99 @@ class ConcCode(SC):
         self._iid = iid # i.i.dかどうか．
         self._code_depth = len(code_instances) #連接符号の長さ
         self._code_instances = code_instances
-        for l in range(1,self._code_depth):
-            if self._k_sum[l] != self._n_sum[l-1]:
+        for d in range(0,self._code_depth-1):
+            if self._code_instances[d+1].k != self._code_instances[d].n:
                 ValueError("Error:codelength mismatched")
-        print(self.n_sum[self.conc_length-1],self.k_sum[0])
-        super().__init__(self.n_sum[self.conc_length-1],self.k_sum[0])
+        super().__init__(self._code_instances[self.conc_length-1].n,self._code_instances[0].k)
+        self.H_depth = {}
+        self._H = self.calc_grobal_H()
+
+    def get_L(self,alpha):
+        if type(alpha)==list:
+            alpha = np.array(alpha)
+        if type(alpha)==int or type(alpha)==np.int64:
+            alpha = int2arr(alpha,2*self.k)
+        if len(alpha) != 2 * self.k:
+            raise ValueError("Length of alpha is not matched number of stabilizer basis. Please check the length of alpha.")
+        L0 = self.code_instances[0].get_L(alpha)
+        for d in range(self._code_depth-1):
+            c0 = self.code_instances[d]
+            c1 = self.code_instances[d+1]
+            L1 = np.zeros(2*c1.n,dtype='i1')
+            nind = 0
+            for i in range(c0.n):
+                for x_or_z in range(2):
+                    if 1==L0[c0.n*x_or_z+i]:
+                        Lind = np.zeros(2*c1.k,dtype='i1')
+                        Lind[c1.k*x_or_z+i]=1
+                        L1 += c1.get_L(Lind) #Lを格納．例えば，繰り返し符号ならL[0]=XXX，
+            L0 = L1
+        return L0
+
+    def get_T(self,beta):
+        beta0 = np.zeros(self.code_instances[0].n - self.code_instances[0].k,dtype='i1')
+        for mother_ind,follower_ind in self.H_depth[0].items():
+            beta0[follower_ind]=beta[mother_ind]
+        T0 = self.code_instances[0].get_T(beta0)
+        for d in range(self._code_depth-1):
+            c0 = self.code_instances[d]
+            c1 = self.code_instances[d+1]
+            T1 = np.zeros(2*c1.n,dtype='i1')
+            for i in range(c0.n):
+                for x_or_z in range(2):
+                    if 1==T0[c0.n*x_or_z+i]:
+                        Lind = np.zeros(2*c1.k,dtype='i1')
+                        Lind[c1.k*x_or_z+i]=1
+                        T1 += c1.get_L(Lind) #Lを格納．例えば，繰り返し符号ならL[0]=XXX，
+            beta1 = np.zeros(c1.n - c1.k,dtype='i1')
+            for mother_ind,follower_ind in self.H_depth[d+1].items():
+                beta1[follower_ind]=beta[mother_ind]
+            T1 ^= c1.get_T(beta1)
+            print(T0,T1,beta1,c1.get_T(beta1),c1.H)
+            T0 = T1
+        return T0
 
     def calc_grobal_H(self):
-        H = np.zeros(self.n-self.k,2*self.n)
-        count = 0
-        for c in self.code_instances:
-            for h in c.H:
-                for hi in h[:c.n]:
-                    alpha = np.zeros(2*c.k)
-                    if 1==hi:
-                        H[count] = c.get_L[hi] #Lを格納．例えば，繰り返し符号ならL[0]=XXX，
-                    H[count]
-                count += 1 # 全体のHの行数をカウント
-            for k in range(c.k):
-                c.L[k]
-            H.append()
+        H0 = self.code_instances[0].H
+        for d in range(self._code_depth-1):
+            c0 = self.code_instances[d]
+            c1 = self.code_instances[d+1]
+            H1 = np.zeros((c1.n-c1.k + H0.shape[0],2*c1.n),dtype='i1')
+            nind = 0
+            #for h0 in H0:
+            for i in range(c0.n - c0.k):
+                for bit in range(c0.n):
+                    for x_or_z in range(2):
+                        if 1==H0[i][c0.n*x_or_z+bit]:
+                            Lind = np.zeros(2*c1.k,dtype='i1')
+                            Lind[c1.k*x_or_z+bit]=1
+                            H1[nind] += c1.get_L(Lind) #Lを格納．例えば，繰り返し符号ならL[0]=XXX，
+                if d not in self.H_depth:
+                    self.H_depth[d] = {}
+                self.H_depth[d][nind] = i
+                nind += 1 # 全体のHの行数をカウント
+            for i in range(c1.n - c1.k):
+                if d+1 not in self.H_depth:
+                    self.H_depth[d+1] = {}
+                self.H_depth[d+1][nind] = i
+                H1[nind] = c1.H[i]
+                nind+=1
+            H0 = H1
+        return H0
+
+    def decode(self,syndrome,**param):
+        super().decode(syndrome,syndrome,**param)
+        if "BP"==self.mode:
+            EE=self.BP_decode(syndrome)
+        return EE
 
     def BP_decode(self,s):
         for l in reversed(range(self.conc_length)):
             if self.IID:
                 P_L = np.zeros((self.n_sum,4)) # 独立同一
             else:
+                ValueError("N/A: non-i.i.d")
                 P_L = np.zeros((4 ** self.n_sum)) # 非独立同一
-                ValueError("Not supported")
             qbit_position_count = 0
             for c in self.code_instances[l]:
                 if l == self.conc_length-1:
@@ -163,97 +228,6 @@ class ConcCode(SC):
     @property
     def conc_length(self):
         return self._code_depth
-
-    @property
-    def n_sum(self):
-        return self._n_sum
-
-    @property
-    def k_sum(self):
-        return self._k_sum
-
-    @property
-    def IID(self):
-        return self._IID
-
-class CONC(SC):
-    NAME = "Concatenated Code"
-    USAGE = ""
-    def __init__(self,code_instances,Interleaver={},IID=True):
-        '''
-        array(SC): code_instances, dict: Interleaver, boolean: IID
-        code_instances: 符号が格納．
-        code_instancesは[[(1段目の符号インスタンス列)],[(2段目の符号インスタンス列)],[(3段目の符号インスタンス列)],...]
-        と書きます．例えば，5量子ビットの連接符号の場合，
-        例: code_instances = [[FIVE()],[FIVE() for i in range(5*1)],[FIVE() for i in range(5*1)]]
-        と書きます．
-        Interleaver: ビット間のインタリーバです．任意の量子ビットの配列で設定したいとき，インタリーブしてください．形式は転置行列で書きます．
-        例: Interleaver = {1:T1,2:T2}
-        '''
-        self._iid = iid
-        self._code_depth = len(code_instances) #連接符号の長さ
-        self._code_instances = code_instances
-        self._n_sum = [0]*self.conc_length #合計
-        self._k_sum = [0]*self.conc_length #合計
-        for l in range(self._code_depth):
-            for c in self.code_instances[l]:
-                self._n_sum[l] += c.n
-                self._k_sum[l] += c.k
-        for l in range(1,self._code_depth):
-            if self._k_sum[l] != self._n_sum[l-1]:
-                ValueError("Error:codelength mismatched")
-        print(self.n_sum[self.conc_length-1],self.k_sum[0])
-        super().__init__(self.n_sum[self.conc_length-1],self.k_sum[0])
-
-    def calc_grobal_H(self):
-        H = np.zeros(self.n-self.k,self.n)
-        count = 0
-        for l in range(self._code_depth):
-            for c in self.code_instances[l]:
-                H = np.zeros(self.n)
-                for h in c.H:
-                    for hi in h[:c.n]:
-                        if 1==hi:
-                            l+i
-                        H[count]
-                for k in range(self.code_instances[l].k):
-                    self.code_instances[l].L[k]
-                H.append()
-    
-    def BP_decode(self,s):
-        for l in reversed(range(self.conc_length)):
-            if self.IID:
-                P_L = np.zeros((self.n_sum,4)) # 独立同一
-            else:
-                P_L = np.zeros((4 ** self.n_sum)) # 非独立同一
-                ValueError("Not supported")
-            qbit_position_count = 0
-            for c in self.code_instances[l]:
-                if l == self.conc_length-1:
-                    c.set_P(self.P[qbit_position_count:qbit_position_count+c.n])
-                else:
-                    c.set_P(P_L[qbit_position_count:qbit_position_count+c.n])
-                qbit_position_count+=c.n
-            qbit_position_count = 0
-            for c in self.code_instances[l]:
-                L,P_L[qbit_position_count:qbit_position_count+c.k]= c.decoder(s,mode="ML",return_logical_error_probability=True)
-        return L^T
-    
-    @property
-    def code_instances(self):
-        return self._code_instances
-
-    @property
-    def conc_length(self):
-        return self._code_depth
-
-    @property
-    def n_sum(self):
-        return self._n_sum
-
-    @property
-    def k_sum(self):
-        return self._k_sum
 
     @property
     def IID(self):

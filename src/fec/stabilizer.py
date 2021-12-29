@@ -8,10 +8,10 @@ class SC(CODE):
     NAME = "stabilizer code"
     USAGE = "Text"
     ML_DECODING_QUBITS_LIMIT = 15
-    def __init__(self,n,k,H='random',T=None,L=None,P=None,iid=True,mode='HD'):
+    def __init__(self,n,k,H=None,T=None,L=None,P=None,iid=True,mode='HD'):
         super().__init__(n,k)
         self._mode = mode
-        self._H = H.astype('i1')
+        self._H = H
         self._T = T
         self._L = L
         self._P = self.set_P(P)
@@ -54,7 +54,7 @@ class SC(CODE):
         #LX or LZ
         for i in range(2):
             for j in range(self.k):
-                L+=alpha[i*self.k+j]*self.L[j][i]
+                L^=alpha[i*self.k+j]*self.L[j][i]
         return np.mod(L,2)
 
     def in_S(self,b):

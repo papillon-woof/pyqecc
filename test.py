@@ -1,6 +1,7 @@
 import numpy as np
 from src import *
-c = CombCode([BIT_FLIP(),BIT_FLIP()])
-c2 = BIT_FLIP()
-dec_sim(c)
-dec_sim(c2)
+c1 = CombCode([BIT_FLIP(),BIT_FLIP(),BIT_FLIP()])
+c0 = PHASE_FLIP()
+c = ConcCode([c0,c1])
+print(c1.get_T([0,0,1,1,0,0]))
+print(c.get_T([0,0,0,0,1,0,0,0]))
