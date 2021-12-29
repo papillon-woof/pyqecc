@@ -7,7 +7,7 @@ class SC(CODE):
     '''
     NAME = "stabilizer code"
     USAGE = "Text"
-    ML_DECODING_QUBITS_LIMIT = 15
+    ML_DECODING_QUBITS_LIMIT = 10
     def __init__(
         self,
         n,
@@ -31,7 +31,7 @@ class SC(CODE):
         self._LUT = {}
         #self.enc_circuit = None
         #self.dec_circuit = None
-    def set_error_probability(self,P):
+    def set_error_probability(self,P,BITWISE=False):
         if not P is None:
             if self.BITWISE:
                 self.set_bitwise_p(P)
@@ -45,6 +45,7 @@ class SC(CODE):
                 self.set_bitwise_p(bitwise_to_blockwise_probability(P))
 
     def set_blockwise_p(self,blockwise_p,iid=False):
+        print(self.n)
         if iid:
             if type(blockwise_p) == list:
                 self._blockwise_p=np.array([blockwise_p for i in range(self.n)])

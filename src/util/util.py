@@ -86,7 +86,7 @@ def bitwise_to_blockwise_probability(bitwise_probability):
     Output: np.array[2 ** (2 * qubit_number)]
     '''
     n = bitwise_probability.shape[0]
-    blockwise_probability = np.ones((2 ** (2 * n)))
+    blockwise_probability = np.ones(2 ** (2 * n))
     for ind in range(2 ** (2 * n)):
         ind_list = int2arr(ind, 2 * n)
         for ei in range(n):
