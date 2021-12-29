@@ -11,18 +11,12 @@ class CombCode(SC):
     [000011|000000]
     '''
     NAME = "COMBOLUTION_CODE"
-    def __init__(self,code_instances,Interleaver={},iid=True,mode='ML'):
+    def __init__(self,code_instances,Interleaver={},iid=True,mode='ML',BITWISE = False):
         self._mode = mode
-        self._L = None
-        self._iid = iid
         self.conc_length = len(code_instances) #連結符号の長さ
         self._code_instances = code_instances
-        self._n = 0 #合計
-        self._k = 0 #合計
-        for c in self.code_instances:
-            self._n += c.n
-            self._k += c.k
-        self._R = self.k/self.n
+        self._n = sum([c.n for c in self.code_instances])
+        self._k = sum([c.k for c in self.code_instances])
         # Stabilizer
         self._H = np.zeros((self.n-self.k,2*self.n),dtype='i1')
         nind = 0
@@ -33,6 +27,7 @@ class CombCode(SC):
                 self._H[nkind][self.n+nind:self.n+nind+c.n] = h[c.n:2*c.n]#Z
                 nkind += 1
             nind += c.n
+        super().__init__(self.n,self.k,self._H,BITWISE = BITWISE,iid = iid)
 
     def get_T(self,beta):
         '''
@@ -102,7 +97,7 @@ class CombCode(SC):
 
 class ConcCode(SC):
     NAME = "CONCATENATED_CODE"
-    def __init__(self,code_instances,interleaver={},iid=True):
+    def __init__(self,code_instances,interleaver={},iid=True,BITWISE = False):
         '''
         array(SC): code_instances, dict: Interleaver, boolean: IID
         code_instances: 符号が格納．
@@ -201,24 +196,40 @@ class ConcCode(SC):
             EE=self.BP_decode(syndrome)
         return EE
 
-    def BP_decode(self,s):
-        for l in reversed(range(self.conc_length)):
-            if self.IID:
-                P_L = np.zeros((self.n_sum,4)) # 独立同一
-            else:
-                ValueError("N/A: non-i.i.d")
-                P_L = np.zeros((4 ** self.n_sum)) # 非独立同一
-            qbit_position_count = 0
-            for c in self.code_instances[l]:
-                if l == self.conc_length-1:
-                    c.set_P(self.P[qbit_position_count:qbit_position_count+c.n])
-                else:
-                    c.set_P(P_L[qbit_position_count:qbit_position_count+c.n])
-                qbit_position_count+=c.n
-            qbit_position_count = 0
-            for c in self.code_instances[l]:
-                L,P_L[qbit_position_count:qbit_position_count+c.k]= c.decoder(s,mode="ML",return_logical_error_probability=True)
-        return L^T
+    def BP_decode(self,syndrome):
+        '''
+        BP_decoding:
+        input: syndrome
+        output: L^T
+        '''
+        if self.iid:
+            P_L = np.zeros((self.n,4)) # 独立同一
+        else:
+            ValueError("N/A: non-i.i.d")
+            P_L = np.zeros((4 ** self.n)) # 非独立同一
+
+        # Estimation for Logical error
+        P = P_L
+        for d in reversed(range(self._code_depth)):
+            c1 = self.code_instances[d]
+            beta1 = np.zeros(c1.n - c1.k,dtype='i1')
+            for mother_ind,follower_ind in self.H_depth[d].items():
+                beta1[follower_ind]=syndrome[mother_ind]
+            c1.set_block_wise_p(P)
+            L0,P = c1.decode(beta1,mode="ML",return_logical_error_probability=True)
+        for d in range(self._code_depth-1):
+            c0 = self.code_instances[d]
+            c1 = self.code_instances[d+1]
+            L1 = np.zeros(2*c1.n,dtype='i1')
+            nind = 0
+            for i in range(c0.n):
+                for x_or_z in range(2):
+                    if 1==L0[c0.n*x_or_z+i]:
+                        Lind = np.zeros(2*c1.k,dtype='i1')
+                        Lind[c1.k*x_or_z+i]=1
+                        L1 += c1.get_L(Lind) #Lを格納．例えば，繰り返し符号ならL[0]=XXX，
+            L0 = L1
+        return L0^self.get_T(syndrome)
 
     @property
     def code_instances(self):
@@ -229,5 +240,5 @@ class ConcCode(SC):
         return self._code_depth
 
     @property
-    def IID(self):
-        return self._IID
+    def iid(self):
+        return self._iid

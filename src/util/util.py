@@ -68,3 +68,18 @@ def gaussjordan(X, change=0):
     if change:
         return A, P
     return A
+
+def bitwise_to_blockwise_probability(bitwise_probability):
+    '''
+    Input: np.array[qubit_number][4]
+    Output: np.array[2 ** (2 * qubit_number)]
+    '''
+    #blockwise_probability = np.zeros((2 ** (2 * bitwise_probability.shape[0])))
+    #for ind in range(2 ** (2 * bitwise_probability.shape[0])):
+    #    ind_list = int2arr(ind,2 * bitwise_probability)
+    #    blockwise_probability[ind] = bitwise_probability[][]
+
+def blockwise_to_bitwise_probability(p):
+    '''
+    Input: p: p
+    '''
