@@ -164,7 +164,6 @@ class ConcCode(SC):
             for mother_ind,follower_ind in self.H_depth[d+1].items():
                 beta1[follower_ind]=beta[mother_ind]
             T1 ^= c1.get_T(beta1)
-            print(T0,T1,beta1,c1.get_T(beta1),c1.H)
             T0 = T1
         return T0
 
