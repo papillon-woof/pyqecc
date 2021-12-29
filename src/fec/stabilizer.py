@@ -110,13 +110,52 @@ class SC(CODE):
     def get_error_probability(self,E):
         return self.blockwise_p[arr2int(E)]
 
+    def ML_decode_beta(self,syndrome,**param):
+        #decoding_metric: メトリック．受信語と通信路情報から計算する．
+        if "return_logical_error_probability" in param:
+            self.return_logical_error_probability = param["return_logical_error_probability"]
+        else:
+            self.return_logical_error_probability = False
+
+        if self.n>self.ML_DECODING_QUBITS_LIMIT:
+            raise ValueError("Error: The qubit n ="+str(self.n)+" is limited because of a large decoding complexity. You can change the qubit limit.")
+
+        T = self.get_T(syndrome)
+        if self.BITWISE:
+            logical_error_probability = np.zeros(self.k,4)
+        else:
+            logical_error_probability = np.zeros(2**(2*self.k))
+        #L,Sについてビット全探索
+        for lind in range(2 ** (2*self.k)):
+            L = self.get_L(lind)
+            for sind in range(2 ** (self.n-self.k)):
+                S = self.get_S(sind)
+                E = L^T^S
+                if self.BITWISE:
+                    logical_error_probability[lind]+=self.get_error_probability(E)
+                else:
+                    lind_list = int2arr(lind,2*self.k)
+                    for i in range(self.k):
+                        j = lind_list[i]+(lind_list[i+self.k]<<1)
+                        logical_error_probability[i][j]+=self.get_error_probability(E)
+        if self.BITWISE:
+            hat_lind = np.zeros(self.k)
+            for i in range(self.k):
+                hat_lind[i] = np.argmax(logical_error_probability[i])
+        else:
+            hat_lind = np.argmax(logical_error_probability)
+        L = self.get_L(hat_lind)
+        if self.return_logical_error_probability:
+            return L^T,logical_error_probability
+        return L^T
+
     def ML_decode(self,syndrome,**param):
         #decoding_metric: メトリック．受信語と通信路情報から計算する．
         if "return_logical_error_probability" in param:
             self.return_logical_error_probability = param["return_logical_error_probability"]
         else:
             self.return_logical_error_probability = False
-        
+
         if self.n>self.ML_DECODING_QUBITS_LIMIT:
             raise ValueError("Error: The qubit n ="+str(self.n)+" is limited because of a large decoding complexity. You can change the qubit limit.")
 

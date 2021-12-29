@@ -66,6 +66,25 @@ class CombCode(SC):
             nind += c.n
         return L
 
+    def ML_decode(self,syndrome,**param):
+        if "return_logical_error_probability" in param:
+            self.return_logical_error_probability = param["return_logical_error_probability"]
+        else:
+            self.return_logical_error_probability = False
+        L = np.zeros(X_AND_Z*self.n)
+        T = self.get_T(syndrome)
+        logical_error_probability = np.zeros(X_AND_Z*self.n,4)
+        nkind = 0
+        nind = 0
+        for c in self.code_instances:
+            l,p = c.ML_decode(syndrome[nkind:c.nk+nkind],**param)
+            L[nind:nind+c.n],logical_error_probability[nind:nind+c.n][:] = l,blockwise_to_bitwise_probability(p)
+            nkind += (c.n - c.k)
+            nind += c.n
+        if self.return_logical_error_probability:
+            return L^T,blockwise_to_bitwise_probability(logical_error_probability)
+        return L^T
+
     @property
     def code_instances(self):
         return self._code_instances
