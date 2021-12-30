@@ -8,6 +8,7 @@ def arr2int(arr):
     for i in range(lengths):
         results+=2**(lengths-i-1)*arr[i]
     return results
+
 def int2arr(i,k):
     if type(i)==list:
         ValueError("i is list!")
@@ -15,6 +16,7 @@ def int2arr(i,k):
     for ind in range(k):
         results.append(i>>(k-ind-1)&1)
     return np.array(results,dtype='i1')
+
 def symplex_binary_inner_product(a,b):
     n = a.T.shape[0]//2
     z = np.zeros((n,n),dtype='i1')
