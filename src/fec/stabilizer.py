@@ -72,11 +72,11 @@ class SC(CODE):
         alpha
         [LX1,LX2,LX3,...,LX(n-k)|LZ1,LZ2,LZ3,...,LZ(n-k)]
         '''
-        alpha = any2arr(alpha,X_AND_Z*self.k)
+        alpha = any2arr(alpha,X_OR_Z*self.k)
         L = np.zeros(2*self.n,dtype='i1')
         #LX or LZ
         for j in range(self.k):
-            for i in range(X_AND_Z):
+            for i in range(X_OR_Z):
                 L^=alpha[i*self.k+j]*self.L[j][i]
         return np.mod(L,2)
 

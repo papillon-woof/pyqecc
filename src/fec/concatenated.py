@@ -17,13 +17,13 @@ class CombCode(SC):
         self._n = sum([c.n for c in self.code_instances]) #符号長
         self._k = sum([c.k for c in self.code_instances]) #情報長
         # Stabilizer
-        self._H = np.zeros((self.n-self.k,X_AND_Z*self.n),dtype='i1') #パリティ検査行列
+        self._H = np.zeros((self.n-self.k,X_OR_Z*self.n),dtype='i1') #パリティ検査行列
         nind = 0
         nkind = 0
         for c in self.code_instances:
             for h in c.H:
                 self._H[nkind][nind:nind+c.n] = h[:c.n]#X
-                self._H[nkind][self.n+nind:self.n+nind+c.n] = h[c.n:X_AND_Z*c.n]#Z
+                self._H[nkind][self.n+nind:self.n+nind+c.n] = h[c.n:X_OR_Z*c.n]#Z
                 nkind += 1
             nind += c.n
         super().__init__(self.n,self.k,self._H,P=P,BITWISE = BITWISE,mode=mode)
@@ -51,10 +51,10 @@ class CombCode(SC):
 
     #2 ** kだけ必要なので，オーバーライドして減らす．
     def get_L(self,alpha):
-        L = np.zeros(X_AND_Z*self.n,dtype='i1')
+        L = np.zeros(X_OR_Z*self.n,dtype='i1')
         kind = 0
         nind = 0
-        alpha = any2arr(alpha,X_AND_Z*self.k)
+        alpha = any2arr(alpha,X_OR_Z*self.k)
         for c in self.code_instances:
             L_child = c.get_L(np.concatenate([alpha[kind:kind+c.k],alpha[self.k + kind:self.k + kind+c.k]]))
             L[nind:nind+c.n] = L_child[:c.n]#Xを代入
@@ -64,7 +64,7 @@ class CombCode(SC):
         return L
 
     def ML_decode(self,syndrome,**param):
-        L = np.zeros(X_AND_Z*self.n,dtype='i1')
+        L = np.zeros(X_OR_Z*self.n,dtype='i1')
         T = self.get_T(syndrome)
         logical_error_probability = np.zeros((self.k,4))
         nkind = 0
@@ -197,13 +197,13 @@ class ConcCode(SC):
             for mother_ind,follower_ind in self.H_depth[d].items():
                 beta1[follower_ind]=syndrome[mother_ind]
             c1.set_error_probability(P)
-            L0,P = c1.decode(beta1,mode="ML",return_logical_error_probability=True)
+            L0,P = c1.decode(beta1,mode="ML")
         for d in range(self._code_depth-1):
             c0 = self.code_instances[d]
             c1 = self.code_instances[d+1]
-            L1 = np.zeros(2*c1.n,dtype='i1')
+            L1 = np.zeros(X_OR_Z*c1.n,dtype='i1')
             for i in range(c0.n):
-                for x_or_z in range(2):
+                for x_or_z in range(X_OR_Z):
                     if 1==L0[c0.n*x_or_z+i]:
                         Lind = np.zeros(2*c1.k,dtype='i1')
                         Lind[c1.k*x_or_z+i]=1

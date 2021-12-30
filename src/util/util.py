@@ -1,6 +1,6 @@
 import numpy as np
 
-X_AND_Z = 2
+X_OR_Z = 2
 
 def arr2int(arr):
     results=0
