@@ -8,6 +8,12 @@ class SC(CODE):
     NAME = "stabilizer code"
     USAGE = "Text"
     ML_DECODING_QUBITS_LIMIT = 10
+    decoder_output = {
+            "LT" : None,
+            "L" : None,
+            "T" : None,
+            "LOGICAL_ERROR_PROBABILITY" : None,
+    }
     def __init__(
         self,
         n,
@@ -90,10 +96,6 @@ class SC(CODE):
     def get_error_probability(self,E):
         return self.blockwise_p[arr2int(E)]
 
-    def hard_decode(self,syndrome):
-        T = self.get_T(syndrome)
-        return T.astype("i1"),None
-
     def ML_decode(self,syndrome,**param): #logical error の複数ビット対応が必要．
         if self.n>self.ML_DECODING_QUBITS_LIMIT:
             raise ValueError("Error: The qubit n ="+str(self.n)+" is limited because of a large decoding complexity. You can change the qubit limit.")
@@ -106,25 +108,30 @@ class SC(CODE):
                 S = self.get_S(sind)
                 E = L^T^S
                 logical_error_probability[lind]+=self.get_error_probability(E)
-        hat_lind = np.argmax(logical_error_probability)
-        L = self.get_L(hat_lind)
-        return L^T,logical_error_probability
+        llind = np.argmax(logical_error_probability)
+        self.decoder_output["L"] = self.get_L(llind)
+        self.decoder_output["T"] = self.get_T(syndrome)
+        self.decoder_output["LT"] = self.decoder_output["L"]^self.decoder_output["T"]
+        self.decoder_output["LOGICAL_ERROR_PROBABILITY"] = logical_error_probability
+
+    def hard_decode(self,syndrome):
+        self.decoder_output["LT"] = self.get_T(syndrome)
 
     def LUT_decode(self,syndrome):
-        return self.LUT[arr2int(syndrome)],None
+        self.decoder_output["LT"] = self.LUT[arr2int(syndrome)]
 
     def decode(self,syndrome,mode=False,**param,):
         if not mode is False:
             self._mode = mode
         if self._mode=="ML":
-            EE,logical_error_probability = self.ML_decode(syndrome,**param)
+            self.ML_decode(syndrome,**param)
         if self._mode=="ML_LUT":
             if self.LUT == {}:
                 self.set_LUT()
-            EE,logical_error_probability = self.LUT_decode(syndrome,**param)
+            self.LUT_decode(syndrome,**param)
         elif self._mode=="HD":
-            EE,logical_error_probability = self.hard_decode(syndrome,**param)
-        return EE,logical_error_probability
+            self.hard_decode(syndrome,**param)
+        return self.decoder_output
 
     @property
     def blockwise_p(self):

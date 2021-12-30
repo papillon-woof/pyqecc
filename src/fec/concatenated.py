@@ -65,19 +65,23 @@ class CombCode(SC):
 
     def ML_decode(self,syndrome,**param):
         L = np.zeros(X_OR_Z*self.n,dtype='i1')
-        T = self.get_T(syndrome)
         logical_error_probability = np.zeros((self.k,4))
         nkind = 0
         nind = 0
         kind = 0
         for c in self.code_instances:
             c.set_error_probability(self.bitwise_p[nind:nind+c.n],iid=False)
-            l,p = c.ML_decode(syndrome[nkind:c.n-c.k+nkind],**param)
-            L[2*nind:2*nind+2*c.n],logical_error_probability[kind:kind+c.k][:] = l,blockwise_to_bitwise_probability(p)
+            #l,p = c.ML_decode(syndrome[nkind:c.n-c.k+nkind],**param)
+            c_decoder_output = c.decode(syndrome[nkind:c.n-c.k+nkind],mode="ML");l = c_decoder_output["L"]; c_logical_error_probability = c_decoder_output["LOGICAL_ERROR_PROBABILITY"]
+            L[X_OR_Z*nind:X_OR_Z*nind+X_OR_Z*c.n] = l
+            logical_error_probability[kind:kind+c.k][:] = blockwise_to_bitwise_probability(c_logical_error_probability)
             nkind += (c.n - c.k)
             nind += c.n
             kind += c.k
-        return L^T,blockwise_to_bitwise_probability(logical_error_probability)
+        self.decoder_output["L"] = L
+        self.decoder_output["T"] = self.get_T(syndrome)
+        self.decoder_output["LT"] = self.decoder_output["LT"] = self.decoder_output["L"]^self.decoder_output["T"]
+        self.decoder_output["LOGICAL_ERROR_PROBABILITY"] = logical_error_probability
 
     @property
     def code_instances(self):
@@ -174,14 +178,6 @@ class ConcCode(SC):
             H0 = H1
         return H0
 
-    def decode(self,syndrome,**param):
-        self._mode = "BP"
-        if "BP"==self.mode:
-            EE=self.BP_decode(syndrome)
-        else:
-            EE = super().decode(syndrome,**param)
-        return EE
-
     def BP_decode(self,syndrome):
         '''
         BP_decoding:
@@ -190,14 +186,15 @@ class ConcCode(SC):
         '''
 
         # Estimation for Logical error
-        P = self.bitwise_p
+        error_probability = self.bitwise_p
         for d in reversed(range(self._code_depth)):
             c1 = self.code_instances[d]
             beta1 = np.zeros(c1.n - c1.k,dtype='i1')
             for mother_ind,follower_ind in self.H_depth[d].items():
                 beta1[follower_ind]=syndrome[mother_ind]
-            c1.set_error_probability(P)
-            L0,P = c1.decode(beta1,mode="ML")
+            c1.set_error_probability(error_probability,iid=False)
+            c1_decoder_output = c1.decode(beta1,mode="ML");L0 = c1_decoder_output["L"]; logical_error_probability = c1_decoder_output["LOGICAL_ERROR_PROBABILITY"]
+            error_probability = blockwise_to_bitwise_probability(logical_error_probability)
         for d in range(self._code_depth-1):
             c0 = self.code_instances[d]
             c1 = self.code_instances[d+1]
@@ -209,7 +206,21 @@ class ConcCode(SC):
                         Lind[c1.k*x_or_z+i]=1
                         L1 += c1.get_L(Lind) #Lを格納．例えば，繰り返し符号ならL[0]=XXX，
             L0 = L1
-        return L0^self.get_T(syndrome)
+
+        self.decoder_output["L"] = L0
+        self.decoder_output["T"] = self.get_T(syndrome)
+        self.decoder_output["LT"] = self.decoder_output["LT"] = self.decoder_output["L"]^self.decoder_output["T"]
+        self.decoder_output["LOGICAL_ERROR_PROBABILITY"] = logical_error_probability
+
+        #return L0^self.get_T(syndrome),error_probability
+
+    def decode(self,syndrome,**param):
+        self._mode = "BP"
+        if "BP"==self.mode:
+            self.BP_decode(syndrome)
+        else:
+            super().decode(syndrome,**param)
+        return self.decoder_output
 
     @property
     def code_instances(self):

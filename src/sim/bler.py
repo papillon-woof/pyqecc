@@ -24,7 +24,7 @@ def dec_sim(
         for mc in range(1,MONTE+1):
             E = channel(n,p,CHANNEL_MODEL=CHANNEL_MODEL)
             syndrome = myQECC.get_syndrome(E)
-            EE,_ = myQECC.decode(syndrome)
+            EE = myQECC.decode(syndrome)["LT"]
             if not myQECC.in_S(E^EE):
                 ble+=1
             if not mc%LOG_OUTPUT_SPAN:
@@ -35,6 +35,7 @@ def dec_sim(
         RESULTS['PHYSICAL_ERROR_PROB'].append(p)
         if ble/mc==0:
             break
+        
     if LOG_OUTPUT:
         DEC_DATA_DIR = "./dec_data"
         if not os.path.exists(DEC_DATA_DIR):
