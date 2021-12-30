@@ -12,14 +12,13 @@ class CombCode(SC):
     '''
     NAME = "COMBOLUTION_CODE"
     def __init__(self,code_instances,P=None,mode='ML',BITWISE = True): #Interleaver={}, 追加予定．
-        self.conc_length = len(code_instances) #連結符号の長さ
+        self._num_code = len(code_instances) #連結符号の長さ
         self._code_instances = code_instances #要素符号インスタンス
         self._n = sum([c.n for c in self.code_instances]) #符号長
         self._k = sum([c.k for c in self.code_instances]) #情報長
         # Stabilizer
         self._H = np.zeros((self.n-self.k,X_OR_Z*self.n),dtype='i1') #パリティ検査行列
-        nind = 0
-        nkind = 0
+        nind,nkind = 0,0
         for c in self.code_instances:
             for h in c.H:
                 self._H[nkind][nind:nind+c.n] = h[:c.n]#X
@@ -40,35 +39,30 @@ class CombCode(SC):
             raise ValueError("Length of beta is not matched number of stabilizer basis. Please check the length of beta.")
         T = np.zeros(2*self.n,dtype='i1')
         nind = self.n #シフトして，部分回復演算子を求めるため，後ろから求める．
-        ind = self.n - self.k
+        nkind = self.n - self.k
         for c in reversed(self.code_instances):
-            T_child = c.get_T(beta[ind - (c.n - c.k):ind]) #後ろの要素符号のインスタンスを取得
+            T_child = c.get_T(beta[nkind - (c.n - c.k):nkind]) #後ろの要素符号のインスタンスを取得
             T[nind - c.n:nind] = T_child[:c.n]#Xを代入
             T[nind - c.n+self.n:nind+self.n] = T_child[c.n:2*c.n]#Zを代入．
-            nind -= c.n
-            ind -= c.n-c.k #nだけシフトし，次の要素符号のTを取り出す準備
+            nind,nkind = nind - c.n,nkind - c.n-c.k
         return T
 
     #2 ** kだけ必要なので，オーバーライドして減らす．
     def get_L(self,alpha):
         L = np.zeros(X_OR_Z*self.n,dtype='i1')
-        kind = 0
-        nind = 0
+        kind,nind = 0,0
         alpha = any2arr(alpha,X_OR_Z*self.k)
         for c in self.code_instances:
             L_child = c.get_L(np.concatenate([alpha[kind:kind+c.k],alpha[self.k + kind:self.k + kind+c.k]]))
             L[nind:nind+c.n] = L_child[:c.n]#Xを代入
             L[self.n + nind:self.n + nind+c.n] = L_child[c.n:2*c.n]#Zを代入
-            kind += c.k
-            nind += c.n
+            kind,nind = kind+c.k,nind+c.n
         return L
 
     def ML_decode(self,syndrome,**param):
         L = np.zeros(X_OR_Z*self.n,dtype='i1')
         logical_error_probability = np.zeros((self.k,4))
-        nkind = 0
-        nind = 0
-        kind = 0
+        nkind,nind,kind = 0,0,0
         for c in self.code_instances:
             c.set_error_probability(self.bitwise_p[nind:nind+c.n],iid=False)
             #l,p = c.ML_decode(syndrome[nkind:c.n-c.k+nkind],**param)
@@ -81,7 +75,7 @@ class CombCode(SC):
         self.decoder_output["L"] = L
         self.decoder_output["T"] = self.get_T(syndrome)
         self.decoder_output["LT"] = self.decoder_output["LT"] = self.decoder_output["L"]^self.decoder_output["T"]
-        self.decoder_output["LOGICAL_ERROR_PROBABILITY"] = logical_error_probability
+        self.decoder_output["LOGICAL_ERROR_PROBABILITY"] = bitwise_to_blockwise_probability(logical_error_probability)
 
     @property
     def code_instances(self):
@@ -90,7 +84,7 @@ class CombCode(SC):
 #SのうちXだったらLxに拡張.e.g. XZIZX=LxLzILzLx\in 25ビット
 class ConcCode(SC):
     NAME = "CONCATENATED_CODE"
-    def __init__(self,code_instances,interleaver={},P=None,BITWISE = True):
+    def __init__(self,code_instances,P=None,BITWISE = True): #,interleaver={}
         '''
         array(SC): code_instances, dict: Interleaver, boolean: IID
         code_instances: 符号が格納．
@@ -107,7 +101,7 @@ class ConcCode(SC):
             if self._code_instances[d+1].k != self._code_instances[d].n:
                 raise ValueError("Error:codelength mismatched")
         self.H_depth = {}
-        super().__init__(self._code_instances[self.conc_length-1].n,self._code_instances[0].k,H=self.calc_grobal_H(),P=P,BITWISE = BITWISE,mode = 'HD')
+        super().__init__(self._code_instances[self.code_depth-1].n,self._code_instances[0].k,H=self.calc_grobal_H(),P=P,BITWISE = BITWISE,mode = 'HD')
 
     def get_L(self,alpha):
         alpha = any2arr(alpha,2*self.k)
@@ -118,7 +112,6 @@ class ConcCode(SC):
             c0 = self.code_instances[d]
             c1 = self.code_instances[d+1]
             L1 = np.zeros(2*c1.n,dtype='i1')
-            nind = 0
             for i in range(c0.n):
                 for x_or_z in range(2):
                     if 1==L0[c0.n*x_or_z+i]:
@@ -212,8 +205,6 @@ class ConcCode(SC):
         self.decoder_output["LT"] = self.decoder_output["LT"] = self.decoder_output["L"]^self.decoder_output["T"]
         self.decoder_output["LOGICAL_ERROR_PROBABILITY"] = logical_error_probability
 
-        #return L0^self.get_T(syndrome),error_probability
-
     def decode(self,syndrome,**param):
         self._mode = "BP"
         if "BP"==self.mode:
@@ -227,5 +218,5 @@ class ConcCode(SC):
         return self._code_instances
 
     @property
-    def conc_length(self):
+    def code_depth(self):
         return self._code_depth
