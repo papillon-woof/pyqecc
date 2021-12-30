@@ -6,6 +6,7 @@ class CODE(metaclass=ABCMeta):
     def __init__(self,n,k):
         self._n = n
         self._k = k
+        self._nk = n - k
         self._R = self.k/self.n
 
     '''

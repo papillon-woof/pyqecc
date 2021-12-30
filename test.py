@@ -1,10 +1,10 @@
 import numpy as np
 from src import *
+#c = CombCode([FIVE() for i in range(2)])
 c1 = CombCode([BIT_FLIP(),BIT_FLIP(),BIT_FLIP()])
 c0 = PHASE_FLIP()
 c = ConcCode([c0,c1])
+for i in range(2 ** 8):
+    print(i,any2arr(i,8),c.get_T(any2arr(i,8)),c.get_syndrome(c.get_T(any2arr(i,8))))
+exit()
 dec_sim(c);exit()
-p = 0.1
-c.set_block_wise_p(np.array([1-p,p/3,p/3,p/3]))
-s = np.zeros(8)
-print(c.BP_decode(s))

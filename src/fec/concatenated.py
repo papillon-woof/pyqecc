@@ -44,7 +44,7 @@ class CombCode(SC):
             T_child = c.get_T(beta[nkind - (c.n - c.k):nkind]) #後ろの要素符号のインスタンスを取得
             T[nind - c.n:nind] = T_child[:c.n]#Xを代入
             T[nind - c.n+self.n:nind+self.n] = T_child[c.n:2*c.n]#Zを代入．
-            nind,nkind = nind - c.n,nkind - c.n-c.k
+            nind,nkind = nind - c.n,nkind - (c.n-c.k)
         return T
 
     #2 ** kだけ必要なので，オーバーライドして減らす．

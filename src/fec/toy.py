@@ -25,15 +25,15 @@ def FIVE(mode='ML_LUT'):
 
 def BIT_FLIP(mode='ML_LUT'):
     H = np.array([[0,0,0,1,1,0],[0,0,0,0,1,1]],dtype='i1')
-    T = {0:np.array([0,0,0,0,0,0]),1:np.array([0,0,0,1,0,0]),2:np.array([0,0,0,0,0,1]),3:np.array([0,0,0,0,1,0])}
     L = np.array([[[1,1,1,0,0,0],[0,0,0,1,1,1]]],dtype='i1')
+    T = {0:np.array([0,0,0,0,0,0]),1:np.array([0,0,1,0,0,0]),2:np.array([1,0,0,0,0,0]),3:np.array([0,1,0,0,0,0])}    
     sc = SC(3,1,H=H,T=T,L=L,mode=mode)
     sc._name = "BIT_FLIP_CODE"
     return sc
 
 def PHASE_FLIP(mode='ML_LUT'):
     H = np.array([[1,1,0,0,0,0],[0,1,1,0,0,0]],dtype='i1')
-    T = {0:np.array([0,0,0,0,0,0]),1:np.array([1,0,0,0,0,0]),2:np.array([0,0,1,0,0,0]),3:np.array([0,1,0,0,0,0])}
+    T = {0:np.array([0,0,0,0,0,0]),1:np.array([0,0,0,0,0,1]),2:np.array([0,0,0,1,0,0]),3:np.array([0,0,0,0,1,0])}
     L = np.array([[[1,1,1,0,0,0],[0,0,0,1,1,1]]],dtype='i1')
     sc = SC(3,1,H=H,T=T,L=L,mode=mode)
     sc._name = "PHASE_FLIP_FLIP_CODE"

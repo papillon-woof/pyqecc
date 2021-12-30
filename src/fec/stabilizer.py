@@ -49,7 +49,7 @@ class SC(CODE):
                     self.set_blockwise_p(bitwise_to_blockwise_probability(P)) # By approximate the bitwise probability.
             else:
                 self.set_blockwise_p(P)
-                self.set_bitwise_p(bitwise_to_blockwise_probability(P))
+                self.set_bitwise_p(blockwise_to_bitwise_probability(P))
         else:
             print("The input error probability is eligable. Please chack the input error probability.")
 

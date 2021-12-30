@@ -35,7 +35,7 @@ def dec_sim(
         RESULTS['PHYSICAL_ERROR_PROB'].append(p)
         if ble/mc==0:
             break
-        
+
     if LOG_OUTPUT:
         DEC_DATA_DIR = "./dec_data"
         if not os.path.exists(DEC_DATA_DIR):
