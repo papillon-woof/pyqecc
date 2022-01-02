@@ -1,7 +1,8 @@
 import numpy as np
 from src import *
-c2 = CombCode([FIVE() for i in range(25)])
-c1 = CombCode([FIVE() for i in range(5)])
+print(1&1);exit()
+c2 = ParaCode([FIVE() for i in range(25)])
+c1 = ParaCode([FIVE() for i in range(5)])
 c0 = FIVE()
 cc = ConcCode([c0,c1,c2])
 ccc = ConcCode([c0,c1])

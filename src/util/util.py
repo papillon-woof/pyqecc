@@ -82,30 +82,30 @@ def any2arr(i,k):
         return int2arr(i,k)
     return i
 
-def bitwise_to_blockwise_probability(bitwise_probability):
+def bitwise_to_blockwise_error_probability(bitwise_error_probabilityrobability):
     '''
     Input: np.array[qubit_number][4]
     Output: np.array[2 ** (2 * qubit_number)]
     '''
-    n = bitwise_probability.shape[0]
-    blockwise_probability = np.ones(2 ** (2 * n))
+    n = bitwise_error_probabilityrobability.shape[0]
+    blockwise_error_probabilityrobability = np.ones(2 ** (2 * n))
     for ind in range(2 ** (2 * n)):
         ind_list = int2arr(ind, 2 * n)
         for ei in range(n):
             i=(ind_list[ei]<<1)+ind_list[ei+n]
-            blockwise_probability[ind]*=bitwise_probability[ei][i]
-    return blockwise_probability
+            blockwise_error_probabilityrobability[ind]*=bitwise_error_probabilityrobability[ei][i]
+    return blockwise_error_probabilityrobability
 
-def blockwise_to_bitwise_probability(blockwise_probability):
+def blockwise_to_bitwise_error_probability(blockwise_error_probabilityrobability):
     '''
     Input: np.array[2 ** (2 * qubit_number)]
     Output: np.array[qubit_number][4]
     '''
-    n = int(np.log2(blockwise_probability.shape[0]))//2
-    bitwise_probability = np.zeros((n,4))
-    for ind in range(len(blockwise_probability)):
+    n = int(np.log2(blockwise_error_probabilityrobability.shape[0]))//2
+    bitwise_error_probabilityrobability = np.zeros((n,4))
+    for ind in range(len(blockwise_error_probabilityrobability)):
         ind_list = int2arr(ind, 2 * n)
         for ei in range(n):
             i=(ind_list[ei]<<1)+ind_list[ei+n]
-            bitwise_probability[ei][i] += blockwise_probability[ind]
-    return bitwise_probability
+            bitwise_error_probabilityrobability[ei][i] += blockwise_error_probabilityrobability[ind]
+    return bitwise_error_probabilityrobability
