@@ -23,6 +23,10 @@ class CODE(metaclass=ABCMeta):
     @property
     def k(self):
         return self._k
+    
+    @property
+    def nk(self):
+        return self._nk
 
     @property
     def R(self):
