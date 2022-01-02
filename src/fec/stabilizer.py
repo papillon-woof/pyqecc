@@ -32,21 +32,22 @@ class SC(CODE):
         self._T = T
         self._L = L
         self.BITWISE = BITWISE
-        self.set_error_probability(P,self.BITWISE)
+        self.set_error_probability(P,self.BITWISE,OUTPUT_LOG=False)
         self._LUT = {}
         self._blockwise_p = False
         self._bitwise_p = False
         #self.enc_circuit = None
         #self.dec_circuit = None
 
-    def set_error_probability(self,error_probability,BITWISE=True,iid=True):
+    def set_error_probability(self,error_probability,BITWISE=True,iid=True,OUTPUT_LOG=False):
         if not error_probability is None:
             if BITWISE:
                 if iid:
                     error_probability = np.array([error_probability for i in range(self.n)])
                 self.bitwise_p = error_probability
                 if self.ML_DECODING_QUBITS_LIMIT<self.n:
-                    print("The num. of qubit exceed ML_DECODING_QUBITS_LIMIT.")
+                    if OUTPUT_LOG:
+                        print("The num. of qubit exceed ML_DECODING_QUBITS_LIMIT.")
                     self.blockwise_p = False
                 else:
                     self.blockwise_p = bitwise_to_blockwise_probability(error_probability) # By approximate the bitwise probability.
@@ -54,7 +55,8 @@ class SC(CODE):
                 self.blockwise_p = error_probability
                 self.bitwise_p = blockwise_to_bitwise_probability(error_probability)
         else:
-            print("Warning: The input error probability doesn't set to variable.")
+            if OUTPUT_LOG:
+                print("Warning: The input error probability doesn't set to variable.")
 
     def get_syndrome(self,e):
         return symplex_binary_inner_product(self._H,e)

@@ -67,7 +67,7 @@ class CombCode(SC):
             L[X_OR_Z*nind:X_OR_Z*nind+X_OR_Z*c.n] = c_decoder_output["L"]
             c_logical_error_probability = c_decoder_output["LOGICAL_ERROR_PROBABILITY"]
             logical_error_probability[kind:kind+c.k][:] = blockwise_to_bitwise_probability(c_logical_error_probability)
-            nind,nkind,kind = c.n+nind,c.k+kind,c.nk+nkind
+            nind,kind,nkind = c.n+nind,c.k+kind,c.nk+nkind
         self.decoder_output["L"] = L
         self.decoder_output["T"] = self.get_T(syndrome)
         self.decoder_output["LT"] = self.decoder_output["LT"] = self.decoder_output["L"]^self.decoder_output["T"]
@@ -101,77 +101,49 @@ class ConcCode(SC):
         self.H_depth = {}
         super().__init__(self._code_instances[self.code_depth-1].n,self._code_instances[0].k,H=self.calc_grobal_H(),P=P,BITWISE = BITWISE,mode = 'HD')
 
+    def get_mother_operator(self,U,depth_U):
+        # depth_U : depth
+        # U : operator
+        if depth_U == self._code_depth:
+            return U
+        U0 = U
+        for d in range(depth_U,self._code_depth-1):
+            c0 = self.code_instances[d]
+            c1 = self.code_instances[d+1]
+            U1 = np.zeros(X_OR_Z*c1.n,dtype='i1')
+            for i in range(c0.n):
+                for x_or_z in range(X_OR_Z):
+                    if 1==U0[c0.n*x_or_z+i]:
+                        Lind = np.zeros(X_OR_Z*c1.k,dtype='i1')
+                        Lind[c1.k*x_or_z+i]=1
+                        U1 += c1.get_L(Lind) #Lを格納．例えば，繰り返し符号ならL[0]=XXX，
+            U0 = U1
+        return U0
+
     def get_L(self,alpha):
         alpha = any2arr(alpha,X_OR_Z*self.k)
         if len(alpha) != X_OR_Z * self.k:
             raise ValueError("Length of alpha is not matched number of stabilizer basis. Please check the length of alpha.")
         L0 = self.code_instances[0].get_L(alpha)
-        for d in range(self._code_depth-1):
-            c0 = self.code_instances[d]
-            c1 = self.code_instances[d+1]
-            L1 = np.zeros(X_OR_Z*c1.n,dtype='i1')
-            for i in range(c0.n):
-                for x_or_z in range(X_OR_Z):
-                    if 1==L0[c0.n*x_or_z+i]:
-                        Lind = np.zeros(X_OR_Z*c1.k,dtype='i1')
-                        Lind[c1.k*x_or_z+i]=1
-                        L1 += c1.get_L(Lind) #Lを格納．例えば，繰り返し符号ならL[0]=XXX，
-            L0 = L1
-        return L0
+        return self.get_mother_operator(L0,0)
 
     def get_T(self,beta):
-        beta0 = np.zeros(self.code_instances[0].n - self.code_instances[0].k,dtype='i1')
-        for mother_ind,follower_ind in self.H_depth[0].items():
-            beta0[follower_ind]=beta[mother_ind]
-        T0 = self.code_instances[0].get_T(beta0)
-        for d in range(self._code_depth-1):
-            c0 = self.code_instances[d]
-            c1 = self.code_instances[d+1]
-            T1 = np.zeros(X_OR_Z*c1.n,dtype='i1')
-            for i in range(c0.n):
-                for x_or_z in range(X_OR_Z):
-                    if 1==T0[c0.n*x_or_z+i]:
-                        Lind = np.zeros(X_OR_Z*c1.k,dtype='i1')
-                        Lind[c1.k*x_or_z+i]=1
-                        T1 += c1.get_L(Lind) #Lを格納．例えば，繰り返し符号ならL[0]=XXX，
-            beta1 = np.zeros(c1.n - c1.k,dtype='i1')
-            for mother_ind,follower_ind in self.H_depth[d+1].items():
-                beta1[follower_ind]=beta[mother_ind]
-            T1 ^= c1.get_T(beta1)
-            T0 = T1
-        return T0
-    
-    def get_T_old(self,beta):
-        beta0 = np.zeros(self.code_instances[0].n - self.code_instances[0].k,dtype='i1')
-        for mother_ind,follower_ind in self.H_depth[0].items():
-            beta0[follower_ind]=beta[mother_ind]
-        T0 = self.code_instances[0].get_T(beta0)
-        for d in range(self._code_depth-1):
-            c0 = self.code_instances[d]
-            c1 = self.code_instances[d+1]
-            T1 = np.zeros(X_OR_Z*c1.n,dtype='i1')
-            for i in range(c0.n):
-                for x_or_z in range(X_OR_Z):
-                    if 1==T0[c0.n*x_or_z+i]:
-                        Lind = np.zeros(X_OR_Z*c1.k,dtype='i1')
-                        Lind[c1.k*x_or_z+i]=1
-                        T1 += c1.get_L(Lind) #Lを格納．例えば，繰り返し符号ならL[0]=XXX，
-            beta1 = np.zeros(c1.n - c1.k,dtype='i1')
-            for mother_ind,follower_ind in self.H_depth[d+1].items():
-                beta1[follower_ind]=beta[mother_ind]
-            T1 ^= c1.get_T(beta1)
-            T0 = T1
-        return T0
+        T = np.zeros(X_OR_Z*self.n,dtype='i1')
+        for d in range(self._code_depth):
+            beta0 = np.zeros(self.code_instances[d].nk,dtype='i1')
+            for mother_ind,follower_ind in self.H_depth[d].items():
+                beta0[follower_ind]=beta[mother_ind]
+            T ^= self.get_mother_operator(self.code_instances[d].get_T(beta0),d)
+        return T
 
     def calc_grobal_H(self):
         H0 = self.code_instances[0].H
         for d in range(self._code_depth-1):
             c0 = self.code_instances[d]
             c1 = self.code_instances[d+1]
-            H1 = np.zeros((c1.n-c1.k + H0.shape[0],2*c1.n),dtype='i1')
+            H1 = np.zeros((c1.nk + H0.shape[0],X_OR_Z*c1.n),dtype='i1')
             nind = 0
-            #for h0 in H0:
-            for i in range(c0.n - c0.k):
+            for i in range(c0.nk):
                 for bit in range(c0.n):
                     for x_or_z in range(2):
                         if 1==H0[i][c0.n*x_or_z+bit]:
@@ -182,7 +154,7 @@ class ConcCode(SC):
                     self.H_depth[d] = {}
                 self.H_depth[d][nind] = i
                 nind += 1 # 全体のHの行数をカウント
-            for i in range(c1.n - c1.k):
+            for i in range(c1.nk):
                 if d+1 not in self.H_depth:
                     self.H_depth[d+1] = {}
                 self.H_depth[d+1][nind] = i
@@ -192,6 +164,36 @@ class ConcCode(SC):
         return H0
 
     def BP_decode(self,syndrome):
+        '''
+        BP_decoding:
+        input: syndrome
+        output: L^T
+        '''
+        # Estimation for Logical error
+        error_probability = self.bitwise_p
+        conc_syndrome = syndrome.copy()
+        for d in reversed(range(self._code_depth)):
+            beta1 = np.zeros(self.code_instances[d].nk,dtype='i1')
+            for mother_ind,follower_ind in self.H_depth[d].items():
+                beta1[follower_ind]=conc_syndrome[mother_ind]
+            self.code_instances[d].set_error_probability(error_probability,iid=False)
+            if not self.code_instances[d].BITWISE:
+                self.code_instances[d].BITWISE = True
+                print("Warning: Forced BITWISE = True in self.code_instances["+str(d)+"].")
+            c1_decoder_output = self.code_instances[d].decode(beta1,mode="ML")
+            L,s,error_probability = c1_decoder_output["L"],self.code_instances[d].get_syndrome(c1_decoder_output["T"]),c1_decoder_output["BIT_WISE_LOGICAL_ERROR_PROBABILITY"]
+            if d!=0:
+                conc_syndrome^=self.get_syndrome(self.code_instances[d].get_T(s))
+        L0 = self.get_mother_operator(L,0)
+        T = np.zeros(X_OR_Z*self.n,dtype='i1')
+        for d in range(1,self._code_depth):
+            T^=self.get_mother_operator(self.code_instances[d].decoder_output["T"],d)
+        self.decoder_output["L"] = L0
+        self.decoder_output["T"] = self.get_T(syndrome)
+        self.decoder_output["LT"] = L0^self.get_T(conc_syndrome)^T
+        self.decoder_output["LOGICAL_ERROR_PROBABILITY"] = error_probability
+
+    def BP_decode_old(self,syndrome):
         '''
         BP_decoding:
         input: syndrome

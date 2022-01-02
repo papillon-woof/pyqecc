@@ -1,13 +1,12 @@
 import numpy as np
 from src import *
+c2 = CombCode([FIVE() for i in range(25)])
 c1 = CombCode([FIVE() for i in range(5)])
 c0 = FIVE(mode='ML')
-print(c0.get_syndrome([1,1,0,0,0,0,0,0,0,0]))
-print(c0.get_syndrome([0,1,1,0,0,0,0,0,0,0]))
 print(c0.get_syndrome([1,0,1,0,0,0,0,0,0,0]))
 #c2 = STEANE()
 c = ConcCode([c0,c1])
-dec_sim(c,PROB=[0.13],MONTE=1000,LOG_OUTPUT_SPAN=1);exit()
+dec_sim(c,PROB=[0.13,0.15],MONTE=1000,LOG_OUTPUT_SPAN=10);exit()
 np.set_printoptions(threshold=10000)
 #E = [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1]
 E = [0,0,0,0,0,0,0,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0 ,0 ,0, 0]

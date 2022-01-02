@@ -23,17 +23,12 @@ def dec_sim(
         myQECC.set_error_probability(np.array([1-p,p/3,p/3,p/3]),iid=True)
         for mc in range(1,MONTE+1):
             E = channel(n,p,CHANNEL_MODEL=CHANNEL_MODEL)
-            #E = np.zeros(2*n,dtype='i1')
-            #E[np.random.randint(0,2*n)]=1
             syndrome = myQECC.get_syndrome(E)
             EE = myQECC.decode(syndrome)["LT"]
-            #print("EE",EE)
-            #print("E ",E)
-            #print("E ",E^EE)
             if not myQECC.in_S(E^EE):
                 ble+=1
             if not mc%LOG_OUTPUT_SPAN:
-                print("DEPOLARIZING_ERROR_PROB",p," LOGICAL_ERROR_PROB:",mc,ble/mc)
+                print("monte",mc,"ble",ble,"DEPOLARIZING_ERROR_PROB",p," LOGICAL_ERROR_PROB:",mc,ble/mc)
             if ble>ERR_STOP:
                 break
         RESULTS['LOGICAL_ERROR_PROB'].append(ble/mc)
