@@ -25,6 +25,7 @@ def dec_sim(
             E = channel(n,p,CHANNEL_MODEL=CHANNEL_MODEL)
             syndrome = myQECC.get_syndrome(E)
             EE = myQECC.decode(syndrome)["LT"]
+            #print(E,EE)
             if not myQECC.in_S(E^EE):
                 ble+=1
             if not mc%LOG_OUTPUT_SPAN:

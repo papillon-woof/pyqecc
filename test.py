@@ -2,25 +2,9 @@ import numpy as np
 from src import *
 c2 = CombCode([FIVE() for i in range(25)])
 c1 = CombCode([FIVE() for i in range(5)])
-c0 = FIVE(mode='ML')
-print(c0.get_syndrome([1,0,1,0,0,0,0,0,0,0]))
-#c2 = STEANE()
-c = ConcCode([c0,c1])
-dec_sim(c,PROB=[0.13,0.15],MONTE=1000,LOG_OUTPUT_SPAN=10);exit()
-np.set_printoptions(threshold=10000)
-#E = [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1]
-E = [0,0,0,0,0,0,0,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0 ,0 ,0, 0]
-E0 = [0,1,0,0,0,0,0,0,0,0]
-p = 0.01
-c.set_error_probability(np.array([1-p,p/3,p/3,p/3]),iid=True)
-c1.set_error_probability(np.array([1-p,p/3,p/3,p/3]),iid=True)
-c0.set_error_probability(np.array([1-p,p/3,p/3,p/3]),iid=True)
-result=c.decode(c.get_syndrome(E))
-print("T  :",result["T"])
-print("L  :",result["L"])
-print("LT :",result["LT"])
-print("ELT:",E^result["LT"])
-print("S  :",c.get_syndrome(E^result["LT"]))
-print(c.in_S(E^result["LT"]))
-#result0=c0.decode(c0.get_syndrome(E0))
-#print(1,c0,result0["LT"])
+c0 = FIVE()
+cc = ConcCode([c0,c1,c2])
+ccc = ConcCode([c0,c1])
+e = np.zeros(2*cc.n)
+np.set_printoptions(threshold=100000)
+dec_sim(ccc,PROB=[0.1885],MONTE=1000,LOG_OUTPUT_SPAN=10);exit()

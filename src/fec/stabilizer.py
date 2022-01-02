@@ -86,7 +86,7 @@ class SC(CODE):
         return np.mod(L,2)
 
     def in_S(self,b):
-        return sum(gaussjordan(np.append(self.H,b).reshape(self.n-self.k+1,2*self.n))[self.n-self.k])==0
+        return sum(gaussjordan(np.append(self.H,b).reshape(self.nk+1,2*self.n))[self.nk])==0
 
     def set_LUT(self):
         for i in range(2 ** (self.nk)):

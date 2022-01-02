@@ -82,7 +82,7 @@ class CombCode(SC):
 #SのうちXだったらLxに拡張.e.g. XZIZX=LxLzILzLx\in 25ビット
 class ConcCode(SC):
     NAME = "CONCATENATED_CODE"
-    def __init__(self,code_instances,P=None,BITWISE = True): #,interleaver={}
+    def __init__(self,code_instances,P=None,BITWISE = True,mode="BP"): #,interleaver={}
         '''
         array(SC): code_instances, dict: Interleaver, boolean: IID
         code_instances: 符号が格納．
@@ -99,7 +99,7 @@ class ConcCode(SC):
             if self._code_instances[d+1].k != self._code_instances[d].n:
                 raise ValueError("Error:codelength mismatched")
         self.H_depth = {}
-        super().__init__(self._code_instances[self.code_depth-1].n,self._code_instances[0].k,H=self.calc_grobal_H(),P=P,BITWISE = BITWISE,mode = 'HD')
+        super().__init__(self._code_instances[self.code_depth-1].n,self._code_instances[0].k,H=self.calc_grobal_H(),P=P,BITWISE = BITWISE,mode = mode)
 
     def get_mother_operator(self,U,depth_U):
         # depth_U : depth
@@ -137,31 +137,19 @@ class ConcCode(SC):
         return T
 
     def calc_grobal_H(self):
-        H0 = self.code_instances[0].H
-        for d in range(self._code_depth-1):
-            c0 = self.code_instances[d]
-            c1 = self.code_instances[d+1]
-            H1 = np.zeros((c1.nk + H0.shape[0],X_OR_Z*c1.n),dtype='i1')
-            nind = 0
-            for i in range(c0.nk):
-                for bit in range(c0.n):
-                    for x_or_z in range(2):
-                        if 1==H0[i][c0.n*x_or_z+bit]:
-                            Lind = np.zeros(2*c1.k,dtype='i1')
-                            Lind[c1.k*x_or_z+bit]=1
-                            H1[nind] += c1.get_L(Lind) #Lを格納．例えば，繰り返し符号ならL[0]=XXX，
-                if d not in self.H_depth:
-                    self.H_depth[d] = {}
+        nind = 0
+        n = self._code_instances[self.code_depth-1].n
+        k = self._code_instances[0].k
+        nk = n-k
+        H = np.zeros((nk,X_OR_Z*n),dtype='i1')
+        for d in range(self._code_depth):
+            if d not in self.H_depth:
+                self.H_depth[d] = {}
+            for i in range(self.code_instances[d].H.shape[0]):
+                H[nind] = self.get_mother_operator(self.code_instances[d].H[i],d)
                 self.H_depth[d][nind] = i
-                nind += 1 # 全体のHの行数をカウント
-            for i in range(c1.nk):
-                if d+1 not in self.H_depth:
-                    self.H_depth[d+1] = {}
-                self.H_depth[d+1][nind] = i
-                H1[nind] = c1.H[i]
-                nind+=1
-            H0 = H1
-        return H0
+                nind += 1
+        return H
 
     def BP_decode(self,syndrome):
         '''
@@ -183,14 +171,15 @@ class ConcCode(SC):
             c1_decoder_output = self.code_instances[d].decode(beta1,mode="ML")
             L,s,error_probability = c1_decoder_output["L"],self.code_instances[d].get_syndrome(c1_decoder_output["T"]),c1_decoder_output["BIT_WISE_LOGICAL_ERROR_PROBABILITY"]
             if d!=0:
-                conc_syndrome^=self.get_syndrome(self.code_instances[d].get_T(s))
+                #print(conc_syndrome.shape,syndrome.shape,self.code_instances[d].get_T(s).shape)
+                conc_syndrome^=self.get_syndrome(self.get_mother_operator(self.code_instances[d].get_T(s),d))
         L0 = self.get_mother_operator(L,0)
         T = np.zeros(X_OR_Z*self.n,dtype='i1')
         for d in range(1,self._code_depth):
             T^=self.get_mother_operator(self.code_instances[d].decoder_output["T"],d)
         self.decoder_output["L"] = L0
         self.decoder_output["T"] = self.get_T(syndrome)
-        self.decoder_output["LT"] = L0^self.get_T(conc_syndrome)^T
+        self.decoder_output["LT"] = L0^T^self.get_T(conc_syndrome)
         self.decoder_output["LOGICAL_ERROR_PROBABILITY"] = error_probability
 
     def BP_decode_old(self,syndrome):
@@ -231,7 +220,7 @@ class ConcCode(SC):
         self.decoder_output["LOGICAL_ERROR_PROBABILITY"] = error_probability
 
     def decode(self,syndrome,**param):
-        self._mode = "BP"
+        #self._mode = "BP"
         if "BP"==self.mode:
             self.BP_decode(syndrome)
         else:

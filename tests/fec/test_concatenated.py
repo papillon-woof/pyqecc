@@ -50,6 +50,18 @@ TEST_DATA_CONC = [
         np.array([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]),
         np.array([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]),
         ],
+    },
+]
+
+TEST_DATA_CONC_H = [
+    {
+    "TEST_NUM_S": 6,
+    "TEST_CODE": [
+        ConcCode([FIVE(),CombCode([FIVE() for i in range(5)])]),
+        ConcCode([FIVE(),CombCode([FIVE() for i in range(5)]),CombCode([FIVE() for i in range(25)])]),
+        ],
+    "GET_S" : [[2,4],[1],[3,5],[9,15],[1,3,5],[6,9,15],
+        ],
     }
 ]
 
@@ -67,3 +79,11 @@ def test_CONC():
             assert 0==sum(np.abs(c.get_T(test_data["T"][i]) - test_data["GET_T"][i]))
         for i in range(test_data["TEST_NUM_L"]):
             assert 0==sum(np.abs(c.get_L(test_data["L"][i]) - test_data["GET_L"][i]))
+
+def test_CONC_H():
+    for test_data in TEST_DATA_CONC_H:
+        for c in test_data["TEST_CODE"]:
+            e = np.zeros(2*c.n)
+            for j in test_data["GET_S"]:
+                e[j]=1
+            assert not c.in_S(e)
