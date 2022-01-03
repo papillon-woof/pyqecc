@@ -2,7 +2,7 @@
 <img src="https://user-images.githubusercontent.com/72004949/147950760-7b073f0b-1efb-4d65-a8db-b347c0e115e0.png" alt="pyqec" title="pyqec">
 </div>
 
-**Pre-alpha version for PyQec is provided. It may have a large bugs.**
+**Warning: Pre-alpha version for PyQec is provided. It may have a large bugs.**
 
 PyQec mainly provide quantum error correction code (QECC) simulator. 
 
