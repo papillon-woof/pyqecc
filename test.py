@@ -1,5 +1,5 @@
 import numpy as np
-from src import *
+from pyqec import *
 c2 = ParaCode([FIVE() for i in range(25)])
 c1 = ParaCode([FIVE() for i in range(5)])
 c0 = FIVE()
