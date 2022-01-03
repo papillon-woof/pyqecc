@@ -16,14 +16,13 @@ setup(
     install_requires=['numpy', ], # pip installする際に同時にインストールされるパッケージ名をリスト形式で指定
     author='papillon', # パッケージ作者の名前
     author_email='ogyogugige@gmail.com', # パッケージ作者の連絡先メールアドレス
-    url='https://github.com/hy4/pyQec', # パッケージに関連するサイトのURL(GitHubなど)
+    url='https://github.com/papillon-woof/pyqec', # パッケージに関連するサイトのURL(GitHubなど)
     description='Simulater for quantum error correction code.', # パッケージの簡単な説明
     long_description=long_description, # PyPIに'Project description'として表示されるパッケージの説明文
     long_description_content_type='text/markdown', # long_descriptionの形式を'text/plain', 'text/x-rst', 'text/markdown'のいずれかから指定
-    keywords='pyqec pyQec py-qec',# PyPIでの検索用キーワードをスペース区切りで指定
+    keywords='pyqec pyQec py-qec qecc qec quantum error correction quantum computer',# PyPIでの検索用キーワードをスペース区切りで指定
     classifiers=[
         'License :: OSI Approved :: MIT License',
-        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.8.6',
     ],
-    # パッケージ(プロジェクト)の分類。
 )
