@@ -3,13 +3,13 @@
 </div>
 
 PyQec mainly provide quantum error correction code (QECC) simulator.   
+**Pre-alpha version for PyQec is provided. It may have a large bug**
 
 # Installation
 
 ```
 pip install pyqec
 ```
-
 In some cases, installation required setting for `--proxy`, `--user` or `sudo`. PyQec is written by python3
 
 # Usage
