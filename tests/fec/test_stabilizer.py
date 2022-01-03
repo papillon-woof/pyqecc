@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from src.fec import *
+from pyqec.qecc import *
 DIFF_THRESHOLD = 1E-4
 
 TEST_FIVE_DATA = {
@@ -13,7 +13,7 @@ TEST_FIVE_DATA = {
 }
 
 def test_general():
-    for c in [FIVE(),STEANE(),BIT_FLIP(),PHASE_FLIP()]:
+    for c in [FiveCode(),SteaneCode(),BitFlipCode(),PhaseFlipCode()]:
         # test for Error
         for e in range(2 ** (X_OR_Z*c.n)):
             ee = any2arr(e,X_OR_Z*c.n)
@@ -37,7 +37,7 @@ TEST_SET_ERROR_PROBABILITY_DATA = {
 }
 
 def test_set_error_probability():
-    c = BIT_FLIP()
+    c = BitFlipCode()
     c.set_error_probability(TEST_SET_ERROR_PROBABILITY_DATA["P_BITWISE"],iid=False,BITWISE=True)
     for i in range(TEST_SET_ERROR_PROBABILITY_DATA["NUM_OF_CASE"]):
         assert np.abs(c.get_error_probability(TEST_SET_ERROR_PROBABILITY_DATA["TEST_CASE_P_BITWISE"][i])-TEST_SET_ERROR_PROBABILITY_DATA["RESULT_P_BITWISE"][i])<DIFF_THRESHOLD
@@ -51,8 +51,8 @@ def test_set_error_probability():
         ind = TEST_SET_ERROR_PROBABILITY_DATA["TEST_CASE_P_BLOCKWISE"][i]
         assert np.abs(c.get_error_probability(ind)-TEST_SET_ERROR_PROBABILITY_DATA["P_BLOCKWISE"][arr2int(ind)])<DIFF_THRESHOLD
 
-def test_five():
-    c = FIVE()
+def test_FiveCode():
+    c = FiveCode()
     for i in range(2 ** (c.n-c.k)):
         assert arr2int(c.get_syndrome(c.get_T(int2arr(i,4))))==i
     for t in range(len(TEST_FIVE_DATA["T_ind"])):
@@ -64,7 +64,7 @@ def test_five():
     for beta in range(2 ** c.k):
         assert 0==sum(np.abs(c.get_syndrome(c.get_L(beta))))
 
-def test_STEANE():
-    c = STEANE()
+def test_SteaneCode():
+    c = SteaneCode()
     for i in range(64):
         assert arr2int(c.get_syndrome(c.get_T(int2arr(i,6))))==i

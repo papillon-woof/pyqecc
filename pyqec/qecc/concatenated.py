@@ -79,7 +79,6 @@ class ParaCode(SC):
 
 #SのうちXだったらLxに拡張.e.g. XZIZX=LxLzILzLx\in 25ビット
 class ConcCode(SC):
-    NAME = "CONCATENATED_CODE"
     def __init__(self,code_instances,P=None,BITWISE = True,mode="BP"): #,interleaver={}
         '''
         array(SC): code_instances, dict: Interleaver, boolean: IID
@@ -91,6 +90,7 @@ class ConcCode(SC):
         Interleaver: ビット間のインタリーバ．任意の量子ビットの配列で設定したいとき，インタリーブする．形式は転置行列で書く．
         例: Interleaver = {1:T1,2:T2}
         '''
+        self.NAME = "CONCATENATED_CODE"
         self._code_depth = len(code_instances) #連接符号の長さ
         self._code_instances = code_instances
         for d in range(0,self._code_depth-1):
