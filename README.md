@@ -83,7 +83,9 @@ In `/decdata`, PyQec generates the simulation results.
 ## Channel Model
 - depolarizing channel
 
-# Future work
+# Simulation results
+
+# Future works
 - quantum LDPC code
 - quantum polar code
 - surface code
