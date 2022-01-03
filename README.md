@@ -26,7 +26,8 @@ The steps of evalutation for decoding performance are `Import the PyQec.`, `Crea
 ```python
 from pyqec import *
 ```
-## 2. Create the instance for QECC. For example, we prepare the 5-qubit code.
+## 2. Create the instance for QECC.
+For example, we prepare the 5-qubit code.
 ```python
 my_code = FIVE()
 ```
@@ -42,7 +43,7 @@ R               : 0.2
 DECODING_MODE   : ML_LUT
 ```
 
-## 3. Prepare the decoding simulator with `my_code`
+## 3. Prepare the decoding simulator.
 ```python
 dec_sim(my_code)
 ```
@@ -56,7 +57,7 @@ default settings:
 python test.py
 ```
 Please wait patiently. 
-## 5. Confirm the decoding result
+## 5. Confirm the decoding results.
 In `/decdata`, PyQec generates the simulation results.
 
 ```
