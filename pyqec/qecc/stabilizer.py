@@ -179,9 +179,9 @@ class SC(CODE):
 
     def __str__(self):
         output = ""
-        output+="NAME            :"+str(self.name)+"\n"
-        output+="N               : "+str(self.n)+"\n"
-        output+="K               : "+str(self.k)+"\n"
-        output+="R               : "+str(self.R)+"\n"
-        output+="DECODING_MODE   : "+str(self.mode)+"\n"
+        output+="NAME               : "+str(self.name)+"\n"
+        output+="PHYSICAL QUBITS (n): "+str(self.n)+"\n"
+        output+="LOGICAL QUBITS (k) : "+str(self.k)+"\n"
+        output+="CODE RATE (R = k/k): "+str(self.R)+"\n"
+        output+="DECODING_MODE      : "+str(self.mode)+"\n"
         return output
