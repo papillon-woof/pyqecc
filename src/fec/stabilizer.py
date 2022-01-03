@@ -174,7 +174,7 @@ class SC(CODE):
     def BITWISE(self):
         return self._BITWISE
     @BITWISE.setter
-    def bitwise_error_probability(self,BITWISE):
+    def BITWISE(self,BITWISE):
         self._BITWISE = BITWISE
 
     def __str__(self):
