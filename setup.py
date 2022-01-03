@@ -23,6 +23,6 @@ setup(
     keywords='pyqec pyQec py-qec qecc qec quantum error correction quantum computer',# PyPIでの検索用キーワードをスペース区切りで指定
     classifiers=[
         'License :: OSI Approved :: MIT License',
-        'Programming Language :: Python :: 3.8.6',
+        'Programming Language :: Python :: 3.8',
     ],
 )
