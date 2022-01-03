@@ -1,29 +1,50 @@
-# What is pyQec
-pyQec is quantum error correction code (QECC) library. This library mainly provide a decoding algorithm for QECC.  
+pyQec is quantum error correction code (QECC) simulator. This library mainly provide a decoding algorithm for QECC.
 The QECC is needed to overcome the quantum noise arising from time evolution, which cannot avoid in principle, the imperfections quantum circuit and channel.   
 
-# Contents
-## Quantum Error Correction Code
-### basic code and toys
-- Stabilizer Code
-- Toy code (5-q code, 7-q(STEANE) code)
+# Installation
+pyQec is written by python3
+- python3
+- pip
 
-### Construction of QECC from classical code
-- (Future) quantum LDPC code
-- (Future) quantum polar code
+or
+
+```
+pip install pyqec
+```
+
+In some cases, installation required setting for `--proxy`, `--user` or `sudo`. 
+
+# Usage
+(Write here.)
+
+# Contents
+
+# Features
+## Stabilizer Code
+- 5-qubit code
+- 7-qubit code (STEANE code)
+- bit flip code
+- phase flip code
+- 9-qubit shor code (concatenated bit and phase flip code.)
 - concatenated code
 
-### Construction QECC from classical physics
-- Topological code (Toric, colar)
-
 ## decoder
-- syndrome decoding (stabilizer)
-- renormalize group decoding (toric code)
-- SC decoder (SC decoder)
+- ML decoding
+- syndrome decoding
+- BP decoding (concatenated code only)
+
+## Decoding simulation
+- Block error rate
 
 ## Channel Model
 - depolarizing channel
+
+# Future work
+- quantum LDPC code
+- quantum polar code
+- surface code
 - (Future) Pauli channel
+- (Future) Amplitude Damping channel
 
 # Explanation Class and Function
 ## `pyQec.fec.abstruct.CODE()`
