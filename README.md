@@ -1,3 +1,4 @@
+[pyqec.pdf](https://github.com/papillon-woof/pyqec/files/7802757/pyqec.pdf)
 pyQec is quantum error correction code (QECC) simulator. This library mainly provide a decoding algorithm for QECC.
 The QECC is needed to overcome the quantum noise arising from time evolution, which cannot avoid in principle, the imperfections quantum circuit and channel.   
 
