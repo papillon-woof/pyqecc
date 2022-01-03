@@ -14,7 +14,7 @@ In some cases, installation required setting for `--proxy`, `--user` or `sudo`. 
 
 # Usage
 We explane the tutorial usage. 
-Please copy and paste following code
+Please prepare the `.py` file (e.g. `test.py`). Please copy and paste following code
 ```python
 from pyqec import *
 my_code = FIVE()
@@ -47,10 +47,16 @@ DECODING_MODE   : ML_LUT
 ```python
 dec_sim(my_code)
 ```
+default settings:
+- depolarizing channel
+- 1000 codeward
+- maximum likelihood decoding.
 
 ## 4. Start the decoding simulation. 
+```
+python test.py
+```
 Please wait patiently. 
-
 ## 5. Confirm the decoding result
 In `/decdata`, PyQec generates the simulation results.
 
@@ -58,7 +64,6 @@ In `/decdata`, PyQec generates the simulation results.
 [decoding result]
 ```
 
-# Contents
 # Features
 ## Stabilizer Code
 - 5-qubit code
@@ -69,12 +74,12 @@ In `/decdata`, PyQec generates the simulation results.
 - concatenated code
 
 ## decoder
-- ML decoding
 - syndrome decoding
-- BP decoding (concatenated code only)
+- maximum likelihood (ML) decoding
+- belief propagation decoding (concatenated code only)
 
 ## Decoding simulation
-- Block error rate
+- block error rate
 
 ## Channel Model
 - depolarizing channel
