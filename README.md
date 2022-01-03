@@ -13,8 +13,16 @@ pip install pyqec
 In some cases, installation required setting for `--proxy`, `--user` or `sudo`. pyQec is written by python3
 
 # Usage
+We explane the tutorial usage. 
+Please copy and paste following code
+```python
+from pyqec import *
+my_code = FIVE()
+print(my_code)
+dec_sim(my_code)
+```
+The step of evalutation for decoding performance is, `Import the PyQec.`, `Create the instance for QECC.`, `Prepare the decoding simulator`, `Start the decoding simulation`, and `Confirm the decoding result`.
 
-The step of evalutation for decoding performance is,
 ## 1. Import the PyQec.
 ```python
 from pyqec import *
@@ -45,6 +53,7 @@ Please wait patiently.
 
 ## 5. Confirm the decoding result
 In `/decdata`, PyQec generates the simulation results.
+
 ```
 [decoding result]
 ```
