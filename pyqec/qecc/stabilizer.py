@@ -182,6 +182,6 @@ class SC(CODE):
         output+="NAME               : "+str(self.name)+"\n"
         output+="PHYSICAL QUBITS (n): "+str(self.n)+"\n"
         output+="LOGICAL QUBITS (k) : "+str(self.k)+"\n"
-        output+="CODE RATE (R = k/k): "+str(self.R)+"\n"
+        output+="CODE RATE (R = k/n): "+str(self.R)+"\n"
         output+="DECODING_MODE      : "+str(self.mode)+"\n"
         return output
