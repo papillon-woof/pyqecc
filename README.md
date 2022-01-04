@@ -58,7 +58,7 @@ python test.py
 ```
 Please wait patiently. 
 ## 5. Confirm the decoding results.
-In `/decdata`, PyQec generates the simulation results.
+In `/dec_data`, PyQec generates the simulation results.
 
 ```
 [decoding result]
@@ -67,7 +67,7 @@ In `/decdata`, PyQec generates the simulation results.
 directory structure
 ```
 ├── test.py
-└── DecData (Folder)
+└── dec_data (Folder)
 ```
 
 # Features
