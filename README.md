@@ -64,6 +64,12 @@ In `/decdata`, PyQec generates the simulation results.
 [decoding result]
 ```
 
+directory structure
+```
+├── test.py
+└── DecData (Folder)
+```
+
 # Features
 ## Stabilizer Code
 - 5-qubit code
