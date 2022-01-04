@@ -98,3 +98,6 @@ directory structure
 - surface code
 - (Future) Pauli channel
 - (Future) Amplitude Damping channel
+
+# Citation
+"T.Kakizaki (2022). pyqec. [online] Available at: https://papillon.github.io/pyqec/"
