@@ -31,7 +31,7 @@ The steps of evalutation for decoding performance are `Import the PyQecc.`, `Cre
 
 ## 1. Import the PyQecc.
 ```python
-from pyqec import *
+from pyqecc import *
 ```
 ## 2. Create the instance for QECC.
 For example, we prepare the 5-qubit code.
