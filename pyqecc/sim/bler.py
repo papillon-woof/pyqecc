@@ -29,7 +29,7 @@ def dec_sim(
             if not myQECC.in_S(E^EE):
                 ble+=1
             if not mc%LOG_OUTPUT_SPAN:
-                print("monte",mc,"ble",ble,"DEPOLARIZING_ERROR_PROB",p," LOGICAL_ERROR_PROB:",mc,ble/mc)
+                print("MONTE",mc,"BLE",ble,"DEPOLARIZING_ERROR_PROB",p," LOGICAL_ERROR_PROB:",mc,ble/mc)
             if ble>ERR_STOP:
                 break
         RESULTS['LOGICAL_ERROR_PROB'].append(ble/mc)
