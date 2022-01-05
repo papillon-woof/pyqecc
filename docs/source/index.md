@@ -2,11 +2,14 @@
 <img src="https://user-images.githubusercontent.com/72004949/148188473-22ea4600-d1d1-46b6-814b-0d3414af5750.png" alt="pyqecc" title="pyqecc">
 </div>
 
+[![Documentation Status](https://readthedocs.org/projects/pyqecc/badge/?version=latest)](https://pyqecc.readthedocs.io/en/latest/?badge=latest)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 # Overview
 PyQecc mainly provide quantum error correction code (QECC) simulator.
-- installation (This page)
-- Quick start (This page)
-- [features](features.md)
+- [Installation](https://pyqecc.readthedocs.io/en/latest/?) (This page)
+- [Quick start](https://pyqecc.readthedocs.io/en/latest/?) (This page)
+- [Features](https://pyqecc.readthedocs.io/en/latest/features.html)
 - [Source code](https://github.com/papillon-woof/pyqecc)
 # Installation
 
@@ -28,7 +31,7 @@ The steps of evalutation for decoding performance are `Import the PyQecc.`, `Cre
 
 ## 1. Import the PyQecc.
 ```python
-from pyqec import *
+from pyqecc import *
 ```
 ## 2. Create the instance for QECC.
 For example, we prepare the 5-qubit code.
@@ -64,14 +67,43 @@ Please wait patiently.
 ## 5. Confirm the decoding results.
 In `/dec_data`, PyQecc generates the simulation results.
 
-```
-[decoding result]
+```console
+...
+MONTE 1000 BLE 86 DEPOLARIZING_ERROR_PROB 0.1  LOGICAL_ERROR_PROB: 1000 0.086
+MONTE 100 BLE 1 DEPOLARIZING_ERROR_PROB 0.01  LOGICAL_ERROR_PROB: 100 0.01
+MONTE 200 BLE 1 DEPOLARIZING_ERROR_PROB 0.01  LOGICAL_ERROR_PROB: 200 0.005
+MONTE 300 BLE 1 DEPOLARIZING_ERROR_PROB 0.01  LOGICAL_ERROR_PROB: 300 0.0033333333333333335
+MONTE 400 BLE 1 DEPOLARIZING_ERROR_PROB 0.01  LOGICAL_ERROR_PROB: 400 0.0025
+MONTE 500 BLE 1 DEPOLARIZING_ERROR_PROB 0.01  LOGICAL_ERROR_PROB: 500 0.002
+MONTE 600 BLE 1 DEPOLARIZING_ERROR_PROB 0.01  LOGICAL_ERROR_PROB: 600 0.0016666666666666668
+MONTE 700 BLE 1 DEPOLARIZING_ERROR_PROB 0.01  LOGICAL_ERROR_PROB: 700 0.0014285714285714286
+MONTE 800 BLE 1 DEPOLARIZING_ERROR_PROB 0.01  LOGICAL_ERROR_PROB: 800 0.00125
+MONTE 900 BLE 1 DEPOLARIZING_ERROR_PROB 0.01  LOGICAL_ERROR_PROB: 900 0.0011111111111111111
+MONTE 1000 BLE 1 DEPOLARIZING_ERROR_PROB 0.01  LOGICAL_ERROR_PROB: 1000 0.001
+MONTE 100 BLE 0 DEPOLARIZING_ERROR_PROB 0.001  LOGICAL_ERROR_PROB: 100 0.0
+MONTE 200 BLE 0 DEPOLARIZING_ERROR_PROB 0.001  LOGICAL_ERROR_PROB: 200 0.0
+MONTE 300 BLE 0 DEPOLARIZING_ERROR_PROB 0.001  LOGICAL_ERROR_PROB: 300 0.0
+MONTE 400 BLE 0 DEPOLARIZING_ERROR_PROB 0.001  LOGICAL_ERROR_PROB: 400 0.0
+MONTE 500 BLE 0 DEPOLARIZING_ERROR_PROB 0.001  LOGICAL_ERROR_PROB: 500 0.0
+MONTE 600 BLE 0 DEPOLARIZING_ERROR_PROB 0.001  LOGICAL_ERROR_PROB: 600 0.0
+MONTE 700 BLE 0 DEPOLARIZING_ERROR_PROB 0.001  LOGICAL_ERROR_PROB: 700 0.0
+MONTE 800 BLE 0 DEPOLARIZING_ERROR_PROB 0.001  LOGICAL_ERROR_PROB: 800 0.0
+MONTE 900 BLE 0 DEPOLARIZING_ERROR_PROB 0.001  LOGICAL_ERROR_PROB: 900 0.0
+MONTE 1000 BLE 0 DEPOLARIZING_ERROR_PROB 0.001  LOGICAL_ERROR_PROB: 1000 0.0
+...
 ```
 
 directory structure
 ```
 ├── test.py
 └── dec_data (Folder)
+```
+
+`dec_data/FIVE_CODE_5_1_monte_1000_20220105175841.csv`
+```
+DEPOLARIZING_PROB,[0.1, 0.01, 0.001, 0.0001]
+PHYSICAL_ERROR_PROB,[0.1, 0.01, 0.001]
+LOGICAL_ERROR_PROB,[0.086, 0.001, 0.0]
 ```
 
 # Features
