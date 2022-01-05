@@ -64,7 +64,7 @@ Please wait patiently.
 ## 5. Confirm the decoding results.
 In `/dec_data`, PyQecc generates the simulation results.
 
-```
+```console
 ...
 MONTE 1000 BLE 86 DEPOLARIZING_ERROR_PROB 0.1  LOGICAL_ERROR_PROB: 1000 0.086
 MONTE 100 BLE 1 DEPOLARIZING_ERROR_PROB 0.01  LOGICAL_ERROR_PROB: 100 0.01
@@ -94,6 +94,13 @@ directory structure
 ```
 ├── test.py
 └── dec_data (Folder)
+```
+
+`dec_data/FIVE_CODE_5_1_monte_1000_20220105175841.csv`
+```
+DEPOLARIZING_PROB,[0.1, 0.01, 0.001, 0.0001]
+PHYSICAL_ERROR_PROB,[0.1, 0.01, 0.001]
+LOGICAL_ERROR_PROB,[0.086, 0.001, 0.0]
 ```
 
 # Features
