@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from pyqec.qecc import *
+from pyqecc.qecc import *
 
 TEST_DATA_PARA = [
     {

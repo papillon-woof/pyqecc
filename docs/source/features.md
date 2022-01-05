@@ -1,6 +1,6 @@
 # Feature
 
-# `pyqec.sim.dec_sim()`
+# `pyqecc.sim.dec_sim()`
 ```python
 dec_sim(
     myQECC,
@@ -23,22 +23,22 @@ dec_sim(
 `LOG_OUTPUT`: Whether log output console.
 `LOG_OUTPUT_SPAN`: log output span of monte calro.
 
-# `pyqec.qecc.toy.SteaneCode()`
+# `pyqecc.qecc.toy.SteaneCode()`
 Return the instance of steane code
 
-# `pyqec.qecc.toy.FiveCode()`
+# `pyqecc.qecc.toy.FiveCode()`
 Return the instance of 5-qubits code
 
-# `pyqec.qecc.toy.ShorCode()`
+# `pyqecc.qecc.toy.ShorCode()`
 Return the instance of shor code
 
-# `pyqec.qecc.toy.BitFlipCode()`
+# `pyqecc.qecc.toy.BitFlipCode()`
 Return the instance of bit flip code
 
-# `pyqec.qecc.toy.PhaseFlipCode()`
+# `pyqecc.qecc.toy.PhaseFlipCode()`
 Return the instance of phase flip code
 
-# `pyqec.qecc.stabilizer.SC(CODE)`
+# `pyqecc.qecc.stabilizer.SC(CODE)`
 Stabilizer Code class
 ```
 class SC(CODE)
@@ -104,10 +104,10 @@ __init__(
   - mode=`ML_LUT`: ML decoding (using lookup table)
   - mode=`ML`: ML decoding (calculate logical error probability `L` and `L=argmax(logical_error_probability)`, `L^T` is returned)
 
-# `pyqec.qecc.ParaCode(SC)`
+# `pyqecc.qecc.ParaCode(SC)`
 `code_instances`: The code instances (Write the `[Code1,Code2,...]`.)
 
-# `pyqec.qecc.ConcCode(SC)`
+# `pyqecc.qecc.ConcCode(SC)`
 Concatenated code class.
 
 **constructor**  
@@ -123,7 +123,7 @@ def __init__(self,code_instances,P=None,BITWISE = True,mode="BP"):
 **method**  
 `calc_grobal_H(self)`: calculation global parity check matrix
 
-# `pyqec.qecc.abstruct.CODE()`
+# `pyqecc.qecc.abstruct.CODE()`
 ```python
 class CODE(metaclass=ABCMeta):
 ```

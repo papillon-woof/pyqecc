@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from pyqec.channel import *
+from pyqecc.channel import *
 def test_depolarizing():
     np.random.seed=0
     n = 100000

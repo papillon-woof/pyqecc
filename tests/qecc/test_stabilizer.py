@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from pyqec.qecc import *
+from pyqecc.qecc import *
 DIFF_THRESHOLD = 1E-4
 
 TEST_FIVE_DATA = {

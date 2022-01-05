@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from pyqec.util import *
+from pyqecc.util import *
 DIFF_THRESHOLD = 1E-4
 TEST_DATA_SYMPLEX_BINARY_INNER_PRODUCT = {
     "NUM_OF_CASE": 4,

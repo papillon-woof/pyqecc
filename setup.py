@@ -9,8 +9,8 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='pyqec', # パッケージ名(プロジェクト名)
-    packages=['pyqec','pyqec.qecc','pyqec.sim','pyqec.channel','pyqec.util'], # パッケージ内(プロジェクト内)のパッケージ名をリスト形式で指定
+    name='pyqecc', # パッケージ名(プロジェクト名)
+    packages=['pyqecc','pyqecc.qecc','pyqecc.sim','pyqecc.channel','pyqecc.util'], # パッケージ内(プロジェクト内)のパッケージ名をリスト形式で指定
     version='0.0.1', # バージョン
     license='MIT', # ライセンス
     install_requires=['numpy', ], # pip installする際に同時にインストールされるパッケージ名をリスト形式で指定
@@ -20,7 +20,7 @@ setup(
     description='Simulater for quantum error correction code.', # パッケージの簡単な説明
     long_description=long_description, # PyPIに'Project description'として表示されるパッケージの説明文
     long_description_content_type='text/markdown', # long_descriptionの形式を'text/plain', 'text/x-rst', 'text/markdown'のいずれかから指定
-    keywords='pyqec pyQec py-qec qecc qec quantum error correction quantum computer',# PyPIでの検索用キーワードをスペース区切りで指定
+    keywords='pyqecc PyQecc py-qecc qecc qec quantum error correction quantum computer',# PyPIでの検索用キーワードをスペース区切りで指定
     classifiers=[
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3.8',
