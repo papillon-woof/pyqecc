@@ -1,7 +1,7 @@
 <div align="center">
 <img src="https://user-images.githubusercontent.com/72004949/148188473-22ea4600-d1d1-46b6-814b-0d3414af5750.png" alt="pyqecc" title="pyqecc">
 </div>
-
+[![Documentation Status](https://readthedocs.org/projects/pyqecc/badge/?version=latest)](https://pyqecc.readthedocs.io/en/latest/?badge=latest)
 # Overview
 PyQecc mainly provide quantum error correction code (QECC) simulator.
 - [Installation](https://pyqecc.readthedocs.io/en/latest/?) (This page)
