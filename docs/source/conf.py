@@ -17,7 +17,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'pyqec'
+project = 'pyqecc'
 copyright = '2022, papillon'
 author = 'papillon'
 

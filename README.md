@@ -1,32 +1,32 @@
 <div align="center">
-<img src="https://user-images.githubusercontent.com/72004949/147950760-7b073f0b-1efb-4d65-a8db-b347c0e115e0.png" alt="pyqec" title="pyqec">
+<img src="https://user-images.githubusercontent.com/72004949/148188473-22ea4600-d1d1-46b6-814b-0d3414af5750.png" alt="pyqecc" title="pyqecc">
 </div>
 
 # Overview
-PyQec mainly provide quantum error correction code (QECC) simulator.
+PyQecc mainly provide quantum error correction code (QECC) simulator.
 - installation (This page)
 - Quick start (This page)
 - [features](features.md)
-- [Source code](https://github.com/papillon-woof/pyqec)
+- [Source code](https://github.com/papillon-woof/pyqecc)
 # Installation
 
 ```
-pip install pyqec
+pip install pyqecc
 ```
-In some cases, installation required setting for `--proxy`, `--user` or `sudo`. PyQec is written by python3
+In some cases, installation required setting for `--proxy`, `--user` or `sudo`. PyQecc is written by python3
 
 # Quick start
 We explane the tutorial usage. 
 Please prepare the `.py` file (e.g. `test.py`). Please copy and paste following code
 ```python
-from pyqec import *
+from pyqecc import *
 my_code = FIVE()
 print(my_code)
 dec_sim(my_code)
 ```
-The steps of evalutation for decoding performance are `Import the PyQec.`, `Create the instance for QECC.`, `Prepare the decoding simulator`, `Start the decoding simulation`, and `Confirm the decoding result`.
+The steps of evalutation for decoding performance are `Import the PyQecc.`, `Create the instance for QECC.`, `Prepare the decoding simulator`, `Start the decoding simulation`, and `Confirm the decoding result`.
 
-## 1. Import the PyQec.
+## 1. Import the PyQecc.
 ```python
 from pyqec import *
 ```
@@ -62,7 +62,7 @@ python test.py
 ```
 Please wait patiently. 
 ## 5. Confirm the decoding results.
-In `/dec_data`, PyQec generates the simulation results.
+In `/dec_data`, PyQecc generates the simulation results.
 
 ```
 [decoding result]
@@ -98,10 +98,18 @@ See the detail for [features](features.md)
 
 # Simulation example
 Concatenated 5-qubit codes (concatenation for 1, 2, and 3) [2, Fig. 1].  
-
+![image](https://user-images.githubusercontent.com/72004949/148180717-3c523204-3acc-48c6-a736-503b14dece4e.png)
 ```python
 #Source code
-
+from pyqecc import *
+NUM_OF_CONCATENATE = 3
+for num_of_concatenate in range(1,NUM_OF_CONCATENATE+1):
+    conc_code = [FiveCode()]
+    for i in range(1,num_of_concatenate):
+        conc_code += [ParaCode([FiveCode() for i in range(5 ** i)])]
+    my_code = ConcCode(conc_code)
+    print(my_code)
+    dec_sim(my_code,PROB=[0.13, 0.15, 0.17, 0.18, 0.1885, 0.19],MONTE=5000)
 ```
 
 # Future works
