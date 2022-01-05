@@ -98,10 +98,18 @@ See the detail for [features](features.md)
 
 # Simulation example
 Concatenated 5-qubit codes (concatenation for 1, 2, and 3) [2, Fig. 1].  
-
+![image](https://user-images.githubusercontent.com/72004949/148180717-3c523204-3acc-48c6-a736-503b14dece4e.png)
 ```python
 #Source code
-
+from pyqec import *
+NUM_OF_CONCATENATE = 3
+for num_of_concatenate in range(1,NUM_OF_CONCATENATE+1):
+    conc_code = [FiveCode()]
+    for i in range(1,num_of_concatenate):
+        conc_code += [ParaCode([FiveCode() for i in range(5 ** i)])]
+    my_code = ConcCode(conc_code)
+    print(my_code)
+    dec_sim(my_code,PROB=[0.13, 0.15, 0.17, 0.18, 0.1885, 0.19],MONTE=5000)
 ```
 
 # Future works
