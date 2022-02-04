@@ -19,7 +19,7 @@ setup(
     version="0.0.1",  # version
     license="MIT",  # lisence
     install_requires=[
-        "numpy",
+        "numpy>=1.21",
     ],
     author="papillon",
     author_email="ogyogugige@gmail.com",
@@ -30,6 +30,6 @@ setup(
     keywords="pyqecc PyQecc py-qecc qecc qec quantum error correction quantum computer quantum computing",
     classifiers=[
         "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
     ],
 )
