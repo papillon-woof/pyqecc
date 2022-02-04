@@ -9,22 +9,25 @@ def dec_sim(
     MONTE=1000,
     ERR_STOP=1000,
     PROB=[0.1, 0.01, 0.001, 0.0001],
-    CHANNEL_MODEL="DEPOLARIZING",
+    channel_instance = None,
     DEBUG=False,
     LABEL=["DEPOLARIZING_PROB", "PHYSICAL_ERROR_PROB", "LOGICAL_ERROR_PROB"],
     LOG_OUTPUT=True,
-    LOG_OUTPUT_SPAN=100,
+    LOG_OUTPUT_SPAN=100, 
 ):
     RESULTS = {}
     RESULTS["LOGICAL_ERROR_PROB"] = []
     RESULTS["PHYSICAL_ERROR_PROB"] = []
     RESULTS["DEPOLARIZING_PROB"] = PROB
     n = myQECC.n
+    if channel_instance is None:
+        channel_instance = DepolarizingChannel(0)
     for p in PROB:
+        channel_instance = DepolarizingChannel(p)
         ble = 0
         myQECC.set_error_probability(np.array([1 - p, p / 3, p / 3, p / 3]), iid=True)
         for mc in range(1, MONTE + 1):
-            E = channel(n, p, CHANNEL_MODEL=CHANNEL_MODEL)
+            E = channel_instance.channel(n)
             syndrome = myQECC.get_syndrome(E)
             EE = myQECC.decode(syndrome)["LT"]
             # print(E,EE)

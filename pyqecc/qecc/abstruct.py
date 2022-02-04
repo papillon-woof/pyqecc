@@ -18,6 +18,10 @@ class CODE(metaclass=ABCMeta):
         return self._enc_circuit
     """
 
+    @abstractmethod
+    def decode(self):
+        pass
+
     @property
     def n(self):
         return self._n

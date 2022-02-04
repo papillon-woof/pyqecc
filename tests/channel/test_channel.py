@@ -4,10 +4,10 @@ from pyqecc.channel import *
 
 
 def test_depolarizing():
-    np.random.seed = 0
     n = 100000
     for p in [0.01, 0.1, 0.2]:
-        e = depolarizing(n, p)
+        myChannel = DepolarizingChannel(p=p,seed=0)
+        e = myChannel.channel(n)
         cx = 0
         cy = 0
         cz = 0
@@ -21,3 +21,26 @@ def test_depolarizing():
         assert np.abs(cy / n - p / 3) < 0.003
         assert np.abs(cx / n - p / 3) < 0.003
         assert np.abs(cz / n - p / 3) < 0.003
+
+def test_t_bitflip():
+    n = 1000
+    for t in range(10):
+        myChannel = TBitFlipChannel(t=t,seed=0)
+        for i in range(30):
+            e = myChannel.channel(n)
+            assert sum(e)==t
+
+def test_pauli():
+    n = 100000
+    for p in [0.01, 0.1, 0.2, 0.3, 0.02, 0.4]:
+        myChannel = PauliChannel(px=p,pz=p/2,seed=0)
+        e = myChannel.channel(n)
+        cx = 0
+        cz = 0
+        for i in range(n):
+            if e[i] == 1:
+                cx += 1
+            if e[i + n] == 1:
+                cz += 1
+        assert np.abs(cx / n - p) < 0.003
+        assert np.abs(cz / n - p / 2) < 0.003
