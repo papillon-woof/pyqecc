@@ -20,9 +20,10 @@ def dec_sim(
     RESULTS["PHYSICAL_ERROR_PROB"] = []
     RESULTS["DEPOLARIZING_PROB"] = PROB
     n = myQECC.n
+    if channel_instance is None:
+        channel_instance = DepolarizingChannel(0)
     for p in PROB:
-        if channel_instance is None:
-            channel_instance = DepolarizingChannel(p)
+        channel_instance = DepolarizingChannel(p)
         ble = 0
         myQECC.set_error_probability(np.array([1 - p, p / 3, p / 3, p / 3]), iid=True)
         for mc in range(1, MONTE + 1):
