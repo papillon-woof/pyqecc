@@ -1,7 +1,8 @@
-import numpy as np
-from ..channel import *
 import os
 from datetime import datetime
+import numpy as np
+from ..channel import *
+
 
 
 def dec_sim(

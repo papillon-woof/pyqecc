@@ -15,7 +15,7 @@ setup(
         "pyqecc.sim",
         "pyqecc.channel",
         "pyqecc.util",
-    ],  # パッケージ内(プロジェクト内)のパッケージ名をリスト形式で指定
+    ],
     version="0.0.1",  # version
     license="MIT",  # lisence
     install_requires=[

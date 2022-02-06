@@ -1,5 +1,6 @@
 from abc import ABCMeta, abstractmethod
 import numpy as np
+
 class Channel(metaclass=ABCMeta):
     _name = ""
 

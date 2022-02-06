@@ -1,7 +1,6 @@
 from abc import ABCMeta, abstractmethod
 import numpy as np
 
-
 class CODE(metaclass=ABCMeta):
     _name = ""
 
@@ -12,7 +11,7 @@ class CODE(metaclass=ABCMeta):
         self._R = self.k / self.n
 
     """
-    #未実装
+    #not implimented
     @property
     def enc_circ(self):
         return self._enc_circuit

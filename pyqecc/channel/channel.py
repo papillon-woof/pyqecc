@@ -1,5 +1,5 @@
-from .abstruct import *
 import numpy as np
+from .abstruct import Channel
 
 class DepolarizingChannel(Channel):
     def __init__(self,p,seed=None):
@@ -14,7 +14,7 @@ class DepolarizingChannel(Channel):
         y_pos = np.intersect1d(np.where(r < 2 * self.p / 3)[0], np.where(r > self.p / 3)[0])
         E[x_pos] = 1  # X
         E[n + z_pos] = 1  # Z
-        E[y_pos] = 1
+        E[y_pos] = 1  # Y
         E[n + y_pos] = 1  # Y
         return E
 

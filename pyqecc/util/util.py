@@ -2,7 +2,6 @@ import numpy as np
 
 X_OR_Z = 2
 
-
 def arr2int(arr):
     results = 0
     lengths = len(arr)

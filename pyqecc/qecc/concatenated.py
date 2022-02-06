@@ -1,12 +1,10 @@
 from .stabilizer import *
 
-
 class ParaCode(SC):
     """
-    符号を並列連結した符号を作る．
-    code_instances: 符号インスタンスのlist.右から順に，通信路に近くなる．
-    Interleaver: 量子ビット順序のインタリーバ．バースト誤り防止や順序を入れ替えたい場合に使用．
-    IID:誤り分布が，独立同分布か．
+    Generate a paralellized code
+    code_instances: a list of code instance which is near the channel from right to left.
+    e.g. bit-flip code with parallelized number of two.
     [110000|000000]
     [011000|000000]
     [000110|000000]
