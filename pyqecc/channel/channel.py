@@ -31,3 +31,6 @@ def channel(n,p,CHANNEL_MODEL="DEPOLARIZING"):
 
 def gaussian_quantum_channel(n,p):
     pass
+
+def photon_loss_channel(n,p):
+    pass
