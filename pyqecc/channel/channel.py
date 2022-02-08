@@ -28,3 +28,6 @@ def channel(n,p,CHANNEL_MODEL="DEPOLARIZING"):
     elif CHANNEL_MODEL=="AMPLITUDE_DUMPING":
         ValueError("Not implimentation")
         #return amplitude_damping(n,p)
+
+def gaussian_quantum_channel(n,p):
+    pass
