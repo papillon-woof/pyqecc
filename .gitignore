@@ -129,5 +129,6 @@ dmypy.json
 .pyre/
 
 /dec_data/
-
 dev.py
+pyqecc/qecc/topological_data/
+test.py

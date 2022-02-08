@@ -5,6 +5,9 @@ from ..util import *
 import csv
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
+import os
+import datetime
+from datetime import datetime
 
 def plt_V(V):
     if type(V) == list:
@@ -220,7 +223,9 @@ class TORIC(SURFACE):
         self._num_v = len(self.V)
         self._num_e = len(self.E)
         self._num_f = len(self.F)
-        self._fname = 'src/fec/topological_data'+'toric_'+str(d1)+'_'+str(d2)+'.csv'
+        if not os.path.isdir('pyqecc/qecc/topological_data'):
+            os.makedirs('pyqecc/qecc/topological_data')
+        self._fname = 'pyqecc/qecc/topological_data'+'/toric_'+str(d1)+'_'+str(d2)+'_'+datetime.now().strftime('%Y%m%d%H%M%S')+'.csv'
         with open(self.fname, 'w',newline="") as f:
             writer = csv.writer(f)
             writer.writerow([self.num_v,self.num_e,self.num_f])
@@ -235,9 +240,9 @@ class TORIC(SURFACE):
         self.set_L()
         self.enc_circuit = None
         self.dec_circuit = None
-        if P == None:
-            self.set_P(P)
-        self.ML_decoding_qubit_limit = 15
+        #if P == None:
+        #    self.set_P(P)
+        #self.ML_decoding_qubit_limit = 15
 
     def set_T(self,T=None):
         pass
