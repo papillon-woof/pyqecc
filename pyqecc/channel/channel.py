@@ -3,7 +3,7 @@ import numpy as np
 
 def depolarizing(n,p):
     r = np.random.random(n)
-    E = np.zeros(2*n,dtype='i1')
+    E = np.zeros(2 * n,dtype='i1')
     x_pos = np.where(r<=p/3)[0]
     z_pos = np.intersect1d(np.where(r<p)[0], np.where(r>2*p/3)[0])
     y_pos = np.intersect1d(np.where(r<2*p/3)[0], np.where(r>p/3)[0])
