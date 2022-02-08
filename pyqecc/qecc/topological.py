@@ -272,6 +272,9 @@ class TORIC(SURFACE):
 
     def set_L(self, L=None):
         pass
+    
+    def decode(self, mode="mwpma"):
+        pass
 
     @property
     def d1(self):
