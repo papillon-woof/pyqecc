@@ -145,6 +145,9 @@ class SURFACE(SC):
             for i in range(self.num_f):
                 f = [int(data) for data in reader[1 + i + self.num_e + self.num_v]]
                 self._F[i] = f
+        print(1, self.V)
+        print(2, self.E)
+        print(3, self.F)
 
         # 双対辺
         # self._EE = [[] for i in range(self.num_e)]
