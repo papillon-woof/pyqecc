@@ -244,6 +244,14 @@ class TORIC(SURFACE):
         #    self.set_P(P)
         #self.ML_decoding_qubit_limit = 15
 
+    def dikstra(self,G,s):
+        return
+    def mwpm_decoder(self,syndrome,side_information="No"):
+        # generate the syndrome graph:
+        syndrome_v = np.where(syndrome==1)[0]
+
+    def blossum(self):
+        pass
     def set_T(self,T=None):
         pass
 
