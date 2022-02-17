@@ -21,6 +21,7 @@ class SC(CODE):
         P=None,
         mode="HD",
         BITWISE=True,
+        ANALOG_INFORMATION="No",
     ):
         self.decoder_output = {
             "LT": None,
@@ -159,6 +160,8 @@ class SC(CODE):
             self.LUT_decode(syndrome, **param)
         if self._mode == "HD":
             self.hard_decode(syndrome, **param)
+        if self._mode == "ANALOG":
+            self.analog_decode(syndrome[0], syndrome[1]) 
         return self.decoder_output
 
     @property

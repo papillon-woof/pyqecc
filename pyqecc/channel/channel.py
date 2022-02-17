@@ -42,3 +42,21 @@ class PauliChannel(Channel):
         E[x_pos] = 1  # X
         E[n + z_pos] = 1  # Z
         return E
+
+class GaussianQuantumChannel(Channel):
+    def __init__(self,sigma,sigma_z=None,seed=None):
+        self.sigma_x = sigma
+        if sigma_z is None:
+            self.sigma_z = sigma_z
+        else:
+            self.sigma_z = sigma
+        super().__init__(seed)
+
+    def channel(self,n):
+        '''
+        Return the ""Analog information""
+        '''
+        E = np.zeros(2 * n)
+        E[:n] = np.random.rand(0,n)*self.sigma_x
+        E[n:] = np.random.rand(0,n)*self.sigma_z
+        return E

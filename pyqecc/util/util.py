@@ -27,7 +27,7 @@ def symplex_binary_inner_product(a, b):
     return np.mod(np.dot(np.dot(a, Lam), b), 2)
 
 
-def gaussjordan(X, change=0):
+def gaussjordan(X, change=False):
     """Compute the binary row reduced echelon form of X.
     Parameters
     ----------
