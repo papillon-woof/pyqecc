@@ -47,9 +47,9 @@ class GaussianQuantumChannel(Channel):
     def __init__(self,sigma,sigma_z=None,seed=None):
         self.sigma_x = sigma
         if sigma_z is None:
-            self.sigma_z = sigma_z
-        else:
             self.sigma_z = sigma
+        else:
+            self.sigma_z = sigma_z
         super().__init__(seed)
 
     def channel(self,n):
@@ -57,6 +57,7 @@ class GaussianQuantumChannel(Channel):
         Return the ""Analog information""
         '''
         E = np.zeros(2 * n)
-        E[:n] = np.random.rand(0,n)*self.sigma_x
-        E[n:] = np.random.rand(0,n)*self.sigma_z
+        #print(np.random.rand(n))
+        E[:n] = np.random.rand(n)*self.sigma_x
+        E[n:] = np.random.rand(n)*self.sigma_z
         return E

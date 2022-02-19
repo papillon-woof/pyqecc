@@ -2,103 +2,91 @@ import numpy as np
 from .abstruct import *
 from ..util import *
 
-from stabilizer import SC
+from .stabilizer import SC
 
-class StabilizerWithGKP(SC):
+class GKP(CODE):
     NAME = "GKP qubit"
     USAGE = 'GKP_STABILIZER_CLASS'
 
     def __init__(
         self,
-        n,
-        k,
-        H=None,
-        T=None,
-        L=None,
-        P=None,
-        mode="HD",
-        BITWISE=True,
-        ANALOG_INFORMATION="No",
+        code_instance,sigma
     ):
-        super().__init__(n,k,H=None,T=None,L=None,P=None,mode="HD",BITWISE=True,)
+        self._code_instance = code_instance
+        self._sigma = sigma
+        super().__init__(self.code_instance.n,self.code_instance.k)
         # create analog infomation calc matrix
-        self.matrix_for_genarating_LLR = util.gaussjordan(np.concatenate([H,L],0),change=True)
+        #self.matrix_for_genarating_LLR = util.gaussjordan(np.concatenate([self.code_instance.H,self.code_instance.L],0),change=True)
         self.llr = np.zeros(self.n)
-    def get_digital_information(self,E):
-        for i in range(self.n):
-            count=0
-            for j in range(self.n):
-                if 1==self.matrix_for_genarating_LLR[i,j]:
-                    self.llr[i]+=((-1)**(count%2))*E[i][j]
-        llr = np.log(self.llr)
-        return llr
 
-    def get_syndrome(self,E):
+    # def get_analog_information(self,E):
+    #     for i in range(self.n):
+    #         count=0
+    #         for j in range(self.n):
+    #             if 1==self.matrix_for_genarating_LLR[i,j]:
+    #                 self.llr[i]+=((-1)**(count%2))*E[i][j]
+    #     llr = np.log(self.llr)
+    #     return llr
+
+    def get_syndrome(self,E,digital=False):
         '''
         引数: E: アナログ雑音もしくは誤り
+        Eは，実際に生じたシフトである．
         '''
-        if E.dtype == "i1":
-            return 
-        else:
-             analog_information = np.zeros(2 * self._n)#ここに，アナログ値を得る方法を記載
-             digital_information = self.get_digital_information(E)
-             syndrome = self._codeInstance.get_syndrome(digital_information)
-             return syndrome,analog_information
+        err = np.zeros(2*self.n,dtype="i1")
+        # 2√π>|E|>√π => error 
+        E = dmods(np.abs(E),2 * np.sqrt(np.pi))
+        e_pos = np.where(E>np.sqrt(np.pi))[0]
+        err[e_pos]=1
+        syndrome = self._code_instance.get_syndrome(err)
+        if digital:
+            return syndrome
+        # calculation Δm
+        delta_m = np.abs(E.copy())
+        delta_m[e_pos] = np.abs(np.sqrt(np.pi)-E)[e_pos]
+        return syndrome, delta_m
 
-    def gkp_cx(a,b):
-        return a-b
-    def analog_decode(analog_information):
+    def calc_llr(self,val):
+        return np.log(np.exp((val**2)/(2*self.sigma**2))/np.exp(((np.sqrt(np.pi)-np.abs(val))**2)/(2*self.sigma**2)))
+
+    def analog_syndrome_decode(self,information):
+        syndrome = information[0]
+        delta_m = information[1]
+        most_likely_error = np.zeros(self.n,dtype='i1')
+        mi = +100000
         
+        for i in range(2 * 2 ** self.k):
+            lt = self.code_instance.get_T(syndrome)
+            for ii in range(2 * self.k):
+                lt ^= (1&(i>>ii))*self.code_instance.get_L(i)
+            for j in range(2 * 2 ** (self.n-self.k)):
+                c = lt.copy()
+                for jj in range(2 * self.nk):
+                    c ^= (1&(j>>jj))*self.code_instance.get_S(j)
+                llr = 0
+                for k in range(len(c)):
+                    #print(111,(((-1)**c[k])*self.calc_llr(delta_m[k])))
+                    llr += (((-1)**c[k])*self.calc_llr(delta_m[k]))
+                #print("llr",llr,c)
+                if mi > llr:
+                    mi = llr
+                    most_likely_error = c        
+        return most_likely_error
 
     def decode(self,syndrome):
+        
         # do not use the analog information
-        #if len(syndrome)==1:
-        #    return super().decode(syndrome, analog=False)
-        # use the analog information
-        #elif len(syndrome)==2:
-        return self.analog_decode(syndrome)
-    @property
-    def codeInstance(self):
-        return self._codeInstance
-
-    @property
-    def n(self):
-        return self._n
-
-class StabilizerWithGKP_old(SC):
-    NAME = "GKP qubit"
-    USAGE = 'GKP_STABILIZER_CLASS'
-    def __init__(self,n,codeInstance):
-        self._n = n
-        self._codeInstance = codeInstance
-    
-    def get_digital_information(self,E):
-        pass
-
-    def get_syndrome(self,E):
-        '''
-        引数: E: アナログ雑音もしくは誤り
-        '''
-        if E.dtype == "i1":
-            return 
+        if len(syndrome) == 1:
+            return super().decode(syndrome, analog=False)
+        
+        #use the analog information
         else:
-             analog_information = np.zeros(2 * self._n)#ここに，アナログ値を得る方法を記載
-             digital_information = self.get_digital_information(E)
-             syndrome = self._codeInstance.get_syndrome(digital_information)
-             return syndrome,analog_information
-
-    def decode(self,syndrome):
-        # do not use the analog information
-        if len(syndrome)==1:
-            return self.codeInstance.decode(syndrome, analog=False)
-        # use the analog information
-        elif len(syndrome)==2:
-            return self.codeInstance.decode(syndrome[0], mode="ANALOG")
+            return self.analog_syndrome_decode(syndrome)
 
     @property
-    def codeInstance(self):
-        return self._codeInstance
+    def code_instance(self):
+        return self._code_instance
 
     @property
-    def n(self):
-        return self._n
+    def sigma(self):
+        return self._sigma
