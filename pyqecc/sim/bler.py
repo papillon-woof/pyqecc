@@ -9,47 +9,42 @@ def dec_sim(
     myQECC,
     MONTE=1000,
     ERR_STOP=1000,
-    PROB=[0.1, 0.01, 0.001, 0.0001],
     channel_instance = None,
     DEBUG=False,
-    LABEL=["DEPOLARIZING_PROB", "PHYSICAL_ERROR_PROB", "LOGICAL_ERROR_PROB"],
+    LABEL=["CHANNEL_PARAMATER", "LOGICAL_ERROR_PROB"],
     LOG_OUTPUT=True,
     LOG_OUTPUT_SPAN=100, 
 ):
     RESULTS = {}
     RESULTS["LOGICAL_ERROR_PROB"] = []
-    RESULTS["PHYSICAL_ERROR_PROB"] = []
-    RESULTS["DEPOLARIZING_PROB"] = PROB
+    
     n = myQECC.n
     if channel_instance is None:
-        channel_instance = DepolarizingChannel(0)
-    for p in PROB:
-        channel_instance = DepolarizingChannel(p)
+        channel_instance = DepolarizingChannel(p = [0.1, 0.01, 0.001, 0.0001])
+    RESULTS["CHANNEL_PARAMETER"] = channel_instance.channel_parameter
+    for par in channel_instance.channel_parameter.keys():
         ble = 0
-        myQECC.set_error_probability(np.array([1 - p, p / 3, p / 3, p / 3]), iid=True)
+        myQECC.set_channel_param(par)
         for mc in range(1, MONTE + 1):
-            E = channel_instance.channel(n)
-            syndrome = myQECC.get_syndrome(E)
-            EE = myQECC.decode(syndrome)["LT"]
-            # print(E,EE)
-            if not myQECC.in_S(E ^ EE):
+            channel_output = channel_instance.channel(n,par)
+            syndrome = myQECC.get_syndrome(channel_output)
+            if not myQECC.in_S(channel_output["E"] ^ myQECC.decode(syndrome)["LT"]):
                 ble += 1
             if not mc % LOG_OUTPUT_SPAN:
                 print(
                     "MONTE",
                     mc,
-                    "BLE",
+                    "BLOCK_ERROR",
                     ble,
-                    "DEPOLARIZING_ERROR_PROB",
-                    p,
-                    " LOGICAL_ERROR_PROB:",
+                    channel_instance.channel_parameter_name,
+                    channel_instance.channel_parameter,
+                    "LOGICAL_ERROR_PROB:",
                     mc,
                     ble / mc,
                 )
             if ble > ERR_STOP:
                 break
         RESULTS["LOGICAL_ERROR_PROB"].append(ble / mc)
-        RESULTS["PHYSICAL_ERROR_PROB"].append(p)
         if ble / mc == 0:
             break
 

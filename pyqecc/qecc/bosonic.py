@@ -10,8 +10,13 @@ class GKP(CODE):
 
     def __init__(
         self,
-        code_instance,sigma
+        code_instance,
+        sigma = 0.1
     ):
+        self.decoder_output = {
+            "LT": None,
+            "LOGICAL_ERROR_PROBABILITY": None,
+        }
         self._code_instance = code_instance
         self._sigma = sigma
         super().__init__(self.code_instance.n,self.code_instance.k)
@@ -53,8 +58,8 @@ class GKP(CODE):
         syndrome = information[0]
         delta_m = information[1]
         most_likely_error = np.zeros(self.n,dtype='i1')
-        mi = +100000
-        
+        mi = 100000
+
         for i in range(2 * 2 ** self.k):
             lt = self.code_instance.get_T(syndrome)
             for ii in range(2 * self.k):
@@ -65,13 +70,12 @@ class GKP(CODE):
                     c ^= (1&(j>>jj))*self.code_instance.get_S(j)
                 llr = 0
                 for k in range(len(c)):
-                    #print(111,(((-1)**c[k])*self.calc_llr(delta_m[k])))
                     llr += (((-1)**c[k])*self.calc_llr(delta_m[k]))
-                #print("llr",llr,c)
                 if mi > llr:
                     mi = llr
-                    most_likely_error = c        
-        return most_likely_error
+                    most_likely_error = c
+        self.decoder_output["LT"] = most_likely_error        
+        return self.decoder_output["LT"]
 
     def decode(self,syndrome):
         

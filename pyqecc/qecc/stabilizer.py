@@ -37,14 +37,14 @@ class SC(CODE):
         self._T = T
         self._L = L
         self._BITWISE = BITWISE
-        self.set_error_probability(P, self.BITWISE, OUTPUT_LOG=False)
+        self.set_channel_param(P, self.BITWISE, OUTPUT_LOG=False)
         self._LUT = {}
         self._blockwise_error_probability = False
         self._bitwise_error_probability = False
         # self.enc_circuit = None # future work
         # self.dec_circuit = None # future work
 
-    def set_error_probability(
+    def set_channel_param(
         self, error_probability, BITWISE=True, iid=True, OUTPUT_LOG=False
     ):
         if not error_probability is None:
@@ -61,6 +61,7 @@ class SC(CODE):
                         )
                     self.blockwise_error_probability = False
                 else:
+                    print(error_probability)
                     self.blockwise_error_probability = (
                         bitwise_to_blockwise_error_probability(error_probability)
                     )  # By approximate the bitwise probability.
