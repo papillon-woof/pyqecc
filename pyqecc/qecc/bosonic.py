@@ -22,11 +22,16 @@ class StabilizerWithGKP(SC):
     ):
         super().__init__(n,k,H=None,T=None,L=None,P=None,mode="HD",BITWISE=True,)
         # create analog infomation calc matrix
-        A = np.concatenate([H,L],0)
-        
-
+        self.matrix_for_genarating_LLR = util.gaussjordan(np.concatenate([H,L],0),change=True)
+        self.llr = np.zeros(self.n)
     def get_digital_information(self,E):
-        pass
+        for i in range(self.n):
+            count=0
+            for j in range(self.n):
+                if 1==self.matrix_for_genarating_LLR[i,j]:
+                    self.llr[i]+=((-1)**(count%2))*E[i][j]
+        llr = np.log(self.llr)
+        return llr
 
     def get_syndrome(self,E):
         '''
@@ -42,17 +47,16 @@ class StabilizerWithGKP(SC):
 
     def gkp_cx(a,b):
         return a-b
-    def analog_decode(syndrome,analog_information):
+    def analog_decode(analog_information):
         
 
     def decode(self,syndrome):
         # do not use the analog information
-        if len(syndrome)==1:
-            return super().decode(syndrome, analog=False)
+        #if len(syndrome)==1:
+        #    return super().decode(syndrome, analog=False)
         # use the analog information
-        elif len(syndrome)==2:
-            return self.analog_decode(syndrome[0],syndrome[1])
-
+        #elif len(syndrome)==2:
+        return self.analog_decode(syndrome)
     @property
     def codeInstance(self):
         return self._codeInstance
