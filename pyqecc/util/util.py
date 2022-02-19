@@ -127,8 +127,11 @@ def blockwise_to_bitwise_error_probability(blockwise_error_probabilityrobability
 
 def dmod(a,b,div_max=100000):
     for i in range(div_max):
-        if a<b:
+        if a>b and a>0:
+            a -= b
+        if a<b and a<0:     
+            a += b
+        if np.abs(a)<b:
             return a
-        a -= b
     raise AssertionError("Div_max is proceeded.")
 dmods = np.frompyfunc(dmod, 2, 1)

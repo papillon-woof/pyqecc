@@ -61,7 +61,6 @@ class SC(CODE):
                         )
                     self.blockwise_error_probability = False
                 else:
-                    print(error_probability)
                     self.blockwise_error_probability = (
                         bitwise_to_blockwise_error_probability(error_probability)
                     )  # By approximate the bitwise probability.
@@ -77,8 +76,8 @@ class SC(CODE):
     def get_error_probability(self, E):
         return self.blockwise_error_probability[arr2int(E)]
 
-    def get_syndrome(self, e):
-        return symplex_binary_inner_product(self._H, e)
+    def get_syndrome(self, channel_output):
+        return symplex_binary_inner_product(self._H, channel_output["E"])
 
     def get_T(self, ind):
         return self.T[arr2int(ind)].astype("i1")  # LUTでの計算? BPでの計算もあり?LDPCについて学ぶ．

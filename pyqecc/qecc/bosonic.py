@@ -24,6 +24,9 @@ class GKP(CODE):
         #self.matrix_for_genarating_LLR = util.gaussjordan(np.concatenate([self.code_instance.H,self.code_instance.L],0),change=True)
         self.llr = np.zeros(self.n)
 
+    def set_channel_param(self, sigma):
+        self._sigma = sigma
+
     # def get_analog_information(self,E):
     #     for i in range(self.n):
     #         count=0
@@ -33,26 +36,31 @@ class GKP(CODE):
     #     llr = np.log(self.llr)
     #     return llr
 
-    def get_syndrome(self,E,digital=False):
+    def get_syndrome(self,channel_output,digital=False):
         '''
         引数: E: アナログ雑音もしくは誤り
         Eは，実際に生じたシフトである．
         '''
         err = np.zeros(2*self.n,dtype="i1")
-        # 2√π>|E|>√π => error 
-        E = dmods(np.abs(E),2 * np.sqrt(np.pi))
-        e_pos = np.where(E>np.sqrt(np.pi))[0]
+        
+        # 2√π>|E|>√π => error if 2√π < or < -2√π => +-2√π 
+        delta = dmods(channel_output["DELTA"],2*np.sqrt(np.pi))
+        e_pos = np.where(delta>np.sqrt(np.pi)/2)[0]
         err[e_pos]=1
-        syndrome = self._code_instance.get_syndrome(err)
+        syndrome = self.code_instance.get_syndrome({"E": err})
         if digital:
             return syndrome
+
         # calculation Δm
-        delta_m = np.abs(E.copy())
-        delta_m[e_pos] = np.abs(np.sqrt(np.pi)-E)[e_pos]
+        delta_m = np.abs(delta.copy())
+        delta_m[e_pos] = (np.sqrt(np.pi)-np.abs(delta))[e_pos]
         return syndrome, delta_m
 
-    def calc_llr(self,val):
-        return np.log(np.exp((val**2)/(2*self.sigma**2))/np.exp(((np.sqrt(np.pi)-np.abs(val))**2)/(2*self.sigma**2)))
+    def in_S(self,s):
+        return self.code_instance.in_S(s)
+
+    def calc_llr(self,val,sigma):
+        return np.log(np.exp((val**2)/(2*sigma**2))/np.exp(((np.sqrt(np.pi)-np.abs(val))**2)/(2*sigma**2)))
 
     def analog_syndrome_decode(self,information):
         syndrome = information[0]
@@ -70,12 +78,33 @@ class GKP(CODE):
                     c ^= (1&(j>>jj))*self.code_instance.get_S(j)
                 llr = 0
                 for k in range(len(c)):
-                    llr += (((-1)**c[k])*self.calc_llr(delta_m[k]))
+                    llr += (((-1)**c[k])*self.calc_llr(delta_m[k],self.sigma))
                 if mi > llr:
                     mi = llr
                     most_likely_error = c
-        self.decoder_output["LT"] = most_likely_error        
-        return self.decoder_output["LT"]
+        self.decoder_output["LT"] = most_likely_error
+        #print(most_likely_error)
+        return self.decoder_output
+    
+    def analog_decode(self,information):
+        syndrome = information[0]
+        delta_m = information[1]
+        most_likely_error = np.zeros(self.n,dtype='i1')
+        mi = 100000
+
+        for i in range(2 * 2 ** self.k):
+            lt = self.code_instance.get_T(syndrome)
+            for ii in range(2 * self.k):
+                lt ^= (1&(i>>ii))*self.code_instance.get_L(i)
+            llr = 0
+            for k in range(len(lt)):
+                llr += (((-1)**lt[k])*self.calc_llr(delta_m[k],self.sigma))
+            if mi > llr:
+                mi = llr
+                most_likely_error = lt
+        self.decoder_output["LT"] = most_likely_error
+        #print(most_likely_error)
+        return self.decoder_output
 
     def decode(self,syndrome):
         
@@ -85,7 +114,7 @@ class GKP(CODE):
         
         #use the analog information
         else:
-            return self.analog_syndrome_decode(syndrome)
+            return self.analog_decode(syndrome)
 
     @property
     def code_instance(self):

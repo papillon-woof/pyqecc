@@ -22,11 +22,11 @@ def dec_sim(
     if channel_instance is None:
         channel_instance = DepolarizingChannel(p = [0.1, 0.01, 0.001, 0.0001])
     RESULTS["CHANNEL_PARAMETER"] = channel_instance.channel_parameter
-    for par in channel_instance.channel_parameter.keys():
+    for ind in range(len(channel_instance.channel_parameter["PARAM_SET"])):
         ble = 0
-        myQECC.set_channel_param(par)
+        myQECC.set_channel_param(channel_instance.channel_parameter["PARAM_SET"][ind])
         for mc in range(1, MONTE + 1):
-            channel_output = channel_instance.channel(n,par)
+            channel_output = channel_instance.channel(n,ind)
             syndrome = myQECC.get_syndrome(channel_output)
             if not myQECC.in_S(channel_output["E"] ^ myQECC.decode(syndrome)["LT"]):
                 ble += 1
@@ -36,8 +36,7 @@ def dec_sim(
                     mc,
                     "BLOCK_ERROR",
                     ble,
-                    channel_instance.channel_parameter_name,
-                    channel_instance.channel_parameter,
+                    channel_instance.channel_parameter["PARAM_SET"][ind],
                     "LOGICAL_ERROR_PROB:",
                     mc,
                     ble / mc,

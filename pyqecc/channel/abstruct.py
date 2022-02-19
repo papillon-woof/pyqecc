@@ -7,18 +7,19 @@ class Channel(metaclass=ABCMeta):
     def __init__(self,seed,n=-1):
         self._channel_parameter_name = [] # string
         self._channel_parameter = {} # list or np.array
-        self._channel_output = {"E",None}
+        self._channel_output = {"E": None}
         self._n = n
         if not seed is None:
             np.random.seed(seed=seed)
 
     def generate_param(self):
-        p = []
-        for v in self._channel_parameter.values():
-            p = itertools.product(v, p)
+        key = list(self._channel_parameter.keys())
+        p = self._channel_parameter[key[0]]
+        for k in key[1:]:
+            p = itertools.product(self._channel_parameter[k], p)
+        p = [v for v in p]
         self._channel_parameter_name = self._channel_parameter.keys()
-        self._channel_parameter["PARAM_SET"] = list(set(p))
-
+        self._channel_parameter["PARAM_SET"] = p
 
     @abstractmethod
     def channel(self):
@@ -27,7 +28,8 @@ class Channel(metaclass=ABCMeta):
     
     def set_n(self,n):
         self._n = n
-        self._channel_output["E"] = np.zeros(n,dtype='i1')
+        print(111,self.n)
+        self._channel_output["E"] = np.zeros(2 * n,dtype='i1')
     
     @property
     def channel_parameter_name(self):
