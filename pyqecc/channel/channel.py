@@ -5,6 +5,8 @@ class DepolarizingChannel(Channel):
     def __init__(self,p,seed=None):
         super().__init__(seed)
         setp = []
+        if type(p) !=list and type(p)!=type(np.array):
+            p=[p]
         for pp in p:
             setp.append([1 - pp,pp/3,pp/3,pp/3])
         self._channel_parameter["p"] = np.array(setp)
@@ -27,20 +29,26 @@ class DepolarizingChannel(Channel):
 class BitFlipChannel(Channel):
     def __init__(self,t,seed=None):
         super().__init__(seed)
+        if type(t) !=list and type(t)!=type(np.array):
+            t=[t]
         self._channel_parameter["t"] = t
         self.generate_param()
 
     def channel(self,n,ind=0):
         if n>0 and n!=0:
             self.set_n(n)
-        self._channel_output["E"][:self.t[ind]] = 1
+        self._channel_output["E"][:self._channel_parameter["t"][ind]] = 1
         np.random.shuffle(self._channel_output["E"])
         return self._channel_output
 
 class PauliChannel(Channel):
     def __init__(self,px,pz=None,seed=None):
         super().__init__(seed)
+        if type(px) !=list and type(px)!=type(np.array):
+            px=[px]
         self._channel_parameter["px"] = px
+        if type(pz) !=list and type(pz)!=type(np.array):
+            pz=[pz]
         self._channel_parameter["pz"] = pz
         self.generate_param()
 
@@ -83,6 +91,8 @@ class GaussianQuantumChannel(Channel):
         self._channel_output["E"][e_pos]=1
 
         return self.channel_output
+    
+
     @property
     def bit_flip(self):
         return self._bit_flip

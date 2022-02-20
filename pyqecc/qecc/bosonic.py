@@ -1,7 +1,6 @@
 import numpy as np
 from .abstruct import *
 from ..util import *
-
 from .stabilizer import SC
 
 class GKP(CODE):
@@ -18,11 +17,11 @@ class GKP(CODE):
             "LT": None,
             "LOGICAL_ERROR_PROBABILITY": None,
         }
-        self._mode ="SYNDROME"
+        self._mode = mode
         self._code_instance = code_instance
         self._sigma = sigma
         super().__init__(self.code_instance.n,self.code_instance.k)
-        self.llr = np.zeros(self.n)
+        #self.llr = np.zeros(self.n)
         #self.matrix_for_genarating_LLR = util.gaussjordan(np.concatenate([self.code_instance.H,self.code_instance.L],0),change=True)
         
 
@@ -46,7 +45,7 @@ class GKP(CODE):
 
         # calculation Δm
         delta_m = np.abs(delta.copy())
-        delta_m[e_pos] = (np.sqrt(np.pi)-np.abs(delta))[e_pos]
+        delta_m[e_pos] = (np.sqrt(np.pi)-delta_m)[e_pos]
         return syndrome, delta_m
 
     def in_S(self,s):
@@ -56,6 +55,9 @@ class GKP(CODE):
         return np.log(np.exp((val**2)/(2*sigma**2))/np.exp(((np.sqrt(np.pi)-np.abs(val))**2)/(2*sigma**2)))
 
     def analog_ML_decode(self,information):
+        '''
+        Calculate the maximum likelihood decoding (ML-decoding) which maximize the P(L|information)
+        '''
         syndrome = information[0]
         delta_m = information[1]
         most_likely_error = np.zeros(self.n,dtype='i1')
@@ -79,30 +81,44 @@ class GKP(CODE):
         return self.decoder_output
     
     def analog_decode(self,information):
+        '''
+        Approximatly calculate the maximum likelihood decoding (ML-decoding) 
+        by the P(L|information) without degenerate for error.
+        That is, stabilizer is not considering in calculation.
+        '''
         syndrome = information[0]
         delta_m = information[1]
-        most_likely_error = np.zeros(self.n,dtype='i1')
+        error = np.zeros(self.n,dtype='i1')
         mi = 100000
         for i in range(2*2 ** self.k):
+            
+            # About recovery opelator T
             lt = self.code_instance.get_T(syndrome)
+            
+            # About logical opelator L
             for ii in range(2 * self.k):
                 lt ^= (1&(i>>ii))*self.code_instance.get_L(i)
+            
+            # Calculation for log-likelihood ratio (LLR)
             llr = 0
             for k in range(len(lt)):
                 llr += (((-1)**lt[k])*self.calc_llr(delta_m[k],self.sigma))
             if mi > llr:
                 mi = llr
-                most_likely_error = lt
-        self.decoder_output["LT"] = most_likely_error
+                error = lt
+        self.decoder_output["LT"] = error
         return self.decoder_output
 
     def decode(self,syndrome,mode=None):     
-        # do not use the analog information
         if mode is not None:
             self._mode = mode
+        
+        # Do not use the analog information
         if len(syndrome) == 1 or self.mode[:8] == "DIGITAL_":
             self.code_instance.decode(syndrome, mode = self.mode[8:])
             return super().decode(syndrome, analog=False)
+        
+        # Use the analog information
         elif self.mode == "ML":
             return self.analog_ML_decode(syndrome)
         elif self.mode == "SYNDROME":

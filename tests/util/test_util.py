@@ -47,12 +47,6 @@ TEST_BITWISE_TO_BLOCKWISE_PROBABILITY = {
     "TEST_CASE": [1, 2, 3, 4, 5, 6, 7],
 }
 
-TEST_DMODS = {
-    "NUM_OF_CASE": 3,
-    "TEST_CASE": [(3.5,2),(5.2,0.5),(-5.2,3)],
-    "CORRECT": [1.5,0.2,-2.2],
-}
-
 def test_symplex_binary_inner_product():
     for i in range(TEST_DATA_SYMPLEX_BINARY_INNER_PRODUCT["NUM_OF_CASE"]):
         assert TEST_DATA_SYMPLEX_BINARY_INNER_PRODUCT["RESULT"][
@@ -87,7 +81,3 @@ def test_bitwise_to_blockwise_probability():
                 - p
             )
         )
-
-def test_dmods():
-    for i in range(TEST_DMODS["NUM_OF_CASE"]):
-        assert 1E-3>np.abs(dmod(TEST_DMODS["TEST_CASE"][i][0],TEST_DMODS["TEST_CASE"][i][1])-TEST_DMODS["CORRECT"][i])

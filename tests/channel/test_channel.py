@@ -7,7 +7,7 @@ def test_depolarizing():
     n = 100000
     for p in [0.01, 0.1, 0.2]:
         myChannel = DepolarizingChannel(p=p,seed=0)
-        e = myChannel.channel(n)
+        e = myChannel.channel(n)["E"]
         cx = 0
         cy = 0
         cz = 0
@@ -25,16 +25,16 @@ def test_depolarizing():
 def test_t_bitflip():
     n = 1000
     for t in range(10):
-        myChannel = TBitFlipChannel(t=t,seed=0)
+        myChannel = BitFlipChannel(t=t,seed=0)
         for i in range(30):
-            e = myChannel.channel(n)
+            e = myChannel.channel(n)["E"]
             assert sum(e)==t
 
 def test_pauli():
     n = 100000
     for p in [0.01, 0.1, 0.2, 0.3, 0.02, 0.4]:
         myChannel = PauliChannel(px=p,pz=p/2,seed=0)
-        e = myChannel.channel(n)
+        e = myChannel.channel(n)["E"]
         cx = 0
         cz = 0
         for i in range(n):
