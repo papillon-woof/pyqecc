@@ -1,4 +1,4 @@
-from pyqecc import *
+from pyqecc import FiveCode, dec_sim
 
 my_code = FiveCode(mode="ML")
 print(my_code)
