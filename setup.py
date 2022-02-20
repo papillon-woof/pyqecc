@@ -25,7 +25,6 @@ setup(
     author_email="ogyogugige@gmail.com",
     url="https://github.com/papillon-woof/pyqecc",
     description="Simulater for quantum error correction code.",
-    long_description=long_description,
     long_description_content_type="text/markdown",
     keywords="pyqecc PyQecc py-qecc qecc qec quantum error correction quantum computer quantum computing",
     classifiers=[
