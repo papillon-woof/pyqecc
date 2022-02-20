@@ -92,20 +92,19 @@ class GaussianQuantumChannel(Channel):
         self._channel_parameter["sigma"] = sigma
         self._bit_flip = bit_flip
         self._phase_flip = phase_flip
-        self.param_len(sigma)
+        self.param_len = len(sigma)
 
     def channel(self,n=-1,ind=0):
         '''
         Return the ""Analog information""
         '''
-        self._channel_output["E"] *= 0
         if n>0:
             self.n = n
         if self.bit_flip:
             self._channel_output["DELTA"][:self.n] = np.random.normal(scale = self.channel_parameter["sigma"][ind], size  = 2*self.n)[:self.n]
         if self.phase_flip:
             self._channel_output["DELTA"][self.n:] = np.random.normal(scale = self.channel_parameter["sigma"][ind], size  = 2*self.n)[self.n:]
-        
+        self._channel_output["E"] *= 0
         # 2√π>|E|>√π => error
         delta = pishifts(self.channel_output["DELTA"])
         e_pos = np.where(np.abs(delta)>=np.sqrt(np.pi)/2)[0]
@@ -127,5 +126,8 @@ class GaussianQuantumChannel(Channel):
         return self._n
     @n.setter
     def n(self,n):
-        self.n = n
+        if n<=0:
+            raise ValueError("PHYSICAL_QUBIT is more than 0")
+        self._n = n
+        self._channel_output["E"] = np.zeros(2 * n,dtype='i1')
         self._channel_output["DELTA"] = np.zeros(2 * n)
