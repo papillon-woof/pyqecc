@@ -1,5 +1,5 @@
 import numpy as np
-from .abstruct import *
+from .abstruct import CODE
 from ..util import *
 
 
