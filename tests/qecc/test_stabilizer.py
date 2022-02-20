@@ -24,16 +24,6 @@ TEST_FIVE_DATA = {
     ],
 }
 
-
-def test_general():
-    for c in [FiveCode(), SteaneCode(), BitFlipCode(), PhaseFlipCode()]:
-        # test for Error
-        for e in range(2 ** (X_OR_Z * c.n)):
-            ee = any2arr(e, X_OR_Z * c.n)
-            s = c.get_syndrome(ee)
-            assert sum(np.abs(s - c.get_syndrome(c.get_T(s)))) == 0
-
-
 TEST_SET_ERROR_PROBABILITY_DATA = {
     "NUM_OF_CASE": 3,
     "P_BITWISE": np.array([[1, 0, 0, 0], [0.9, 0.2, 0.1, 0], [1, 0, 0, 0]]),
@@ -51,10 +41,17 @@ TEST_SET_ERROR_PROBABILITY_DATA = {
     # "RESULT_P_BLOCKWISE" : [0.9,0,0.1],
 }
 
+def test_general():
+    for c in [FiveCode(), SteaneCode(), BitFlipCode(), PhaseFlipCode()]:
+        # test for Error
+        for e in range(2 ** (X_OR_Z * c.n)):
+            ee = any2arr(e, X_OR_Z * c.n)
+            s = c.get_syndrome({"E": ee})
+            assert sum(np.abs(s - c.get_syndrome({"E":c.get_T(s)}))) == 0
 
 def test_set_error_probability():
     c = BitFlipCode()
-    c.set_error_probability(
+    c.set_channel_param(
         TEST_SET_ERROR_PROBABILITY_DATA["P_BITWISE"], iid=False, BITWISE=True
     )
     for i in range(TEST_SET_ERROR_PROBABILITY_DATA["NUM_OF_CASE"]):
@@ -67,7 +64,7 @@ def test_set_error_probability():
             )
             < DIFF_THRESHOLD
         )
-    c.set_error_probability(TEST_SET_ERROR_PROBABILITY_DATA["P_IID"], BITWISE=True)
+    c.set_channel_param(TEST_SET_ERROR_PROBABILITY_DATA["P_IID"], BITWISE=True)
     for i in range(TEST_SET_ERROR_PROBABILITY_DATA["NUM_OF_CASE"]):
         assert (
             np.abs(
@@ -82,7 +79,7 @@ def test_set_error_probability():
     TEST_SET_ERROR_PROBABILITY_DATA["P_BLOCKWISE"] /= sum(
         TEST_SET_ERROR_PROBABILITY_DATA["P_BLOCKWISE"]
     )
-    c.set_error_probability(
+    c.set_channel_param(
         TEST_SET_ERROR_PROBABILITY_DATA["P_BLOCKWISE"], BITWISE=False
     )
     for i in range(TEST_SET_ERROR_PROBABILITY_DATA["NUM_OF_CASE"]):
@@ -99,7 +96,7 @@ def test_set_error_probability():
 def test_FiveCode():
     c = FiveCode()
     for i in range(2 ** (c.n - c.k)):
-        assert arr2int(c.get_syndrome(c.get_T(int2arr(i, 4)))) == i
+        assert arr2int(c.get_syndrome({"E": c.get_T(int2arr(i, 4))})) == i
     for t in range(len(TEST_FIVE_DATA["T_ind"])):
         assert 0 == sum(
             np.abs(
@@ -119,10 +116,10 @@ def test_FiveCode():
             )
         )
     for beta in range(2 ** c.k):
-        assert 0 == sum(np.abs(c.get_syndrome(c.get_L(beta))))
+        assert 0 == sum(np.abs(c.get_syndrome({"E": c.get_L(beta)})))
 
 
 def test_SteaneCode():
     c = SteaneCode()
     for i in range(64):
-        assert arr2int(c.get_syndrome(c.get_T(int2arr(i, 6)))) == i
+        assert arr2int(c.get_syndrome({"E": c.get_T(int2arr(i, 6))})) == i

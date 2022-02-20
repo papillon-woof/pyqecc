@@ -6,8 +6,8 @@ from pyqecc.channel import *
 def test_depolarizing():
     n = 100000
     for p in [0.01, 0.1, 0.2]:
-        myChannel = DepolarizingChannel(p=p,seed=0)
-        e = myChannel.channel(n)
+        myChannel = DepolarizingChannel(n,p=p,seed=0)
+        e = myChannel.channel(n)["E"]
         cx = 0
         cy = 0
         cz = 0
@@ -25,16 +25,16 @@ def test_depolarizing():
 def test_t_bitflip():
     n = 1000
     for t in range(10):
-        myChannel = TBitFlipChannel(t=t,seed=0)
+        myChannel = BitFlipChannel(n,tx=t,tz=t,seed=0)
         for i in range(30):
-            e = myChannel.channel(n)
-            assert sum(e)==t
+            e = myChannel.channel(n)["E"]
+            assert sum(e)==2*t
 
 def test_pauli():
     n = 100000
     for p in [0.01, 0.1, 0.2, 0.3, 0.02, 0.4]:
-        myChannel = PauliChannel(px=p,pz=p/2,seed=0)
-        e = myChannel.channel(n)
+        myChannel = PauliChannel(n,px=p,pz=p/2,seed=0)
+        e = myChannel.channel(ind=0)["E"]
         cx = 0
         cz = 0
         for i in range(n):

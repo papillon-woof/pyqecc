@@ -16,7 +16,7 @@ setup(
         "pyqecc.channel",
         "pyqecc.util",
     ],
-    version="0.0.1",  # version
+    version="0.0.2",  # version
     license="MIT",  # lisence
     install_requires=[
         "numpy>=1.21",

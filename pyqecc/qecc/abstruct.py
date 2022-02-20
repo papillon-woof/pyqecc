@@ -43,8 +43,8 @@ class CODE(metaclass=ABCMeta):
 
     def __str__(self):
         output = ""
-        output += "codename        :" + str(self.name) + "\n"
-        output += "n               : " + str(self.n) + "\n"
-        output += "k               : " + str(self.k) + "\n"
-        output += "R               : " + str(self.R) + "\n"
+        output += "CODE_NAME       :" + str(self.name) + "\n"
+        output += "PHYSICAL_QUBITS : " + str(self.n) + "\n"
+        output += "LOGICAL_QUBITS  : " + str(self.k) + "\n"
+        output += "CODE_RATE       : " + str(self.R) + "\n"
         return output

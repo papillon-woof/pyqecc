@@ -21,6 +21,7 @@ class SC(CODE):
         P=None,
         mode="HD",
         BITWISE=True,
+        ANALOG_INFORMATION="No",
     ):
         self.decoder_output = {
             "LT": None,
@@ -36,14 +37,14 @@ class SC(CODE):
         self._T = T
         self._L = L
         self._BITWISE = BITWISE
-        self.set_error_probability(P, self.BITWISE, OUTPUT_LOG=False)
+        self.set_channel_param(P, self.BITWISE, OUTPUT_LOG=False)
         self._LUT = {}
         self._blockwise_error_probability = False
         self._bitwise_error_probability = False
         # self.enc_circuit = None # future work
         # self.dec_circuit = None # future work
 
-    def set_error_probability(
+    def set_channel_param(
         self, error_probability, BITWISE=True, iid=True, OUTPUT_LOG=False
     ):
         if not error_probability is None:
@@ -75,8 +76,8 @@ class SC(CODE):
     def get_error_probability(self, E):
         return self.blockwise_error_probability[arr2int(E)]
 
-    def get_syndrome(self, e):
-        return symplex_binary_inner_product(self._H, e)
+    def get_syndrome(self, channel_output):
+        return symplex_binary_inner_product(self._H, channel_output["E"])
 
     def get_T(self, ind):
         return self.T[arr2int(ind)].astype("i1")  # LUTでの計算? BPでの計算もあり?LDPCについて学ぶ．
@@ -159,6 +160,8 @@ class SC(CODE):
             self.LUT_decode(syndrome, **param)
         if self._mode == "HD":
             self.hard_decode(syndrome, **param)
+        if self._mode == "ANALOG":
+            self.analog_decode(syndrome[0], syndrome[1]) 
         return self.decoder_output
 
     @property
