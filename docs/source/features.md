@@ -134,7 +134,7 @@ def __init__(
 The `GKP` class has the arguments for 
 - `code_instance`: code instance for `CODE` class
 - `sigma=0.1`: Standard deviation for Quantum Gaussian Channel
-- `mode="SYNDROME"`,: decoding mode
+- `mode="SYNDROME"`: decoding mode
 
 # `pyqecc.qecc.abstruct.CODE()`
 ```python
