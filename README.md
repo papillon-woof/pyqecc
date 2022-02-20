@@ -148,8 +148,7 @@ for num_of_concatenate in range(1, NUM_OF_CONCATENATE + 1):
 ```
 
 ## 2. Conatenated Gottesman-Kitaev-Preskill (GKP)-bit flip code with analog information [3]
-![image2](https://user-images.githubusercontent.com/72004949/154846414-611be2d5-df48-469b-b67b-1dd94cd4830d.png)
-
+![image2](https://user-images.githubusercontent.com/72004949/154846761-fb98d353-18dd-4698-b10d-2fc356ce02c5.png)
 
 ```python
 #Source code
@@ -159,7 +158,7 @@ from pyqecc import GKP, BitFlipCode, GaussianQuantumChannel, dec_sim
 
 my_code = BitFlipCode()
 my_GKP = GKP(my_code)
-my_channel = GaussianQuantumChannel(my_GKP.n,sigma=[0.32,0.33,0.35,0.37,0.39],phase_flip=False)
+my_channel = GaussianQuantumChannel(my_GKP.n,sigma=[0.33,0.35,0.37,0.39],phase_flip=False)
 print(my_GKP)
 dec_sim(my_GKP,channel_instance=my_channel,MONTE=10000000,ERR_STOP=1000000)
 ```
