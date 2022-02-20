@@ -1,6 +1,5 @@
 import numpy as np
-import pytest
-from pyqecc.channel import *
+from pyqecc.channel import DepolarizingChannel, BitFlipChannel, PauliChannel
 
 
 def test_depolarizing():

@@ -1,4 +1,4 @@
-from pyqecc import FiveCode, dec_sim, ConcCode, ParaCode, DepolarizingChannel
+from pyqecc import FiveCode, ParaCode, ConcCode, dec_sim, DepolarizingChannel
 
 NUM_OF_CONCATENATE = 3
 for num_of_concatenate in range(1, NUM_OF_CONCATENATE + 1):
