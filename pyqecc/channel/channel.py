@@ -1,6 +1,6 @@
 import numpy as np
 from .abstruct import Channel
-from ..util import dmods
+from ..util import pishifts
 class DepolarizingChannel(Channel):
     def __init__(self,p,seed=None):
         super().__init__(seed)
@@ -42,23 +42,23 @@ class PauliChannel(Channel):
         super().__init__(seed)
         self._channel_parameter["px"] = px
         self._channel_parameter["pz"] = pz
-        self.px = px
-        self.pz = pz
         self.generate_param()
 
     def channel(self,n,ind=0):
         if n>0 and n!=0:
             self.set_n(n)
-        x_pos = np.where(np.random.random(n) <= self.px[ind])[0]
-        z_pos = np.where(np.random.random(n) <= self.pz[ind])[0]
+        x_pos = np.where(np.random.random(n) <= self._channel_parameter["px"][ind])[0]
+        z_pos = np.where(np.random.random(n) <= self._channel_parameter["pz"][ind])[0]
         self._channel_output["E"][x_pos] = 1  # X
         self._channel_output["E"][n + z_pos] = 1  # Z
         return self._channel_output
 
 class GaussianQuantumChannel(Channel):
-    def __init__(self,sigma,seed=None,x_side=True):
+    def __init__(self,sigma,seed=None,bit_flip=True,phase_flip=True):
         super().__init__(seed)
         self._channel_parameter["sigma"] = sigma
+        self._bit_flip = bit_flip
+        self._phase_flip = phase_flip
         self.generate_param()
 
     def set_n(self,n):
@@ -71,12 +71,21 @@ class GaussianQuantumChannel(Channel):
         '''
         if n!=self.n:
             self.set_n(n)
-        self._channel_output["DELTA"][:self.n] = np.random.normal(scale = self.channel_parameter["sigma"][ind], size  = 2*self.n)[:self.n]
+        if self.bit_flip:
+            self._channel_output["DELTA"][:self.n] = np.random.normal(scale = self.channel_parameter["sigma"][ind], size  = 2*self.n)[:self.n]
+        if self.phase_flip:
+            self._channel_output["DELTA"][self.n:] = np.random.normal(scale = self.channel_parameter["sigma"][ind], size  = 2*self.n)[self.n:]
         self._channel_output["E"] *= 0
         
         # 2√π>|E|>√π => error
-        delta = dmods(self.channel_output["DELTA"],2*np.sqrt(np.pi))
-        e_pos = np.where(delta>np.sqrt(np.pi)/2)[0]
+        delta = pishifts(self.channel_output["DELTA"])
+        e_pos = np.where(np.abs(delta)>=np.sqrt(np.pi)/2)[0]
         self._channel_output["E"][e_pos]=1
 
         return self.channel_output
+    @property
+    def bit_flip(self):
+        return self._bit_flip
+    @property
+    def phase_flip(self):
+        return self._phase_flip

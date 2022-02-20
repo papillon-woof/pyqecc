@@ -125,13 +125,22 @@ def blockwise_to_bitwise_error_probability(blockwise_error_probabilityrobability
             ] += blockwise_error_probabilityrobability[ind]
     return bitwise_error_probabilityrobability
 
-def dmod(a,b,div_max=100000):
-    for i in range(div_max):
-        if a>b and a>0:
-            a -= b
-        if a<b and a<0:     
-            a += b
-        if np.abs(a)<b:
-            return a
+def pishift(a,div_max=100000):
+    if a>=0:
+        for i in range(div_max):
+            if a>np.sqrt(np.pi):
+                a -= 2*np.sqrt(np.pi)
+            else:
+                return a
+            if a<0:
+                return a
+    else:      
+        for i in range(div_max):
+            if a<np.sqrt(np.pi):
+                a += 2*np.sqrt(np.pi)
+            else:
+                return a
+            if a>=0:
+                return a
     raise AssertionError("Div_max is proceeded.")
-dmods = np.frompyfunc(dmod, 2, 1)
+pishifts = np.frompyfunc(pishift, 1, 1)
