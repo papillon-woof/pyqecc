@@ -14,19 +14,6 @@ PyQecc mainly provide quantum error correction code (QECC) simulator.
 - [Features](https://pyqecc.readthedocs.io/en/latest/features.html)
 - [Source code](https://github.com/papillon-woof/pyqecc)
 - [PyPI](https://pypi.org/project/pyqecc/0.0.1/)
-<div align="center">
-<img src="https://user-images.githubusercontent.com/72004949/148188473-22ea4600-d1d1-46b6-814b-0d3414af5750.png" alt="pyqecc" title="pyqecc">
-</div>
-
-[![Documentation Status](https://readthedocs.org/projects/pyqecc/badge/?version=latest)](https://pyqecc.readthedocs.io/en/latest/?badge=latest)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
-# Overview
-PyQecc mainly provide quantum error correction code (QECC) simulator.
-- [Installation](https://pyqecc.readthedocs.io/en/latest/?) (This page)
-- [Quick start](https://pyqecc.readthedocs.io/en/latest/?) (This page)
-- [Features](https://pyqecc.readthedocs.io/en/latest/features.html)
-- [Source code](https://github.com/papillon-woof/pyqecc)
 # Installation
 
 ```
