@@ -147,7 +147,7 @@ for num_of_concatenate in range(1, NUM_OF_CONCATENATE + 1):
     )
 ```
 
-## 2. Gottesman-kitaev-preskill (GKP)-bit flip concatenated code with analog information [3]
+## 2. Conatenated Gottesman-Kitaev-Preskill (GKP)-bit flip code with analog information [3]
 ![image2](https://user-images.githubusercontent.com/72004949/154846414-611be2d5-df48-469b-b67b-1dd94cd4830d.png)
 
 
