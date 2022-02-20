@@ -80,7 +80,7 @@ class ParaCode(SC):
         logical_error_probability = np.zeros((self.k, 4))
         nkind, nind, kind = 0, 0, 0
         for c in self.code_instances:
-            c.set_error_probability(
+            c.set_channel_param(
                 self.bitwise_error_probability[nind : nind + c.n], iid=False
             )
             c_decoder_output = c.decode(syndrome[nkind : c.n - c.k + nkind], mode="ML")
@@ -207,7 +207,7 @@ class ConcCode(SC):
             beta1 = np.zeros(self.code_instances[d].nk, dtype="i1")
             for mother_ind, follower_ind in self.H_depth[d].items():
                 beta1[follower_ind] = conc_syndrome[mother_ind]
-            self.code_instances[d].set_error_probability(error_probability, iid=False)
+            self.code_instances[d].set_channel_param(error_probability, iid=False)
             if not self.code_instances[d].BITWISE:
                 self.code_instances[d].BITWISE = True
                 print(
@@ -218,12 +218,12 @@ class ConcCode(SC):
             c1_decoder_output = self.code_instances[d].decode(beta1, mode="ML")
             L, s, error_probability = (
                 c1_decoder_output["L"],
-                self.code_instances[d].get_syndrome(c1_decoder_output["T"]),
+                self.code_instances[d].get_syndrome({"E": c1_decoder_output["T"]}),
                 c1_decoder_output["BIT_WISE_LOGICAL_ERROR_PROBABILITY"],
             )
             if d != 0:
                 conc_syndrome ^= self.get_syndrome(
-                    self.get_mother_operator(self.code_instances[d].get_T(s), d)
+                    {"E": self.get_mother_operator(self.code_instances[d].get_T(s), d)}
                 )
         L0 = self.get_mother_operator(L, 0)
         T = np.zeros(X_OR_Z * self.n, dtype="i1")

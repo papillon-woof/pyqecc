@@ -4,11 +4,11 @@ import numpy as np
 class Channel(metaclass=ABCMeta):
     _name = ""
 
-    def __init__(self,seed,n=-1):
+    def __init__(self,n,seed):
         self._channel_parameter_name = [] # string
         self._channel_parameter = {} # list or np.array
         self._channel_output = {"E": None}
-        self._n = n
+        self.n = n
         if not seed is None:
             np.random.seed(seed=seed)
 
@@ -28,7 +28,6 @@ class Channel(metaclass=ABCMeta):
     
     def set_n(self,n):
         self._n = n
-        print(111,self.n)
         self._channel_output["E"] = np.zeros(2 * n,dtype='i1')
     
     @property
@@ -43,3 +42,9 @@ class Channel(metaclass=ABCMeta):
     @property
     def n(self):
         return self._n
+    @n.setter
+    def n(self,n):
+        if n<=0:
+            raise ValueError("PHYSICAL_QUBIT is more than 0")
+        self._n = n
+        self._channel_output["E"] = np.zeros(2 * n,dtype='i1')
