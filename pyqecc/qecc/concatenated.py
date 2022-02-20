@@ -1,5 +1,6 @@
 from .stabilizer import *
 
+
 class ParaCode(SC):
     """
     Generate a paralellized code

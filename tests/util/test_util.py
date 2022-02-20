@@ -47,6 +47,7 @@ TEST_BITWISE_TO_BLOCKWISE_PROBABILITY = {
     "TEST_CASE": [1, 2, 3, 4, 5, 6, 7],
 }
 
+
 def test_symplex_binary_inner_product():
     for i in range(TEST_DATA_SYMPLEX_BINARY_INNER_PRODUCT["NUM_OF_CASE"]):
         assert TEST_DATA_SYMPLEX_BINARY_INNER_PRODUCT["RESULT"][
@@ -64,7 +65,7 @@ def test_arr2int():
 
 def test_int2arr():
     m = 5
-    for i in range(2 ** m):
+    for i in range(2**m):
         assert i == arr2int(int2arr(i, m))
 
 

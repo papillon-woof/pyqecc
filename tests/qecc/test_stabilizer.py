@@ -31,7 +31,7 @@ TEST_SET_ERROR_PROBABILITY_DATA = {
     "RESULT_P_BITWISE": [0.9, 0, 0.1],
     "P_IID": np.array([0.7, 0.1, 0.1, 0.1]),
     "TEST_CASE_P_IID": [[0, 0, 0, 0, 0, 0], [0, 0, 1, 0, 0, 1], [0, 1, 0, 0, 0, 0]],
-    "RESULT_P_IID": [(0.7 ** 3), (0.7 ** 2) * 0.1, (0.7 ** 2) * 0.1],
+    "RESULT_P_IID": [(0.7**3), (0.7**2) * 0.1, (0.7**2) * 0.1],
     "P_BLOCKWISE": np.random.rand(2 ** (2 * 3)),
     "TEST_CASE_P_BLOCKWISE": [
         [0, 0, 0, 0, 0, 0],
@@ -41,13 +41,15 @@ TEST_SET_ERROR_PROBABILITY_DATA = {
     # "RESULT_P_BLOCKWISE" : [0.9,0,0.1],
 }
 
+
 def test_general():
     for c in [FiveCode(), SteaneCode(), BitFlipCode(), PhaseFlipCode()]:
         # test for Error
         for e in range(2 ** (X_OR_Z * c.n)):
             ee = any2arr(e, X_OR_Z * c.n)
             s = c.get_syndrome({"E": ee})
-            assert sum(np.abs(s - c.get_syndrome({"E":c.get_T(s)}))) == 0
+            assert sum(np.abs(s - c.get_syndrome({"E": c.get_T(s)}))) == 0
+
 
 def test_set_error_probability():
     c = BitFlipCode()
@@ -79,9 +81,7 @@ def test_set_error_probability():
     TEST_SET_ERROR_PROBABILITY_DATA["P_BLOCKWISE"] /= sum(
         TEST_SET_ERROR_PROBABILITY_DATA["P_BLOCKWISE"]
     )
-    c.set_channel_param(
-        TEST_SET_ERROR_PROBABILITY_DATA["P_BLOCKWISE"], BITWISE=False
-    )
+    c.set_channel_param(TEST_SET_ERROR_PROBABILITY_DATA["P_BLOCKWISE"], BITWISE=False)
     for i in range(TEST_SET_ERROR_PROBABILITY_DATA["NUM_OF_CASE"]):
         ind = TEST_SET_ERROR_PROBABILITY_DATA["TEST_CASE_P_BLOCKWISE"][i]
         assert (
@@ -115,7 +115,7 @@ def test_FiveCode():
                 c.get_L(TEST_FIVE_DATA["L_ind"][l]) - np.array(TEST_FIVE_DATA["L"][l])
             )
         )
-    for beta in range(2 ** c.k):
+    for beta in range(2**c.k):
         assert 0 == sum(np.abs(c.get_syndrome({"E": c.get_L(beta)})))
 
 

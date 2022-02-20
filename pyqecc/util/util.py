@@ -2,6 +2,7 @@ import numpy as np
 
 X_OR_Z = 2
 
+
 def arr2int(arr):
     results = 0
     lengths = len(arr)
@@ -125,22 +126,25 @@ def blockwise_to_bitwise_error_probability(blockwise_error_probabilityrobability
             ] += blockwise_error_probabilityrobability[ind]
     return bitwise_error_probabilityrobability
 
-def pishift(a,div_max=100000):
-    if a>=0:
+
+def pishift(a, div_max=100000):
+    if a >= 0:
         for i in range(div_max):
-            if a>np.sqrt(np.pi):
-                a -= 2*np.sqrt(np.pi)
+            if a > np.sqrt(np.pi):
+                a -= 2 * np.sqrt(np.pi)
             else:
                 return a
-            if a<0:
+            if a < 0:
                 return a
-    else:      
+    else:
         for i in range(div_max):
-            if a<np.sqrt(np.pi):
-                a += 2*np.sqrt(np.pi)
+            if a < np.sqrt(np.pi):
+                a += 2 * np.sqrt(np.pi)
             else:
                 return a
-            if a>=0:
+            if a >= 0:
                 return a
     raise AssertionError("Div_max is proceeded.")
+
+
 pishifts = np.frompyfunc(pishift, 1, 1)

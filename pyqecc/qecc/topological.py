@@ -8,7 +8,6 @@ from ..util import *
 import csv
 
 
-
 def plt_V(V):
     if type(V) == list:
         V = np.array(V)
@@ -272,7 +271,7 @@ class TORIC(SURFACE):
 
     def set_L(self, L=None):
         pass
-    
+
     def decode(self, mode="mwpma"):
         pass
 
