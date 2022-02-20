@@ -6,7 +6,7 @@ from ..util import pishifts
 class DepolarizingChannel(Channel):
     def __init__(self, n, p, seed=None):
         super().__init__(n, seed)
-        if not isinstance(p,(list,np.ndarray)):
+        if not isinstance(p, (list, np.ndarray)):
             p = [p]
         self.param_len = len(p)
         self._channel_parameter["p"] = p
@@ -34,13 +34,13 @@ class DepolarizingChannel(Channel):
 class BitFlipChannel(Channel):
     def __init__(self, n, tx, tz, seed=None):
         super().__init__(n, seed)
-        if not isinstance(tx,(list,np.ndarray)):
+        if not isinstance(tx, (list, np.ndarray)):
             tx = np.array([tx])
-        if not isinstance(tz,(list,np.ndarray)):
+        if not isinstance(tz, (list, np.ndarray)):
             tz = np.array([tz])
-        if not isinstance(tx,np.ndarray):
+        if not isinstance(tx, np.ndarray):
             tx = np.array(tx)
-        if not isinstance(tz,np.ndarray):
+        if not isinstance(tz, np.ndarray):
             tz = np.array(tz)
         self.param_len = min(len(tx), len(tz))
         self._channel_parameter["tx"] = tx
@@ -72,14 +72,14 @@ class BitFlipChannel(Channel):
 class PauliChannel(Channel):
     def __init__(self, n, px, pz, seed=None):
         super().__init__(n, seed)
-        if not isinstance(px,(list,np.ndarray)):
+        if not isinstance(px, (list, np.ndarray)):
             px = [px]
         self._channel_parameter["px"] = px
-        if not isinstance(pz,(list,np.ndarray)):
+        if not isinstance(pz, (list, np.ndarray)):
             pz = [pz]
-        if not isinstance(px,np.ndarray):
+        if not isinstance(px, np.ndarray):
             px = np.array(px)
-        if not isinstance(pz,np.ndarray):
+        if not isinstance(pz, np.ndarray):
             pz = np.array(pz)
         self.param_len = min(len(px), len(pz))
         self._channel_parameter["pz"] = pz
@@ -112,9 +112,9 @@ class PauliChannel(Channel):
 class GaussianQuantumChannel(Channel):
     def __init__(self, n, sigma, seed=None, bit_flip=True, phase_flip=True):
         super().__init__(n, seed)
-        if not isinstance(sigma,(list,np.ndarray)):
+        if not isinstance(sigma, (list, np.ndarray)):
             sigma = np.array([sigma])
-        if not isinstance(sigma,(np.ndarray)):
+        if not isinstance(sigma, (np.ndarray)):
             sigma = np.array(sigma)
         self._channel_parameter["sigma"] = sigma
         self._bit_flip = bit_flip
