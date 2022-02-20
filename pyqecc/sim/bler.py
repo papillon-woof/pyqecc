@@ -3,15 +3,12 @@ from datetime import datetime
 import numpy as np
 from ..channel import *
 
-
-
 def dec_sim(
     myQECC,
     MONTE=1000,
     ERR_STOP=1000,
     channel_instance = None,
     DEBUG=False,
-    LABEL=["CHANNEL_PARAMATER", "LOGICAL_ERROR_PROB"],
     LOG_OUTPUT=True,
     LOG_OUTPUT_SPAN=100, 
 ):
@@ -64,9 +61,8 @@ def dec_sim(
             + ".csv"
         )
         with open("dec_data/" + path_w, mode="w") as f:
-            for label in LABEL:
-                if label in RESULTS.keys():
-                    f.write(str(label) + "," + str(RESULTS[label]) + "\n")
+            for label in RESULTS.keys():
+                f.write(str(label) + "," + str(RESULTS[label]) + "\n")
     if DEBUG:
         print(RESULTS)
     return RESULTS

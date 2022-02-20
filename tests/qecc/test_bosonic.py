@@ -8,10 +8,9 @@ TEST_BOSONIC_BASIC = {
 }
 
 TEST_BOSONIC_CALC_LLR = {
-    "TEST_CASE": 4,
+    "TEST_CASE": 1,
     "CODE_INSTANCE": BitFlipCode(),
     "PARAM": (0,1,((np.sqrt(np.pi))**2)/(2*1**2))
-
 }
 
 def test_bosonic_basic():
