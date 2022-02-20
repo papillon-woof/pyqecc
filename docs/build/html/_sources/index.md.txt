@@ -121,7 +121,8 @@ See the detail for [features](features.md)
 - quantum gaussian channel
 
 # Simulation example
-Concatenated 5-qubit codes (concatenation for 1, 2, and 3) [2, Fig. 1].  
+
+## 1. Concatenated 5-qubit codes (concatenation for 1, 2, and 3) [2, Fig. 1].  
 ![image](https://user-images.githubusercontent.com/72004949/148180717-3c523204-3acc-48c6-a736-503b14dece4e.png)
 ```python
 #Source code
@@ -142,6 +143,23 @@ for num_of_concatenate in range(1, NUM_OF_CONCATENATE + 1):
         MONTE=5000,
     )
 ```
+
+## 2. Conatenated Gottesman-Kitaev-Preskill (GKP)-bit flip code with analog information [3]
+![image2](https://user-images.githubusercontent.com/72004949/154846761-fb98d353-18dd-4698-b10d-2fc356ce02c5.png)
+
+```python
+#Source code
+import numpy as np
+from pyqecc import GKP, BitFlipCode, GaussianQuantumChannel, dec_sim
+
+
+my_code = BitFlipCode()
+my_GKP = GKP(my_code)
+my_channel = GaussianQuantumChannel(my_GKP.n,sigma=[0.33,0.35,0.37,0.39],phase_flip=False)
+print(my_GKP)
+dec_sim(my_GKP,channel_instance=my_channel,MONTE=10000000,ERR_STOP=1000000)
+```
+
 
 # Future works
 - surface code

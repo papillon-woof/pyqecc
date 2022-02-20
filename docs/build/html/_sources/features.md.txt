@@ -1,27 +1,28 @@
 # Feature
 
-# `pyqecc.sim.dec_sim()`
+# `pyqecc.sim.dec_sim`
 ```python
-dec_sim(
+def dec_sim(
     myQECC,
     MONTE=1000,
     ERR_STOP=1000,
-    PROB=[0.1,0.01,0.001,0.0001],
-    CHANNEL_MODEL="DEPOLARIZING",
+    channel_instance=None,
     DEBUG=False,
-    LABEL=['DEPOLARIZING_PROB','PHYSICAL_ERROR_PROB','LOGICAL_ERROR_PROB'],
     LOG_OUTPUT=True,
-    LOG_OUTPUT_SPAN = 100,
-    ):
+    LOG_OUTPUT_SPAN=100,
+):
 ```
-`myQECC`: Code Instance.
-`MONTE`: number of monte carlo.
-`ERR_STOP`: Threshold of error count for stopping simulation.
-`CHANNEL_MODEL`: Channel Model.
-`DEBUG`: Debug mode.
-`LABEL`: Output Labels.
-`LOG_OUTPUT`: Whether log output console.
-`LOG_OUTPUT_SPAN`: log output span of monte calro.
+
+This function `pyqecc.sim.dec_sim` is numerical simulation for quantum error correction code.   
+The `dec_sim` requires arguments for
+- `myQECC`: `CODE` class instance (e.g. `SC`, `BitFlipCode`, `GKP`, ...)
+and has the optional arguments for 
+- `channel_instance`: `Channel` class instance (e.g. `DepolarizingChannel`,...) (default: `DepolarizingChannel(n, p=[0.1, 0.01, 0.001, 0.0001])`)
+- `MONTE`: number of monte carlo (default: `1000`)
+- `ERR_STOP`: Threshold of error count for stopping simulation (default: `1000`)
+- `DEBUG`: Debug mode (default: `False`)
+- `LOG_OUTPUT`: Whether log output console (default: `True`)
+- `LOG_OUTPUT_SPAN`: log output span of monte calro (default: `100`)
 
 # `pyqecc.qecc.toy.SteaneCode()`
 Return the instance of steane code
@@ -40,16 +41,13 @@ Return the instance of phase flip code
 
 # `pyqecc.qecc.stabilizer.SC(CODE)`
 Stabilizer Code class
-```
-class SC(CODE)
-```
 
 **Member**  
 
 `n :int`  
-Code length (number of physical qubit)  
+Code length (Number of physical qubit)  
 `k :int`  
-Information length (number of logical qubit)  
+Information length (Number of logical qubit)  
 `nk :int`  
 n - k  
 `R :float`  
@@ -93,7 +91,7 @@ __init__(
 ```
 
 **Method**  
-- `set_error_probability(self,error_probability,BITWISE=True,iid=True,OUTPUT_LOG=False):`: Stores channel probability distribution information `error_probability`. `OUTPUT_LOG` can confirm whether `error_probability` is a varid value.
+- `set_channel_param(self,error_probability,BITWISE=True,iid=True,OUTPUT_LOG=False):`: Stores channel probability distribution information `error_probability`. `OUTPUT_LOG` can confirm whether `error_probability` is a varid value.
 - `get_syndrome(self,e)`: It receives the binary representation vector `e` of the error`E` belonging to the Pauli group `G` and calculates the syndrome`syndrome`. The `PROB` is list of depolarizing probability.
 - `get_T(self,idx)`: Given the index or array `idx`, it returns the corresponding error operator`T`.
 - `get_L(self,idx)`: Given the index or array `idx`, it returns the corresponding error operator`L`.
@@ -122,6 +120,21 @@ def __init__(self,code_instances,P=None,BITWISE = True,mode="BP"):
 
 **method**  
 `calc_grobal_H(self)`: calculation global parity check matrix
+
+# `pyqecc.qecc.GKP(CODE)`
+GKP Qubit class
+`
+def __init__(
+        self,
+        code_instance,
+        sigma=0.1,
+        mode="SYNDROME",
+    ):
+`
+The `GKP` class has the arguments for 
+- `code_instance`: code instance for `CODE` class
+- `sigma=0.1`: Standard deviation for Quantum Gaussian Channel
+- `mode="SYNDROME"`: decoding mode
 
 # `pyqecc.qecc.abstruct.CODE()`
 ```python
