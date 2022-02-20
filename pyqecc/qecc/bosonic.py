@@ -7,7 +7,7 @@ from .stabilizer import SC
 class GKP(CODE):
     NAME = "GKP qubit"
     USAGE = 'GKP code class. This class uses the analog information (See ref )'
-
+    START_MAX = -1E+300
     def __init__(
         self,
         code_instance,
@@ -65,7 +65,7 @@ class GKP(CODE):
         syndrome = information[0]
         delta_m = information[1]
         most_likely_error = np.zeros(self.n,dtype='i1')
-        ma = -100000
+        ma = self.START_MAX
 
         for i in range(2 * 2 ** self.k):
             lt = self.code_instance.get_T(syndrome)
@@ -93,7 +93,7 @@ class GKP(CODE):
         syndrome = information[0]
         delta_m = information[1]
         error = np.zeros(self.n,dtype='i1')
-        ma = -100000
+        ma = self.START_MAX
         for i in range(2*2 ** self.k):
             
             # About recovery opelator T
