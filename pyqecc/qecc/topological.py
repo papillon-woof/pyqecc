@@ -195,82 +195,82 @@ class SURFACE(SC):
             self._H[self.num_f - 1 + i][np.array(self.FF[i]) + self.num_e] = 1
         print(self.H)
 
-        def decode(self, s):
-            return mwpm(s)
+    def decode(self, s):
+        return self.mwpm(s)
 
-        def matching(self, syndromes):
-            graph_instance = nw.Graph()
-            edges = self.get_qubit_distances(syndromes, self.code.size)
-            for v0, v1, weight in edges:
-                graph_instance.add_edge(v0, v1, weight=-weight)
-            return nw.algorithms.matching.max_weight_matching(graph_instance, maxcardinality=10)
+    def matching(self, syndromes):
+        graph_instance = nw.Graph()
+        edges = self.get_qubit_distances(syndromes, self.code.size)
+        for v0, v1, weight in edges:
+            graph_instance.add_edge(v0, v1, weight=-weight)
+        return nw.algorithms.matching.max_weight_matching(graph_instance, maxcardinality=10)
 
-        def correct_matching(self, syndromes, matching, **kwargs):
-            weight = 0
-            for i0, i1 in matching:
-                weight += self._correct_matched_qubits(syndromes[i0], syndromes[i1])
-            return weight
+    def correct_matching(self, syndromes, matching, **kwargs):
+        weight = 0
+        for i0, i1 in matching:
+            weight += self._correct_matched_qubits(syndromes[i0], syndromes[i1])
+        return weight
 
-        def get_qubit_distances(qubits, size):
-            edges = []
-            for i0, q0 in enumerate(qubits[:-1]):
-                (x0, y0), z0 = q0.loc, q0.z
-                for i1, q1 in enumerate(qubits[i0 + 1 :]):
-                    (x1, y1), z1 = q1.loc, q1.z
-                    wx = int(x0 - x1) % (size[0])
-                    wy = int(y0 - y1) % (size[1])
-                    wz = int(abs(z0 - z1))
-                    weight = min([wy, size[1] - wy]) + min([wx, size[0] - wx]) + wz
-                    edges.append([i0, i1 + i0 + 1, weight])
-            return edges
+    def get_qubit_distances(qubits, size):
+        edges = []
+        for i0, q0 in enumerate(qubits[:-1]):
+            (x0, y0), z0 = q0.loc, q0.z
+            for i1, q1 in enumerate(qubits[i0 + 1 :]):
+                (x1, y1), z1 = q1.loc, q1.z
+                wx = int(x0 - x1) % (size[0])
+                wy = int(y0 - y1) % (size[1])
+                wz = int(abs(z0 - z1))
+                weight = min([wy, size[1] - wy]) + min([wx, size[0] - wx]) + wz
+                edges.append([i0, i1 + i0 + 1, weight])
+        return edges
 
-        def mwpm(self, s):
-            x = self.correct_matching(s[:len(self.nk)//2], self.matching(s[:len(self.nk)//2]))
-            z = self.correct_matching(s[len(self.nk)//2:], self.matching(s[len(self.nk)//2:]))
-            return x+z
+    def mwpm(self, s):
+        x = self.correct_matching(s[:len(self.nk)//2], self.matching(s[:len(self.nk)//2]))
+        z = self.correct_matching(s[len(self.nk)//2:], self.matching(s[len(self.nk)//2:]))
+        return x+z
 
-        def set_P(self, P):
-            self._P = P
+    def set_P(self, P):
+        self._P = P
 
-        @property
-        def num_v(self):
-            return self._num_v
+    @property
+    def num_v(self):
+        return self._num_v
 
-        @property
-        def num_e(self):
-            return self._num_e
+    @property
+    def num_e(self):
+        return self._num_e
 
-        @property
-        def num_f(self):
-            return self._num_f
+    @property
+    def num_f(self):
+        return self._num_f
 
-        @property
-        def V(self):
-            return self._V
+    @property
+    def V(self):
+        return self._V
 
-        @property
-        def E(self):
-            return self._E
+    @property
+    def E(self):
+        return self._E
 
-        @property
-        def F(self):
-            return self._F
+    @property
+    def F(self):
+        return self._F
 
-        @property
-        def VV(self):
-            return self._VV
+    @property
+    def VV(self):
+        return self._VV
 
-        @property
-        def EE(self):
-            return self._EE
+    @property
+    def EE(self):
+        return self._EE
 
-        @property
-        def FF(self):
-            return self._FF
+    @property
+    def FF(self):
+        return self._FF
 
-        @property
-        def fname(self):
-            return self._fname
+    @property
+    def fname(self):
+        return self._fname
 
 
 class TORIC(SURFACE):
