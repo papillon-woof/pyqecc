@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Feature &mdash; pyqecc  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> pyqecc
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">Feature</a></li>
+<li><a class="reference internal" href="#pyqecc-sim-dec-sim"><code class="docutils literal notranslate"><span class="pre">pyqecc.sim.dec_sim</span></code></a></li>
+<li><a class="reference internal" href="#pyqecc-qecc-toy-steanecode"><code class="docutils literal notranslate"><span class="pre">pyqecc.qecc.toy.SteaneCode()</span></code></a></li>
+<li><a class="reference internal" href="#pyqecc-qecc-toy-fivecode"><code class="docutils literal notranslate"><span class="pre">pyqecc.qecc.toy.FiveCode()</span></code></a></li>
+<li><a class="reference internal" href="#pyqecc-qecc-toy-shorcode"><code class="docutils literal notranslate"><span class="pre">pyqecc.qecc.toy.ShorCode()</span></code></a></li>
+<li><a class="reference internal" href="#pyqecc-qecc-toy-bitflipcode"><code class="docutils literal notranslate"><span class="pre">pyqecc.qecc.toy.BitFlipCode()</span></code></a></li>
+<li><a class="reference internal" href="#pyqecc-qecc-toy-phaseflipcode"><code class="docutils literal notranslate"><span class="pre">pyqecc.qecc.toy.PhaseFlipCode()</span></code></a></li>
+<li><a class="reference internal" href="#pyqecc-qecc-stabilizer-sc-code"><code class="docutils literal notranslate"><span class="pre">pyqecc.qecc.stabilizer.SC(CODE)</span></code></a></li>
+<li><a class="reference internal" href="#pyqecc-qecc-paracode-sc"><code class="docutils literal notranslate"><span class="pre">pyqecc.qecc.ParaCode(SC)</span></code></a></li>
+<li><a class="reference internal" href="#pyqecc-qecc-conccode-sc"><code class="docutils literal notranslate"><span class="pre">pyqecc.qecc.ConcCode(SC)</span></code></a></li>
+<li><a class="reference internal" href="#pyqecc-qecc-gkp-code"><code class="docutils literal notranslate"><span class="pre">pyqecc.qecc.GKP(CODE)</span></code></a></li>
+<li><a class="reference internal" href="#pyqecc-qecc-abstruct-code"><code class="docutils literal notranslate"><span class="pre">pyqecc.qecc.abstruct.CODE()</span></code></a></li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyqecc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Feature</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="feature">
+<h1>Feature<a class="headerlink" href="#feature" title="Permalink to this headline"></a></h1>
+</div>
+<div class="section" id="pyqecc-sim-dec-sim">
+<h1><code class="docutils literal notranslate"><span class="pre">pyqecc.sim.dec_sim</span></code><a class="headerlink" href="#pyqecc-sim-dec-sim" title="Permalink to this headline"></a></h1>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">dec_sim</span><span class="p">(</span>
+    <span class="n">myQECC</span><span class="p">,</span>
+    <span class="n">MONTE</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">ERR_STOP</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">channel_instance</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+    <span class="n">DEBUG</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+    <span class="n">LOG_OUTPUT</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="n">LOG_OUTPUT_SPAN</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+<span class="p">):</span>
+</pre></div>
+</div>
+<p>This function <code class="docutils literal notranslate"><span class="pre">pyqecc.sim.dec_sim</span></code> is numerical simulation for quantum error correction code.<br />The <code class="docutils literal notranslate"><span class="pre">dec_sim</span></code> requires arguments for</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">myQECC</span></code>: <code class="docutils literal notranslate"><span class="pre">CODE</span></code> class instance (e.g. <code class="docutils literal notranslate"><span class="pre">SC</span></code>, <code class="docutils literal notranslate"><span class="pre">BitFlipCode</span></code>, <code class="docutils literal notranslate"><span class="pre">GKP</span></code>, …)
+and has the optional arguments for</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">channel_instance</span></code>: <code class="docutils literal notranslate"><span class="pre">Channel</span></code> class instance (e.g. <code class="docutils literal notranslate"><span class="pre">DepolarizingChannel</span></code>,…) (default: <code class="docutils literal notranslate"><span class="pre">DepolarizingChannel(n,</span> <span class="pre">p=[0.1,</span> <span class="pre">0.01,</span> <span class="pre">0.001,</span> <span class="pre">0.0001])</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MONTE</span></code>: number of monte carlo (default: <code class="docutils literal notranslate"><span class="pre">1000</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ERR_STOP</span></code>: Threshold of error count for stopping simulation (default: <code class="docutils literal notranslate"><span class="pre">1000</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DEBUG</span></code>: Debug mode (default: <code class="docutils literal notranslate"><span class="pre">False</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">LOG_OUTPUT</span></code>: Whether log output console (default: <code class="docutils literal notranslate"><span class="pre">True</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">LOG_OUTPUT_SPAN</span></code>: log output span of monte calro (default: <code class="docutils literal notranslate"><span class="pre">100</span></code>)</p></li>
+</ul>
+</div>
+<div class="section" id="pyqecc-qecc-toy-steanecode">
+<h1><code class="docutils literal notranslate"><span class="pre">pyqecc.qecc.toy.SteaneCode()</span></code><a class="headerlink" href="#pyqecc-qecc-toy-steanecode" title="Permalink to this headline"></a></h1>
+<p>Return the instance of steane code</p>
+</div>
+<div class="section" id="pyqecc-qecc-toy-fivecode">
+<h1><code class="docutils literal notranslate"><span class="pre">pyqecc.qecc.toy.FiveCode()</span></code><a class="headerlink" href="#pyqecc-qecc-toy-fivecode" title="Permalink to this headline"></a></h1>
+<p>Return the instance of 5-qubits code</p>
+</div>
+<div class="section" id="pyqecc-qecc-toy-shorcode">
+<h1><code class="docutils literal notranslate"><span class="pre">pyqecc.qecc.toy.ShorCode()</span></code><a class="headerlink" href="#pyqecc-qecc-toy-shorcode" title="Permalink to this headline"></a></h1>
+<p>Return the instance of shor code</p>
+</div>
+<div class="section" id="pyqecc-qecc-toy-bitflipcode">
+<h1><code class="docutils literal notranslate"><span class="pre">pyqecc.qecc.toy.BitFlipCode()</span></code><a class="headerlink" href="#pyqecc-qecc-toy-bitflipcode" title="Permalink to this headline"></a></h1>
+<p>Return the instance of bit flip code</p>
+</div>
+<div class="section" id="pyqecc-qecc-toy-phaseflipcode">
+<h1><code class="docutils literal notranslate"><span class="pre">pyqecc.qecc.toy.PhaseFlipCode()</span></code><a class="headerlink" href="#pyqecc-qecc-toy-phaseflipcode" title="Permalink to this headline"></a></h1>
+<p>Return the instance of phase flip code</p>
+</div>
+<div class="section" id="pyqecc-qecc-stabilizer-sc-code">
+<h1><code class="docutils literal notranslate"><span class="pre">pyqecc.qecc.stabilizer.SC(CODE)</span></code><a class="headerlink" href="#pyqecc-qecc-stabilizer-sc-code" title="Permalink to this headline"></a></h1>
+<p>Stabilizer Code class</p>
+<p><strong>Member</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">:int</span></code><br />Code length (Number of physical qubit)<br /><code class="docutils literal notranslate"><span class="pre">k</span> <span class="pre">:int</span></code><br />Information length (Number of logical qubit)<br /><code class="docutils literal notranslate"><span class="pre">nk</span> <span class="pre">:int</span></code><br />n - k<br /><code class="docutils literal notranslate"><span class="pre">R</span> <span class="pre">:float</span></code><br />Code rate (R:=k/n)<br /><code class="docutils literal notranslate"><span class="pre">H</span> <span class="pre">:np.array((nk,2*n),dtype=np.int8</span></code>)<code class="docutils literal notranslate">&#160; <span class="pre">Parity</span> <span class="pre">check</span> <span class="pre">matrix.</span> <span class="pre">For</span> <span class="pre">example</span></code>bit flip()` is defined by</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+    <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+<p>the first <code class="docutils literal notranslate"><span class="pre">n</span></code> bits and others correspond to Pauli <code class="docutils literal notranslate"><span class="pre">X</span></code> and <code class="docutils literal notranslate"><span class="pre">Z</span></code> in Stabilizer respectively.</p>
+<p><code class="docutils literal notranslate"><span class="pre">T</span> <span class="pre">:np.array</span> <span class="pre">(int)</span> <span class="pre">or</span> <span class="pre">None</span></code><br />Recovery operator.<br /><code class="docutils literal notranslate"><span class="pre">L</span> <span class="pre">:np.array</span> <span class="pre">(int)</span> <span class="pre">or</span> <span class="pre">None</span></code><br />Logical operator.<br /><code class="docutils literal notranslate"><span class="pre">blockwise_error_probability</span> <span class="pre">:np.array(2**(2*n))</span> <span class="pre">or</span> <span class="pre">None</span></code><br />blockwise channel error probability．<br /><code class="docutils literal notranslate"><span class="pre">bitwise_error_probability</span> <span class="pre">:np.array((n,4))</span> <span class="pre">or</span> <span class="pre">None</span></code><br />bitwise channel error probability．<br /><code class="docutils literal notranslate"><span class="pre">iid</span> <span class="pre">:boolean</span></code>
+　Whether channel error probability is iid</p>
+<p><strong>Constructer</strong><br />Setup for the stabilizer need to <code class="docutils literal notranslate"><span class="pre">n</span></code>,<code class="docutils literal notranslate"><span class="pre">k</span></code> and <code class="docutils literal notranslate"><span class="pre">H</span></code>. But, in most cases, you need to set <code class="docutils literal notranslate"><span class="pre">T</span></code> and <code class="docutils literal notranslate"><span class="pre">L</span></code>.
+The <code class="docutils literal notranslate"><span class="pre">P</span></code> is channel probability. if <code class="docutils literal notranslate"><span class="pre">BIT_WISE</span></code> is true, it calculates the bitwise error probability. In contrast, if <code class="docutils literal notranslate"><span class="pre">BIT_WISE</span></code> is false, it calculates the block wise probability.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">n</span><span class="p">,</span>
+        <span class="n">k</span><span class="p">,</span>
+        <span class="n">H</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+        <span class="n">L</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+        <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;HD&#39;</span><span class="p">,</span>
+        <span class="n">BITWISE</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span>
+        <span class="p">):</span>
+</pre></div>
+</div>
+<p><strong>Method</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">set_channel_param(self,error_probability,BITWISE=True,iid=True,OUTPUT_LOG=False):</span></code>: Stores channel probability distribution information <code class="docutils literal notranslate"><span class="pre">error_probability</span></code>. <code class="docutils literal notranslate"><span class="pre">OUTPUT_LOG</span></code> can confirm whether <code class="docutils literal notranslate"><span class="pre">error_probability</span></code> is a varid value.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">get_syndrome(self,e)</span></code>: It receives the binary representation vector <code class="docutils literal notranslate"><span class="pre">e</span></code> of the error<code class="docutils literal notranslate"><span class="pre">E</span></code> belonging to the Pauli group <code class="docutils literal notranslate"><span class="pre">G</span></code> and calculates the syndrome<code class="docutils literal notranslate"><span class="pre">syndrome</span></code>. The <code class="docutils literal notranslate"><span class="pre">PROB</span></code> is list of depolarizing probability.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">get_T(self,idx)</span></code>: Given the index or array <code class="docutils literal notranslate"><span class="pre">idx</span></code>, it returns the corresponding error operator<code class="docutils literal notranslate"><span class="pre">T</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">get_L(self,idx)</span></code>: Given the index or array <code class="docutils literal notranslate"><span class="pre">idx</span></code>, it returns the corresponding error operator<code class="docutils literal notranslate"><span class="pre">L</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">get_S(self,idx)</span></code>: Given the index or array <code class="docutils literal notranslate"><span class="pre">idx</span></code>, it returns the corresponding error operator<code class="docutils literal notranslate"><span class="pre">S</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">in_S(self,b)</span></code>: Given the binary representation of the Pauli group <code class="docutils literal notranslate"><span class="pre">b</span></code>, it is determined whether the element<code class="docutils literal notranslate"> <span class="pre">b</span></code> is included in the fixed subgroup.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">decode(self,syndrome,mode='hd')</span></code>: Syndrome (Hard decision) decoding or maximum likelihood decoding is performed according to <code class="docutils literal notranslate"><span class="pre">mode</span></code>, and the recovery operator <code class="docutils literal notranslate"><span class="pre">T</span></code> (or <code class="docutils literal notranslate"><span class="pre">LT</span></code>) and likelihood probability are returned in<code class="docutils literal notranslate"> <span class="pre">dict</span></code> type.</p>
+<ul>
+<li><p>mode=<code class="docutils literal notranslate"><span class="pre">HD</span></code>: syndrome decoding</p></li>
+<li><p>mode=<code class="docutils literal notranslate"><span class="pre">ML_LUT</span></code>: ML decoding (using lookup table)</p></li>
+<li><p>mode=<code class="docutils literal notranslate"><span class="pre">ML</span></code>: ML decoding (calculate logical error probability <code class="docutils literal notranslate"><span class="pre">L</span></code> and <code class="docutils literal notranslate"><span class="pre">L=argmax(logical_error_probability)</span></code>, <code class="docutils literal notranslate"><span class="pre">L^T</span></code> is returned)</p></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="pyqecc-qecc-paracode-sc">
+<h1><code class="docutils literal notranslate"><span class="pre">pyqecc.qecc.ParaCode(SC)</span></code><a class="headerlink" href="#pyqecc-qecc-paracode-sc" title="Permalink to this headline"></a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">code_instances</span></code>: The code instances (Write the <code class="docutils literal notranslate"><span class="pre">[Code1,Code2,...]</span></code>.)</p>
+</div>
+<div class="section" id="pyqecc-qecc-conccode-sc">
+<h1><code class="docutils literal notranslate"><span class="pre">pyqecc.qecc.ConcCode(SC)</span></code><a class="headerlink" href="#pyqecc-qecc-conccode-sc" title="Permalink to this headline"></a></h1>
+<p>Concatenated code class.</p>
+<p><strong>constructor</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">code_instances</span><span class="p">,</span><span class="n">P</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">BITWISE</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;BP&quot;</span><span class="p">):</span>
+</pre></div>
+</div>
+<p><strong>Member</strong><br /><code class="docutils literal notranslate"><span class="pre">code_instances</span></code>: The code instances (Write the <code class="docutils literal notranslate"><span class="pre">[Code1,Code2,...]</span></code>.)</p>
+<p><strong>example: <code class="docutils literal notranslate"><span class="pre">[FiveCode(),Para([FiveCode(),FiveCode(),FiveCode(),FiveCode(),FiveCode()])]</span></code> is concatenated 5-qubit code, which is a code in which one qubit is encoded into five qubits by “five-qubit code”, are encoded  into twenty five qubits by five “five-qubit code”s, one for each.</strong></p>
+<p><strong>method</strong><br /><code class="docutils literal notranslate"><span class="pre">calc_grobal_H(self)</span></code>: calculation global parity check matrix</p>
+</div>
+<div class="section" id="pyqecc-qecc-gkp-code">
+<h1><code class="docutils literal notranslate"><span class="pre">pyqecc.qecc.GKP(CODE)</span></code><a class="headerlink" href="#pyqecc-qecc-gkp-code" title="Permalink to this headline"></a></h1>
+<p>GKP Qubit class
+<code class="docutils literal notranslate"><span class="pre">def</span> <span class="pre">__init__(</span> <span class="pre">self,</span> <span class="pre">code_instance,</span> <span class="pre">sigma=0.1,</span> <span class="pre">mode=&quot;SYNDROME&quot;,</span> <span class="pre">):</span></code>
+The <code class="docutils literal notranslate"><span class="pre">GKP</span></code> class has the arguments for</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">code_instance</span></code>: code instance for <code class="docutils literal notranslate"><span class="pre">CODE</span></code> class</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sigma=0.1</span></code>: Standard deviation for Quantum Gaussian Channel</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mode=&quot;SYNDROME&quot;</span></code>: decoding mode</p></li>
+</ul>
+</div>
+<div class="section" id="pyqecc-qecc-abstruct-code">
+<h1><code class="docutils literal notranslate"><span class="pre">pyqecc.qecc.abstruct.CODE()</span></code><a class="headerlink" href="#pyqecc-qecc-abstruct-code" title="Permalink to this headline"></a></h1>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">CODE</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>The all of code class inherits this class.
+<strong>Constructor</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">**</span><span class="n">param</span><span class="p">):</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">:int</span></code><br />code length (number of physical qubit)<br /><code class="docutils literal notranslate"><span class="pre">k</span> <span class="pre">:int</span></code><br />information length (number of logical qubit)<br /><code class="docutils literal notranslate"><span class="pre">R</span> <span class="pre">:float</span></code><br />code rate (R:=k/n)</p>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, papillon.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

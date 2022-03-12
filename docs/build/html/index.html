@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Overview &mdash; pyqecc  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="#" class="icon icon-home"> pyqecc
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">Overview</a></li>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#quick-start">Quick start</a><ul>
+<li><a class="reference internal" href="#import-the-pyqecc">1. Import the PyQecc.</a></li>
+<li><a class="reference internal" href="#create-the-instance-for-qecc">2. Create the instance for QECC.</a></li>
+<li><a class="reference internal" href="#prepare-the-decoding-simulator">3. Prepare the decoding simulator.</a></li>
+<li><a class="reference internal" href="#start-the-decoding-simulation">4. Start the decoding simulation.</a></li>
+<li><a class="reference internal" href="#confirm-the-decoding-results">5. Confirm the decoding results.</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#features">Features</a><ul>
+<li><a class="reference internal" href="#stabilizer-code">Stabilizer Code</a></li>
+<li><a class="reference internal" href="#decoder">decoder</a></li>
+<li><a class="reference internal" href="#decoding-simulation">Decoding simulation</a></li>
+<li><a class="reference internal" href="#channel-model">Channel Model</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#simulation-example">Simulation example</a><ul>
+<li><a class="reference internal" href="#concatenated-5-qubit-codes-concatenation-for-1-2-and-3-2-fig-1">1. Concatenated 5-qubit codes (concatenation for 1, 2, and 3) [2, Fig. 1].</a></li>
+<li><a class="reference internal" href="#conatenated-gottesman-kitaev-preskill-gkp-bit-flip-code-with-analog-information-3">2. Conatenated Gottesman-Kitaev-Preskill (GKP)-bit flip code with analog information [3]</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#future-works">Future works</a></li>
+<li><a class="reference internal" href="#references">References</a></li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">pyqecc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
+      <li>Overview</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div align="center">
+<img src="https://user-images.githubusercontent.com/72004949/148188473-22ea4600-d1d1-46b6-814b-0d3414af5750.png" alt="pyqecc" title="pyqecc">
+</div><p><a class="reference external" href="https://pyqecc.readthedocs.io/en/latest/?badge=latest"><img alt="Documentation Status" src="https://readthedocs.org/projects/pyqecc/badge/?version=latest" /></a>
+<a class="reference external" href="https://opensource.org/licenses/MIT"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" /></a></p>
+<div class="section" id="overview">
+<h1>Overview<a class="headerlink" href="#overview" title="Permalink to this headline"></a></h1>
+<p>PyQecc mainly provide quantum error correction code (QECC) simulator.</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://pyqecc.readthedocs.io/en/latest/?">Installation</a> (This page)</p></li>
+<li><p><a class="reference external" href="https://pyqecc.readthedocs.io/en/latest/?">Quick start</a> (This page)</p></li>
+<li><p><a class="reference external" href="https://pyqecc.readthedocs.io/en/latest/features.html">Features</a></p></li>
+<li><p><a class="reference external" href="https://github.com/papillon-woof/pyqecc">Source code</a></p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/pyqecc/0.0.1/">PyPI</a></p></li>
+</ul>
+</div>
+<div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline"></a></h1>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">pyqecc</span>
+</pre></div>
+</div>
+<p>In some cases, installation required setting for <code class="docutils literal notranslate"><span class="pre">--proxy</span></code>, <code class="docutils literal notranslate"><span class="pre">--user</span></code> or <code class="docutils literal notranslate"><span class="pre">sudo</span></code>. PyQecc is written by python3.</p>
+</div>
+<div class="section" id="quick-start">
+<h1>Quick start<a class="headerlink" href="#quick-start" title="Permalink to this headline"></a></h1>
+<p>We explane the tutorial usage.
+Please prepare the new <code class="docutils literal notranslate"><span class="pre">.py</span></code> file (e.g. <code class="docutils literal notranslate"><span class="pre">test.py</span></code>). Please copy and paste following code</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyqecc</span> <span class="kn">import</span> <span class="n">FiveCode</span><span class="p">,</span> <span class="n">dec_sim</span>
+
+<span class="n">my_code</span> <span class="o">=</span> <span class="n">FiveCode</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;ML&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">my_code</span><span class="p">)</span>
+<span class="n">dec_sim</span><span class="p">(</span><span class="n">my_code</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The steps of evalutation for decoding performance are <code class="docutils literal notranslate"><span class="pre">Import</span> <span class="pre">the</span> <span class="pre">PyQecc.</span></code>, <code class="docutils literal notranslate"><span class="pre">Create</span> <span class="pre">the</span> <span class="pre">instance</span> <span class="pre">for</span> <span class="pre">QECC.</span></code>, <code class="docutils literal notranslate"><span class="pre">Prepare</span> <span class="pre">the</span> <span class="pre">decoding</span> <span class="pre">simulator</span></code>, <code class="docutils literal notranslate"><span class="pre">Start</span> <span class="pre">the</span> <span class="pre">decoding</span> <span class="pre">simulation</span></code>, and <code class="docutils literal notranslate"><span class="pre">Confirm</span> <span class="pre">the</span> <span class="pre">decoding</span> <span class="pre">result</span></code>.</p>
+<div class="section" id="import-the-pyqecc">
+<h2>1. Import the PyQecc.<a class="headerlink" href="#import-the-pyqecc" title="Permalink to this headline"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyqecc</span> <span class="kn">import</span> <span class="n">FiveCode</span><span class="p">,</span> <span class="n">dec_sim</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="create-the-instance-for-qecc">
+<h2>2. Create the instance for QECC.<a class="headerlink" href="#create-the-instance-for-qecc" title="Permalink to this headline"></a></h2>
+<p>For example, we prepare the 5-qubit code.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">my_code</span> <span class="o">=</span> <span class="n">FiveCode</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>We confirm the information for QECC <code class="docutils literal notranslate"><span class="pre">my_code</span></code> by</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="n">my_code</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">NAME</span>               <span class="p">:</span> <span class="n">FIVE_CODE</span>
+<span class="n">PHYSICAL</span> <span class="n">QUBITS</span> <span class="p">(</span><span class="n">n</span><span class="p">):</span> <span class="mi">5</span>
+<span class="n">LOGICAL</span> <span class="n">QUBITS</span> <span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="p">:</span> <span class="mi">1</span>
+<span class="n">CODE</span> <span class="n">RATE</span> <span class="p">(</span><span class="n">R</span> <span class="o">=</span> <span class="n">k</span><span class="o">/</span><span class="n">n</span><span class="p">):</span> <span class="mf">0.2</span>
+<span class="n">DECODING_MODE</span>      <span class="p">:</span> <span class="n">ML</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="prepare-the-decoding-simulator">
+<h2>3. Prepare the decoding simulator.<a class="headerlink" href="#prepare-the-decoding-simulator" title="Permalink to this headline"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dec_sim</span><span class="p">(</span><span class="n">my_code</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>default settings:</p>
+<ul class="simple">
+<li><p>depolarizing channel</p></li>
+<li><p>1000 codeward</p></li>
+<li><p>maximum likelihood decoding.</p></li>
+</ul>
+</div>
+<div class="section" id="start-the-decoding-simulation">
+<h2>4. Start the decoding simulation.<a class="headerlink" href="#start-the-decoding-simulation" title="Permalink to this headline"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">test</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>Please wait patiently.</p>
+</div>
+<div class="section" id="confirm-the-decoding-results">
+<h2>5. Confirm the decoding results.<a class="headerlink" href="#confirm-the-decoding-results" title="Permalink to this headline"></a></h2>
+<p>In <code class="docutils literal notranslate"><span class="pre">/dec_data</span></code>, PyQecc generates the simulation results.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">MONTE: 100 BLOCK_ERROR: 5 p: 0.1 LOGICAL_ERROR_PROB: 0.05</span>
+<span class="go">MONTE: 200 BLOCK_ERROR: 19 p: 0.1 LOGICAL_ERROR_PROB: 0.095</span>
+<span class="go">MONTE: 300 BLOCK_ERROR: 24 p: 0.1 LOGICAL_ERROR_PROB: 0.08</span>
+<span class="go">MONTE: 400 BLOCK_ERROR: 29 p: 0.1 LOGICAL_ERROR_PROB: 0.0725</span>
+<span class="go">MONTE: 500 BLOCK_ERROR: 35 p: 0.1 LOGICAL_ERROR_PROB: 0.07</span>
+<span class="go">MONTE: 600 BLOCK_ERROR: 44 p: 0.1 LOGICAL_ERROR_PROB: 0.07333333333333333</span>
+<span class="go">MONTE: 700 BLOCK_ERROR: 53 p: 0.1 LOGICAL_ERROR_PROB: 0.07571428571428572</span>
+<span class="go">MONTE: 800 BLOCK_ERROR: 63 p: 0.1 LOGICAL_ERROR_PROB: 0.07875</span>
+<span class="go">MONTE: 900 BLOCK_ERROR: 71 p: 0.1 LOGICAL_ERROR_PROB: 0.07888888888888888</span>
+<span class="go">...</span>
+</pre></div>
+</div>
+<p>directory structure</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>├── test.py
+└── dec_data (Folder)
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">dec_data/FIVE_CODE_5_1_monte_1000_20220220212203.csv</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">p</span><span class="p">,</span><span class="n">LOGICAL_ERROR_PROB</span><span class="p">,</span>
+<span class="mf">0.1</span><span class="p">,</span><span class="mf">0.08</span><span class="p">,</span>
+<span class="mf">0.01</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="features">
+<h1>Features<a class="headerlink" href="#features" title="Permalink to this headline"></a></h1>
+<p>See the detail for <a class="reference internal" href="features.html"><span class="doc">features</span></a></p>
+<div class="section" id="stabilizer-code">
+<h2>Stabilizer Code<a class="headerlink" href="#stabilizer-code" title="Permalink to this headline"></a></h2>
+<ul class="simple">
+<li><p>5-qubit code</p></li>
+<li><p>7-qubit code (STEANE code)</p></li>
+<li><p>bit flip code</p></li>
+<li><p>phase flip code</p></li>
+<li><p>9-qubit shor code (concatenated bit and phase flip code.)</p></li>
+<li><p>concatenated code</p></li>
+</ul>
+</div>
+<div class="section" id="decoder">
+<h2>decoder<a class="headerlink" href="#decoder" title="Permalink to this headline"></a></h2>
+<ul class="simple">
+<li><p>syndrome decoding</p></li>
+<li><p>maximum likelihood (ML) decoding</p></li>
+<li><p>belief propagation decoding (concatenated code only)</p></li>
+<li><p>decoding with analog informatuon [3] (GKP qubit only)</p></li>
+</ul>
+</div>
+<div class="section" id="decoding-simulation">
+<h2>Decoding simulation<a class="headerlink" href="#decoding-simulation" title="Permalink to this headline"></a></h2>
+<ul class="simple">
+<li><p>block error rate</p></li>
+</ul>
+</div>
+<div class="section" id="channel-model">
+<h2>Channel Model<a class="headerlink" href="#channel-model" title="Permalink to this headline"></a></h2>
+<ul class="simple">
+<li><p>depolarizing channel</p></li>
+<li><p>pauli channel</p></li>
+<li><p>bit flip channel</p></li>
+<li><p>quantum gaussian channel</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="simulation-example">
+<h1>Simulation example<a class="headerlink" href="#simulation-example" title="Permalink to this headline"></a></h1>
+<div class="section" id="concatenated-5-qubit-codes-concatenation-for-1-2-and-3-2-fig-1">
+<h2>1. Concatenated 5-qubit codes (concatenation for 1, 2, and 3) [2, Fig. 1].<a class="headerlink" href="#concatenated-5-qubit-codes-concatenation-for-1-2-and-3-2-fig-1" title="Permalink to this headline"></a></h2>
+<p><img alt="image" src="https://user-images.githubusercontent.com/72004949/148180717-3c523204-3acc-48c6-a736-503b14dece4e.png" /></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#Source code</span>
+<span class="kn">from</span> <span class="nn">pyqecc</span> <span class="kn">import</span> <span class="n">FiveCode</span><span class="p">,</span> <span class="n">dec_sim</span><span class="p">,</span> <span class="n">ConcCode</span><span class="p">,</span> <span class="n">ParaCode</span><span class="p">,</span> <span class="n">DepolarizingChannel</span>
+
+<span class="n">NUM_OF_CONCATENATE</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="k">for</span> <span class="n">num_of_concatenate</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">NUM_OF_CONCATENATE</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="n">conc_code</span> <span class="o">=</span> <span class="p">[</span><span class="n">FiveCode</span><span class="p">()]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_of_concatenate</span><span class="p">):</span>
+        <span class="n">conc_code</span> <span class="o">+=</span> <span class="p">[</span><span class="n">ParaCode</span><span class="p">([</span><span class="n">FiveCode</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="o">**</span><span class="n">i</span><span class="p">)])]</span>
+    <span class="n">my_code</span> <span class="o">=</span> <span class="n">ConcCode</span><span class="p">(</span><span class="n">conc_code</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">my_code</span><span class="p">)</span>
+    <span class="n">dec_sim</span><span class="p">(</span>
+        <span class="n">my_code</span><span class="p">,</span>
+        <span class="n">channel_instance</span><span class="o">=</span><span class="n">DepolarizingChannel</span><span class="p">(</span>
+            <span class="n">my_code</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mf">0.13</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.17</span><span class="p">,</span> <span class="mf">0.18</span><span class="p">,</span> <span class="mf">0.1885</span><span class="p">,</span> <span class="mf">0.19</span><span class="p">]</span>
+        <span class="p">),</span>
+        <span class="n">MONTE</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="conatenated-gottesman-kitaev-preskill-gkp-bit-flip-code-with-analog-information-3">
+<h2>2. Conatenated Gottesman-Kitaev-Preskill (GKP)-bit flip code with analog information [3]<a class="headerlink" href="#conatenated-gottesman-kitaev-preskill-gkp-bit-flip-code-with-analog-information-3" title="Permalink to this headline"></a></h2>
+<p><img alt="image2" src="https://user-images.githubusercontent.com/72004949/154846761-fb98d353-18dd-4698-b10d-2fc356ce02c5.png" /></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#Source code</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">pyqecc</span> <span class="kn">import</span> <span class="n">GKP</span><span class="p">,</span> <span class="n">BitFlipCode</span><span class="p">,</span> <span class="n">GaussianQuantumChannel</span><span class="p">,</span> <span class="n">dec_sim</span>
+
+
+<span class="n">my_code</span> <span class="o">=</span> <span class="n">BitFlipCode</span><span class="p">()</span>
+<span class="n">my_GKP</span> <span class="o">=</span> <span class="n">GKP</span><span class="p">(</span><span class="n">my_code</span><span class="p">)</span>
+<span class="n">my_channel</span> <span class="o">=</span> <span class="n">GaussianQuantumChannel</span><span class="p">(</span><span class="n">my_GKP</span><span class="o">.</span><span class="n">n</span><span class="p">,</span><span class="n">sigma</span><span class="o">=</span><span class="p">[</span><span class="mf">0.33</span><span class="p">,</span><span class="mf">0.35</span><span class="p">,</span><span class="mf">0.37</span><span class="p">,</span><span class="mf">0.39</span><span class="p">],</span><span class="n">phase_flip</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">my_GKP</span><span class="p">)</span>
+<span class="n">dec_sim</span><span class="p">(</span><span class="n">my_GKP</span><span class="p">,</span><span class="n">channel_instance</span><span class="o">=</span><span class="n">my_channel</span><span class="p">,</span><span class="n">MONTE</span><span class="o">=</span><span class="mi">10000000</span><span class="p">,</span><span class="n">ERR_STOP</span><span class="o">=</span><span class="mi">1000000</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="future-works">
+<h1>Future works<a class="headerlink" href="#future-works" title="Permalink to this headline"></a></h1>
+<ul class="simple">
+<li><p>surface code</p></li>
+<li><p>color code</p></li>
+<li><p>quantum LDPC code</p></li>
+<li><p>quantum polar code</p></li>
+</ul>
+</div>
+<div class="section" id="references">
+<h1>References<a class="headerlink" href="#references" title="Permalink to this headline"></a></h1>
+<p>[1] Nielsen, Michael A., and Isaac Chuang. “Quantum computation and quantum information.” (2002): 558-559.</p>
+<p>[2] Poulin, David. “Optimal and efficient decoding of concatenated quantum block codes.” Physical Review A 74.5 (2006): 052333.</p>
+<p>[3] Kosuke Fukui, Akihisa Tomita, and Atsushi Okamoto Phys. Rev. Lett. 119, 180507 – Published 3 November 2017</p>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, papillon.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
