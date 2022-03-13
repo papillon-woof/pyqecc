@@ -134,3 +134,4 @@ test.py
 
 # docs
 !docs/build/
+pyqecc/qecc/topological_data/
