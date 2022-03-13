@@ -293,71 +293,6 @@ class Surface(SC):
         elif H == "H":
             self._H = H
 
-        self.enc_circuit = None
-        self.dec_circuit = None
-        self.ML_decoding_qubit_limit = 15
-
-    def read_txt(self):
-        # 形式
-        # 頂点: 点の座標，行番号が点番号: float[3]
-        # 辺: 点の集合 edge 行番号が辺番号: int[2]
-        # 面: 辺の集合 face 行番号が面番号: int[d]
-        # 現状3次元まで
-        # 12 15 17
-        # 1 1.0 2.1 3,1
-        # 2 1.1 2.3 4.5
-        # ...
-        # 1 2 5
-        # 1 3
-        # 1 2
-        # 1 2 4 5..
-        # 1 3 5 6..
-        # ...
-        with open(self.fname, newline="") as f:
-            reader = [row for row in csv.reader(f)]
-            self._num_v, self._num_e, self._num_f = [int(i) for i in reader[0]]
-            self._V = [[],[[] for i in range(self.num_f)]] #双対点は面の個数と同等
-            self._E = [[],[[] for i in range(self.num_e)]]
-            self._F = [[],[]]
-            count = 0
-            print(len(reader))
-            for i in range(1, self.num_v + 1):
-                v = [float(data) for data in reader[i]]
-                self._V[0].append(v)
-                count+=1
-            for i in range(self.num_e):
-                e = [int(data) for data in reader[count]]
-                self._E[0].append(e)
-                count+=1
-            for i in range(self.num_f):
-                f = [int(data) for data in reader[count]]
-                self._F[0].append(f)
-                count+=1
-            for i in range(1, self.num_v + 1):
-                v = [float(data) for data in reader[count]]
-                self._V[0].append(v)
-                count+=1
-            print(count)
-            for i in range(self.num_e):
-                e = [int(data) for data in reader[count]]
-                self._E[0].append(e)
-                count+=1
-            for i in range(self.num_f):
-                f = [int(data) for data in reader[count]]
-                self._F[0].append(f)
-                count+=1
-        
-        # Generate a parity chack matrix 
-        self._n = self.num_e
-        self._k = self.num_e - 2*self.num_f
-        self._nk = self.n - self.k
-        self._R = self.k / self.n
-        self._H = np.zeros((self.nk, 2 * self.n), dtype="i1")
-        for i in range(self.num_f):
-            self._H[i][self.dual_faces[i]] = 1
-        for i in range(self.num_f):
-            self._H[self.nk//2 + i][self.n + np.array(self.dual_faces[i])] = 1
-
     def decode(self, s):
         return self.mwpm(s)
 
@@ -382,17 +317,62 @@ class Surface(SC):
         toricでは変更
         '''
         edges = []
-        vertexs = self.vertexs if val == 0 else self.dual_vertexs
-        for i, f in enumerate(syndrome):
-            if -1 not in vertexs[i]:
-                x,y,z = vertexs[i]
-            if s == 1:
-                for j, ss in enumerate(syndrome[i + 1:]):
-                    if ss == 1:
-                        xx,yy,zz = self._vertex[(val+1)%2][j]
-                        weight = np.abs(xx - x) + np.abs(yy - y) + np.abs(zz - z)
-                        edges.append([i, j + i + 1, weight])
+        print(syndrome)
+        faces = self.faces if val == 0 else self.dual_faces
+        for s, f in enumerate(syndrome):
+            if f != 1:
+                continue
+            f = np.where(self.H[self.nk//2*val+s]==1)[0]
+            f.sort()
+            for i in range(self.d1-1):
+                if f.tolist() in faces[i]:
+                    x,y = i,faces[i].index(f.tolist())
+                    break
+            for ss, ff in enumerate(syndrome[s + 1:]):
+                if ff != 1:
+                    continue
+                f = np.where(self.H[self.nk//2*val+ss]==1)[0]
+                f.sort()
+                for i in range(self.d1-1):
+                    if f.tolist() in faces[i]:
+                        xx,yy = i,faces[i].index(f.tolist())
+                        print(xx,yy)
+                        weight = np.abs(xx-x)+np.abs(yy-y)
+                        edges.append([s, s + ss + 1,weight])
+                        break
         return edges
+
+    def _correct_matched_qubits(self, aq0, aq1):
+        """Flips the values of edges between two matched qubits by doing a walk in between."""
+        ancillas = self.code.ancilla_qubits[self.code.decode_layer]
+        pseudos = self.code.pseudo_qubits[self.code.decode_layer]
+        dq0 = ancillas[aq0.loc] if aq0.loc in ancillas else pseudos[aq0.loc]
+        dq1 = ancillas[aq1.loc] if aq1.loc in ancillas else pseudos[aq1.loc]
+        dx, dy, xd, yd = self._walk_direction(aq0, aq1, self.code.size)
+        xv = self._walk_and_correct(dq0, dy, yd)
+        self._walk_and_correct(dq1, dx, xd)
+        return dy + dx + abs(aq0.z - aq1.z)
+
+    def _walk_direction(q0, q1, size):
+        """Finds the closest walking distance and direction."""
+        (x0, y0) = q0.loc
+        (x1, y1) = q1.loc
+        dx0 = int(x0 - x1) % size[0]
+        dx1 = int(x1 - x0) % size[0]
+        dy0 = int(y0 - y1) % size[1]
+        dy1 = int(y1 - y0) % size[1]
+        dx, xd = (dx0, (0.5, 0)) if dx0 < dx1 else (dx1, (-0.5, 0))
+        dy, yd = (dy0, (0, -0.5)) if dy0 < dy1 else (dy1, (0, 0.5))
+        return dx, dy, xd, yd
+
+    def _walk_and_correct(self, qubit, length, key):
+        """Corrects the state of a qubit as it traversed during a walk."""
+        for _ in range(length):
+            try:
+                qubit = self.correct_edge(qubit, key)
+            except:
+                break
+        return qubit
 
     def mwpm(self, s):
         x = self.correct_matching(s[:self.nk//2], self.matching(s[:self.nk//2],0))
@@ -506,12 +486,17 @@ class Toric(Surface):
 
 
 def gen_plane(d1,d2):
+
+    # original d1 x (d2 + 1)
+    # dual: (d1 - 1) x d2
+
     vertexs = []
     edges = []
-    faces = []
+    faces = [[[] for i in range(d2)] for j in range(d1-1)]
     dual_vertexs = []
     dual_edges = []
-    dual_faces = []
+    dual_faces = [[[] for i in range(d2 - 1)] for j in range(d1)]
+
     '''
     - - - -
      | | |
@@ -563,7 +548,7 @@ def gen_plane(d1,d2):
                 if a>b:
                     a,b = b,a
                 f.append(edges.index([a,b]))
-            faces.append(f)
+            faces[i][j] = f
     
     # Mask the vertexes for planner on boundary
     for i in range(d1):
@@ -612,13 +597,18 @@ def gen_plane(d1,d2):
             if a>b:
                 a,b = b,a
             f.append(dual_edges.index([a,b]))
-            dual_faces.append(f)
+            dual_faces[i][j] = f
     
     # Mask the vertexes for planner on boundary
     for i in range(d1+1):
         for j in range(d2):
             if i == 0 or i == d1:
                 dual_vertexs[i*d2 + j] = [-1]
+
+    # faces <-> dual_vertexs
+    graph_component = {"vertexs":vertexs, "edges":edges, "faces":faces, "dual_vertexs":dual_vertexs, "dual_edges":dual_edges, "dual_faces":dual_faces,}
+    faces_coordinate = []
+    dual_faces_coordinate = []
 
     return vertexs, edges, faces, dual_vertexs, dual_edges, dual_faces,
 
@@ -635,26 +625,28 @@ class Planner(Surface):
         self._vertexs, self._edges, self._faces,self._dual_vertexs, self._dual_edges, self._dual_faces = gen_plane(self.d1, self.d2)
         self._num_v = len(self.vertexs)
         self._num_e = len(self.edges)
-        self._num_f = len(self.faces)
+        self._num_f = (d1 - 1) * d2
         if not os.path.isdir('pyqecc/qecc/topological_data'):
             os.makedirs('pyqecc/qecc/topological_data')
         self._fname = 'pyqecc/qecc/topological_data'+'/toric_'+str(d1)+'_'+str(d2)+'_'+datetime.now().strftime('%Y%m%d%H%M%S')+'.csv'
         with open(self.fname, 'w',newline="") as f:
             writer = csv.writer(f)
             writer.writerow([self.num_v, self.num_e, self.num_f])
-            print(self.num_e,self.num_v,self.num_f,)
             for i in range(self.num_v):
                 writer.writerow(self.vertexs[i])
             for i in range(self.num_e):
                 writer.writerow(self.edges[i])
-            for i in range(self.num_f):
-                writer.writerow(self.faces[i])
+            for i in range(self.d1-1):
+                for j in range(self.d2):
+                    writer.writerow(self.faces[i][j])
+            
             for i in range(self.num_v):
                 writer.writerow(self.dual_vertexs[i])
             for i in range(self.num_e):
                 writer.writerow(self.dual_edges[i])
-            for i in range(self.num_f):
-                writer.writerow(self.dual_faces[i])
+            for i in range(self.d1):
+                for j in range(self.d2-1):
+                    writer.writerow(self.dual_faces[i][j])
         self.read_txt()
         self.enc_circuit = None
         self.dec_circuit = None
@@ -662,11 +654,80 @@ class Planner(Surface):
         self._nk = self.H.shape[1]
         self._k = self.n - self.nk
 
-    def set_T(self, T=None):
-        pass
-
-    def set_L(self, L=None):
-        pass
+    def read_txt(self):
+        # 形式
+        # 頂点: 点の座標，行番号が点番号: float[3]
+        # 辺: 点の集合 edge 行番号が辺番号: int[2]
+        # 面: 辺の集合 face 行番号が面番号: int[d]
+        # 現状3次元まで
+        # 12 15 17
+        # 1 1.0 2.1 3,1
+        # 2 1.1 2.3 4.5
+        # ...
+        # 1 2 5
+        # 1 3
+        # 1 2
+        # 1 2 4 5..
+        # 1 3 5 6..
+        # ...
+        with open(self.fname, newline="") as f:
+            reader = [row for row in csv.reader(f)]
+            self._num_v, self._num_e, self._num_f = [int(i) for i in reader[0]]
+            vertexs = []
+            edges = []
+            faces = []
+            dual_vertexs = []
+            dual_edges = []
+            dual_faces = []
+            count = 1
+            for i in range(self.num_v):
+                v = [float(data) for data in reader[count]]
+                vertexs.append(v)
+                count+=1
+            for i in range(self.num_e):
+                e = [int(data) for data in reader[count]]
+                edges.append(e)
+                count+=1
+            for i in range(self.d1-1):
+                f = []
+                for j in range(self.d2):
+                    f.append([int(data) for data in reader[count]])
+                    count+=1
+                faces.append(f)
+            for i in range(self.num_v):
+                v = [float(data) for data in reader[count]]
+                dual_vertexs.append(v)
+                count+=1
+            for i in range(self.num_e):
+                e = [int(data) for data in reader[count]]
+                dual_edges.append(e)
+                count+=1
+            for i in range(self.d1):
+                f = []
+                for j in range(self.d2-1):
+                    f.append([int(data) for data in reader[count]])
+                    count+=1
+                dual_faces.append(f)
+        self._vertexs = vertexs
+        self._edges = edges
+        self._faces = faces
+        self._dual_vertexs = dual_vertexs
+        self._dual_edges = dual_edges
+        self._dual_faces = dual_faces
+        print(self._dual_faces)
+        # Generate a parity chack matrix 
+        self._n = self.num_e
+        self._k = self.num_e - 2*self.num_f
+        self._nk = self.n - self.k
+        self._R = self.k / self.n
+        self._H = np.zeros((self.nk, 2 * self.n), dtype="i1")
+        for i in range(self.d1-1):
+            for j in range(self.d2):
+                self._H[i*self.d2+j][self.faces[i][j]] = 1
+    
+        for i in range(self.d1):
+            for j in range(self.d2-1):
+                self._H[self.nk//2 + i*(self.d2-1)+j][self.n + np.array(self.dual_faces[i][j])] = 1
 
     def decode(self, syndrome,mode="mwpm"):
         super().decode(syndrome)
