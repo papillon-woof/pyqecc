@@ -102,6 +102,7 @@ class Surface(SC):
         return self.mwpm(s)
 
     def matching(self, syndromes,val):
+        # minimum weight perfect matching
         graph_instance = nw.Graph()
         edges = self.get_qubit_distances(syndromes, val)
         for v0, v1, weight in edges:
@@ -109,6 +110,7 @@ class Surface(SC):
         return nw.algorithms.matching.max_weight_matching(graph_instance, maxcardinality=10)
 
     def correct_matching(self, matching, val, **kwargs):
+        # get_error
         qubit = set()
         for i, j in matching:
             qubit^=self._correct_matched_qubits(i, j, val)
@@ -120,31 +122,28 @@ class Surface(SC):
         '''
         calculated between qubits. wo measurement err
         s: v
-        重みを計算する必要がある．
-        toricでは変更
         '''
         edges = []
-        faces = self.faces if val == 0 else self.dual_faces
-        for s, f in enumerate(syndrome):
-            if f != 1:
+        for s_ind, s in enumerate(syndrome):
+            if s != 1:
                 continue
-            f = np.where(self.H[self.nk//2*val+s]==1)[0]
+            f = np.where(self.H[self.nk//2*val+s_ind]==1)[0]
             f.sort()
             f = f.tolist()
             for i in range(self.d[val]-1):
-                if f in faces[i]:
-                    x,y = i,faces[i].index(f)
+                if f in self.faces[val][i]:
+                    x,y = i,self.faces[val][i].index(f)
                     break
-            for ss, ff in enumerate(syndrome[s + 1:]):
-                if ff != 1:
+            for ss_ind, ss in enumerate(syndrome[s_ind + 1:]):
+                if ss != 1:
                     continue
-                f = np.where(self.H[self.nk//2*val+s+ss+1]==1)[0]
+                f = np.where(self.H[self.nk//2*val+s_ind+ss_ind+1]==1)[0]
                 f.sort()
                 for j in range(self.d[val]-1):
-                    if f.tolist() in faces[j]:
-                        xx,yy = j,faces[j].index(f.tolist())
+                    if f.tolist() in self.faces[val][j]:
+                        xx,yy = j,self.faces[val][j].index(f.tolist())
                         weight = np.abs(xx-x)+np.abs(yy-y)
-                        edges.append([s, s + ss + 1,weight])
+                        edges.append([s_ind, s_ind + ss_ind + 1,weight])
                         break
         return edges
 
@@ -152,20 +151,15 @@ class Surface(SC):
         """Flips the values of edges between two matched qubits by doing a walk in between."""   
         x0,y0 = s0%(self.d[0]), s0//(self.d[0])
         x1,y1 = s1%(self.d[0]), s1//(self.d[0])
-        dx = np.sign(x1 - x0)
-        dy = np.sign(y1 - y0)
+        dx,dy = np.sign(x1 - x0),np.sign(y1 - y0)
         qubit = set()
-        faces = self.faces if val == 0 else self.dual_faces
         while(y0!=y1):
-            qubit^=set(faces[y0+dy][x0])&set(faces[y0][x0])
+            qubit^=set(self.faces[val][y0+dy][x0])&set(self.faces[val][y0][x0])
             y0+=dy
         while(x0!=x1):
-            qubit^=set(faces[y0][x0+dx])&set(faces[y0][x0])
+            qubit^=set(self.faces[val][y0][x0+dx])&set(self.faces[val][y0][x0])
             x0+=dx
         return qubit
-
-    def get_correction_location():
-        pass
 
     def mwpm(self, s):
         x = self.correct_matching(self.matching(s[:self.nk//2],0),0)
@@ -195,18 +189,6 @@ class Surface(SC):
     @property
     def faces(self):
         return self._faces
-
-    @property
-    def dual_vertexs(self):
-        return self._dual_vertexs
-
-    @property
-    def dual_edges(self):
-        return self._dual_edges
-
-    @property
-    def dual_faces(self):
-        return self._dual_faces
 
     @property
     def fname(self):
@@ -405,37 +387,27 @@ def gen_plane(d1,d2):
 class Planner(Surface):
     def __init__(self, d1, d2, P=None):
         self._d = [d1,d2]
-        self._vertexs = []
-        self._edges = []
-        self._faces = []
-        self._dual_vertexs = []
-        self._dual_edges = []
-        self._dual_faces = []
-        self._vertexs, self._edges, self._faces,self._dual_vertexs, self._dual_edges, self._dual_faces = gen_plane(self.d[0], self.d[1])
-        self._num_v = len(self.vertexs)
-        self._num_e = len(self.edges)
-        self._num_f = (self.d[0] - 1) * self.d[1]
+        self._vertexs = [[] for _ in range(2)]
+        self._edges = [[] for _ in range(2)]
+        self._faces = [[] for _ in range(2)]
+        self._vertexs[0], self._edges[0], self._faces[0], self._vertexs[1], self._edges[1], self._faces[1] = gen_plane(self.d[0], self.d[1])
+        self._num_v = [len(self.vertexs[0]),len(self.vertexs[1])]
+        self._num_e = [len(self.edges[0]),len(self.edges[1])]
+        self._num_f = [(self.d[0] - 1) * self.d[1],(self.d[1] - 1) * self.d[0]]
         if not os.path.isdir('pyqecc/qecc/topological_data'):
             os.makedirs('pyqecc/qecc/topological_data')
-        self._fname = 'pyqecc/qecc/topological_data'+'/toric_'+str(d1)+'_'+str(d2)+'_'+datetime.now().strftime('%Y%m%d%H%M%S')+'.csv'
+        self._fname = 'pyqecc/qecc/topological_data'+'/toric_'+str(self.d[0])+'_'+str(self.d[1])+'_'+datetime.now().strftime('%Y%m%d%H%M%S')+'.csv'
         with open(self.fname, 'w',newline="") as f:
             writer = csv.writer(f)
-            writer.writerow([self.num_v, self.num_e, self.num_f])
-            for i in range(self.num_v):
-                writer.writerow(self.vertexs[i])
-            for i in range(self.num_e):
-                writer.writerow(self.edges[i])
-            for i in range(self.d[0]-1):
-                for j in range(self.d[1]):
-                    writer.writerow(self.faces[i][j])
-            
-            for i in range(self.num_v):
-                writer.writerow(self.dual_vertexs[i])
-            for i in range(self.num_e):
-                writer.writerow(self.dual_edges[i])
-            for i in range(self.d[0]):
-                for j in range(self.d[1]-1):
-                    writer.writerow(self.dual_faces[i][j])
+            writer.writerow([self.num_v[0], self.num_e[0], self.num_f[0]])
+            writer.writerow([self.num_v[1], self.num_e[1], self.num_f[1]])
+            for i in range(2):
+                for j in range(self.num_v[i]):
+                    writer.writerow(self.vertexs[i][j])
+                for j in range(self.num_e[i]):
+                    writer.writerow(self.edges[i][j])
+                for j in range(self.num_f[i]):
+                    writer.writerow(self.faces[i][j//(self.d[i] - 1)][j%(self.d[i] - 1)])
         self.read_txt()
         self.enc_circuit = None
         self.dec_circuit = None
@@ -461,62 +433,40 @@ class Planner(Surface):
         # ...
         with open(self.fname, newline="") as f:
             reader = [row for row in csv.reader(f)]
-            self._num_v, self._num_e, self._num_f = [int(i) for i in reader[0]]
-            vertexs = []
-            edges = []
-            faces = []
-            dual_vertexs = []
-            dual_edges = []
-            dual_faces = []
-            count = 1
-            for i in range(self.num_v):
-                v = [float(data) for data in reader[count]]
-                vertexs.append(v)
-                count+=1
-            for i in range(self.num_e):
-                e = [int(data) for data in reader[count]]
-                edges.append(e)
-                count+=1
-            for i in range(self.d[0]-1):
-                f = []
-                for j in range(self.d[1]):
-                    f.append([int(data) for data in reader[count]])
+            vertexs = [[] for _ in range(2)]
+            edges = [[] for _ in range(2)]
+            faces = [[] for _ in range(2)]
+            count = 2
+            for i in range(2):
+                for j in range(self.num_v[i]):
+                    v = [float(data) for data in reader[count]]
+                    vertexs[i].append(v)
                     count+=1
-                faces.append(f)
-            for i in range(self.num_v):
-                v = [float(data) for data in reader[count]]
-                dual_vertexs.append(v)
-                count+=1
-            for i in range(self.num_e):
-                e = [int(data) for data in reader[count]]
-                dual_edges.append(e)
-                count+=1
-            for i in range(self.d[0]):
-                f = []
-                for j in range(self.d[1]-1):
-                    f.append([int(data) for data in reader[count]])
+                for j in range(self.num_e[i]):
+                    e = [int(data) for data in reader[count]]
+                    edges[i].append(e)
                     count+=1
-                dual_faces.append(f)
+                for j in range(self.d[(i+1)%2]):
+                    f = []
+                    for k in range(self.d[i]-1):
+                        f.append([int(data) for data in reader[count]])
+                        count+=1
+                    faces[i].append(f)
         self._vertexs = vertexs
         self._edges = edges
         self._faces = faces
-        self._dual_vertexs = dual_vertexs
-        self._dual_edges = dual_edges
-        self._dual_faces = dual_faces
+        print(faces[1])
         # Generate a parity chack matrix 
-        self._n = self.num_e
-        self._k = self.num_e - 2*self.num_f
+        self._n = self.num_e[0]
+        self._k = self.num_e[0] - sum(self.num_f)
         self._nk = self.n - self.k
         self._R = self.k / self.n
         self._H = np.zeros((self.nk, 2 * self.n), dtype="i1")
-        for i in range(self.d[0]-1):
-            for j in range(self.d[1]):
-                self._H[i*self.d[1]+j][self.faces[i][j]] = 1
-    
-        for i in range(self.d[0]):
-            for j in range(self.d[1]-1):
-                self._H[self.nk//2 + i*(self.d[1]-1)+j][self.n + np.array(self.dual_faces[i][j])] = 1
 
+        for i in range(2):
+            for j in range(self.num_f[i]):
+                self._H[i*self.num_f[i]+j][self.faces[i][j//(self.d[i] - 1)][j%(self.d[i] - 1)]] = 1
+    
     def decode(self, syndrome,mode="mwpm"):
         return super().decode(syndrome)
 
