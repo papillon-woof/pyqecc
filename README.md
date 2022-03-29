@@ -22,8 +22,8 @@ pip install pyqecc
 In some cases, installation required setting for `--proxy`, `--user` or `sudo`. PyQecc is written by python3.
 
 # Quick start
-We explane the tutorial usage. 
-Please prepare the new `.py` file (e.g. `test.py`). Please copy and paste following code
+We explain the tutorial usage. 
+Please prepare the new `.py` file (e.g. `test.py`). Next we copy and paste following code;
 ```python
 from pyqecc import FiveCode, dec_sim
 
@@ -98,7 +98,7 @@ p,LOGICAL_ERROR_PROB,
 ```
 
 # Features
-See the detail for [features](features.md)
+See the detail for [features](https://github.com/papillon-woof/pyqecc/blob/main/docs/source/features.md)
 
 ## Stabilizer Code
 - 5-qubit code
