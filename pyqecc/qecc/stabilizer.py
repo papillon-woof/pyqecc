@@ -10,7 +10,7 @@ class SC(CODE):
 
     NAME = "stabilizer code"
     USAGE = 'The argments for class of stabilizer code\'s are the codeword length "n" and information length "k".'
-
+    _ML_DECODING_QUBITS_LIMIT = 10
     def __init__(
         self,
         n,

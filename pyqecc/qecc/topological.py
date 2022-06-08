@@ -90,6 +90,7 @@ class Surface(SC):
     def __init__(self, fname, H="obj", T=None, L=None, P=None, iid=True):
         # H is replesentation for graph into adjacent matrix:
         self._fname = fname
+        self._mode = "mwpm"
         if H == "obj":
             self.read_obj()
         elif H == "csv":
@@ -149,8 +150,8 @@ class Surface(SC):
 
     def _correct_matched_qubits(self, s0, s1, val):
         """Flips the values of edges between two matched qubits by doing a walk in between."""   
-        x0,y0 = s0%(self.d[0]), s0//(self.d[0])
-        x1,y1 = s1%(self.d[0]), s1//(self.d[0])
+        x0,y0 = s0%(self.d[1-val]), s0//(self.d[1-val])
+        x1,y1 = s1%(self.d[1-val]), s1//(self.d[1-val])
         dx,dy = np.sign(x1 - x0),np.sign(y1 - y0)
         qubit = set()
         while(y0!=y1):
@@ -164,7 +165,11 @@ class Surface(SC):
     def mwpm(self, s):
         x = self.correct_matching(self.matching(s[:self.nk//2],0),0)
         z = self.correct_matching(self.matching(s[self.nk//2:],1),1)
-        return x+z
+        self.decoder_output["L"] = np.zeros(2*self.n,dtype='i1')
+        self.decoder_output["T"] = x+z
+        self.decoder_output["LT"] = self.decoder_output["L"] ^ self.decoder_output["T"]
+        self.decoder_output["LOGICAL_ERROR_PROBABILITY"] = None
+        return self.decoder_output
 
     @property
     def num_v(self):
@@ -386,6 +391,7 @@ def gen_plane(d1,d2):
 
 class Planner(Surface):
     def __init__(self, d1, d2, P=None):
+        self.decoder_output = {}
         self._d = [d1,d2]
         self._vertexs = [[] for _ in range(2)]
         self._edges = [[] for _ in range(2)]
@@ -394,6 +400,7 @@ class Planner(Surface):
         self._num_v = [len(self.vertexs[0]),len(self.vertexs[1])]
         self._num_e = [len(self.edges[0]),len(self.edges[1])]
         self._num_f = [(self.d[0] - 1) * self.d[1],(self.d[1] - 1) * self.d[0]]
+        self._mode = "mwpm"
         if not os.path.isdir('pyqecc/qecc/topological_data'):
             os.makedirs('pyqecc/qecc/topological_data')
         self._fname = 'pyqecc/qecc/topological_data'+'/toric_'+str(self.d[0])+'_'+str(self.d[1])+'_'+datetime.now().strftime('%Y%m%d%H%M%S')+'.csv'
