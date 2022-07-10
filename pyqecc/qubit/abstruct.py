@@ -45,9 +45,10 @@ class Qubits(metaclass=ABCMeta):
 
     def M(self,first_idx=-1,second_idx=-1):
         r = np.random.rand()
-        p = np.dot(self.qubits,np.dot(self.gate_dictionary["M"],self.qubits))
-        print(p)
-        if r>p:
+        self.SW(first_idx=first_idx,second_idx=second_idx)
+        p = np.real(np.dot(self.qubits.conjugate(),np.dot(self.gate_dictionary["M"],self.qubits)))
+        self.SW(first_idx=first_idx,second_idx=second_idx)
+        if r<p:
             return 0
         else:
             return 1
@@ -75,9 +76,9 @@ class Qubits(metaclass=ABCMeta):
 
     def gate(self,name,first_idx=-1,second_idx=-1):
         if "SW" == name:
-            return self.SW(first_idx=-1,second_idx=-1)
+            return self.SW(first_idx=first_idx,second_idx=second_idx)
         elif "M" == name:
-            return self.M(first_idx=-1,second_idx=-1)
+            return self.M(first_idx=0,second_idx=first_idx)
         elif len(name) == 1:
             if 0 > first_idx or first_idx >= self.n:
                 raise ValueError("invalid first index")
