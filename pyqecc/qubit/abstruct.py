@@ -5,6 +5,7 @@ import numpy as np
 Measure = None
 SW_gate = None
 # 1 qubit gate
+M_gate = np.array([[1,0],[0,0]],dtype=np.complex128)
 I_gate = np.array([[1,0],[0,1]],dtype=np.complex128)
 X_gate = np.array([[0,1],[1,0]],dtype=np.complex128)
 Y_gate = np.array([[0,1j],[-1j,0]],dtype=np.complex128)
@@ -19,7 +20,7 @@ CZ_gate = np.array([[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,-1]],dtype=np.complex12
 class Qubits(metaclass=ABCMeta):
     _name = "qubits"
     gate_fundamental_dictionary = {
-        "M":Measure,
+        "M":M_gate,
         "X":X_gate,
         "Y":Y_gate,
         "Z":Z_gate,
@@ -35,7 +36,7 @@ class Qubits(metaclass=ABCMeta):
         self.gate_dictionary = {}
         # 動作用の行列を準備
         for k,gate in self.gate_fundamental_dictionary.items():
-            if "SW"==k or "M"==k:
+            if "SW"==k:
                 continue
             gate_tmp = gate.copy()
             for idx in range(self.n-1):
@@ -44,8 +45,13 @@ class Qubits(metaclass=ABCMeta):
 
     def M(self,first_idx=-1,second_idx=-1):
         r = np.random.rand()
-        #np.dot(self.qubits,np.dot(self.gate_dictionary["0"],self.qubits))
-        return 1
+        p = np.dot(self.qubits,np.dot(self.gate_dictionary["M"],self.qubits))
+        print(p)
+        if r>p:
+            return 0
+        else:
+            return 1
+
     def SW(self,first_idx=-1, second_idx=-1, therd_idx=-1, fourth_idx=-1):
         rep = {}
         if first_idx == second_idx:
