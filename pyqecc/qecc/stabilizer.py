@@ -77,7 +77,7 @@ class SC(CODE):
         return self.blockwise_error_probability[arr2int(E)]
 
     def get_syndrome(self, channel_output):
-        return symplex_binary_inner_product(self._H, channel_output["E"])
+        return symplex_binary_inner_product(self._H, channel_output["error"])
 
     def get_T(self, ind):
         return self.T[arr2int(ind)].astype("i1")  # LUTでの計算? BPでの計算もあり?LDPCについて学ぶ．

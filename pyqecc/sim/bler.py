@@ -26,7 +26,7 @@ def dec_sim(
         for mc in range(1, MONTE + 1):
             channel_output = channel_instance.channel(ind=ind)
             syndrome = myQECC.get_syndrome(channel_output)
-            if not myQECC.in_S(channel_output["E"] ^ myQECC.decode(syndrome)["LT"]):
+            if not myQECC.in_S(channel_output["error"] ^ myQECC.decode(syndrome)["LT"]):
                 ble += 1
             if not mc % LOG_OUTPUT_SPAN:
                 text = "MONTE: " + str(mc) + " BLOCK_ERROR: " + str(ble) + " "

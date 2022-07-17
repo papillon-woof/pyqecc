@@ -31,7 +31,7 @@ def test_bosonic_basic():
         my_gkp = GKP(TEST_BOSONIC_BASIC["CODE_INSTANCE"][i])
         channel_output = {"E": np.zeros(2 * my_gkp.n, dtype="i1")}
         assert sum(my_gkp.get_syndrome(channel_output)) == 0
-        channel_output["DELTA"] = np.ones(2 * my_gkp.n)
+        channel_output["shift_error"] = np.ones(2 * my_gkp.n)
         assert sum(my_gkp.get_syndrome(channel_output)[0]) == 0
 
 

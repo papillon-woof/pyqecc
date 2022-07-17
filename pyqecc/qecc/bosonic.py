@@ -36,7 +36,7 @@ class GKP(CODE):
         """
         err = np.zeros(2 * self.n, dtype="i1")
         if "DELTA" not in channel_output:
-            if channel_output["E"].dtype != "i1":
+            if channel_output["error"].dtype != "i1":
                 raise ValueError("E is not binary. Please Chack the channel output")
             else:
                 warnings.warn(
@@ -45,7 +45,7 @@ class GKP(CODE):
                 return self.code_instance.get_syndrome(channel_output)
 
         # 2√π>|E|>√π => error if 2√π < or < -2√π => +-2√π
-        delta = pishifts(channel_output["DELTA"])
+        delta = pishifts(channel_output["shift_error"])
         e_pos = np.where(np.abs(delta) >= np.sqrt(np.pi) / 2)[0]
         err[e_pos] = 1
         syndrome = self.code_instance.get_syndrome({"E": err})

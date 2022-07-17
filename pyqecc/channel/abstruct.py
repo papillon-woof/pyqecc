@@ -30,7 +30,7 @@ class Channel(metaclass=ABCMeta):
 
     def set_n(self, n):
         self._n = n
-        self._channel_output["E"] = np.zeros(2 * n, dtype="i1")
+        self._channel_output["error"] = np.zeros(2 * n, dtype="i1")
 
     @property
     def channel_parameter_name(self):
@@ -53,4 +53,4 @@ class Channel(metaclass=ABCMeta):
         if n <= 0:
             raise ValueError("PHYSICAL_QUBIT is more than 0")
         self._n = n
-        self._channel_output["E"] = np.zeros(2 * n, dtype="i1")
+        self._channel_output["error"] = np.zeros(2 * n, dtype="i1")

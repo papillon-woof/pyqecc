@@ -2,7 +2,6 @@ import numpy as np
 from .abstruct import Channel
 from ..util import pishifts
 
-
 class DepolarizingChannel(Channel):
     def __init__(self, n, p, seed=None):
         super().__init__(n, seed)
@@ -12,7 +11,7 @@ class DepolarizingChannel(Channel):
         self._channel_parameter["p"] = p
 
     def channel(self, n=-1, ind=0):
-        self._channel_output["E"] *= 0
+        self._channel_output["error"] *= 0
         if n > 0:
             self.n = n
         r = np.random.random(self.n)
@@ -20,10 +19,10 @@ class DepolarizingChannel(Channel):
         x_pos = np.where(r <= p / 3)[0]
         z_pos = np.intersect1d(np.where(r < p)[0], np.where(r > 2 * p / 3)[0])
         y_pos = np.intersect1d(np.where(r < 2 * p / 3)[0], np.where(r > p / 3)[0])
-        self._channel_output["E"][x_pos] = 1  # X
-        self._channel_output["E"][self.n + z_pos] = 1  # Z
-        self._channel_output["E"][y_pos] = 1  # Y
-        self._channel_output["E"][self.n + y_pos] = 1  # Y
+        self._channel_output["error"][x_pos] = 1  # X
+        self._channel_output["error"][self.n + z_pos] = 1  # Z
+        self._channel_output["error"][y_pos] = 1  # Y
+        self._channel_output["error"][self.n + y_pos] = 1  # Y
         return self._channel_output
 
     def get_param(self, ind):
@@ -49,15 +48,15 @@ class BitFlipChannel(Channel):
         self.pz = self._channel_parameter["tz"] / n
 
     def channel(self, n=-1, ind=0):
-        self._channel_output["E"] *= 0
+        self._channel_output["error"] *= 0
         if n > 0:
             self.n = n
             self.px = self._channel_parameter["tx"] / self.n
             self.pz = self._channel_parameter["tz"] / self.n
-        (self._channel_output["E"][: self.n])[: self._channel_parameter["tx"][ind]] = 1
-        (self._channel_output["E"][self.n :])[: self._channel_parameter["tz"][ind]] = 1
-        np.random.shuffle(self._channel_output["E"][: self.n])
-        np.random.shuffle(self._channel_output["E"][self.n :])
+        (self._channel_output["error"][: self.n])[: self._channel_parameter["tx"][ind]] = 1
+        (self._channel_output["error"][self.n :])[: self._channel_parameter["tz"][ind]] = 1
+        np.random.shuffle(self._channel_output["error"][: self.n])
+        np.random.shuffle(self._channel_output["error"][self.n :])
         return self._channel_output
 
     def get_param(self, ind):
@@ -85,7 +84,7 @@ class PauliChannel(Channel):
         self._channel_parameter["pz"] = pz
 
     def channel(self, n=-1, ind=0):
-        self._channel_output["E"] *= 0
+        self._channel_output["error"] *= 0
         if n > 0:
             self.n = n
         x_pos = np.where(
@@ -94,8 +93,8 @@ class PauliChannel(Channel):
         z_pos = np.where(
             np.random.random(self.n) <= self._channel_parameter["pz"][ind]
         )[0]
-        self._channel_output["E"][x_pos] = 1  # X
-        self._channel_output["E"][self.n + z_pos] = 1  # Z
+        self._channel_output["error"][x_pos] = 1  # X
+        self._channel_output["error"][self.n + z_pos] = 1  # Z
         return self._channel_output
 
     def get_param(self, ind):
@@ -128,18 +127,18 @@ class GaussianQuantumChannel(Channel):
         if n > 0:
             self.n = n
         if self.bit_flip:
-            self._channel_output["DELTA"][: self.n] = np.random.normal(
+            self._channel_output["shift_error"][: self.n] = np.random.normal(
                 scale=self.channel_parameter["sigma"][ind], size=2 * self.n
             )[: self.n]
         if self.phase_flip:
-            self._channel_output["DELTA"][self.n :] = np.random.normal(
+            self._channel_output["shift_error"][self.n :] = np.random.normal(
                 scale=self.channel_parameter["sigma"][ind], size=2 * self.n
             )[self.n :]
-        self._channel_output["E"] *= 0
+        self._channel_output["error"] *= 0
         # 2√π>|E|>√π => error
-        delta = pishifts(self.channel_output["DELTA"])
+        delta = pishifts(self.channel_output["shift_error"])
         e_pos = np.where(np.abs(delta) >= np.sqrt(np.pi) / 2)[0]
-        self._channel_output["E"][e_pos] = 1
+        self._channel_output["error"][e_pos] = 1
 
         return self.channel_output
 
@@ -163,5 +162,5 @@ class GaussianQuantumChannel(Channel):
         if n <= 0:
             raise ValueError("PHYSICAL_QUBIT is more than 0")
         self._n = n
-        self._channel_output["E"] = np.zeros(2 * n, dtype="i1")
-        self._channel_output["DELTA"] = np.zeros(2 * n)
+        self._channel_output["error"] = np.zeros(2 * n, dtype="i1")
+        self._channel_output["shift_error"] = np.zeros(2 * n)
