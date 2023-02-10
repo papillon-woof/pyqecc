@@ -1,0 +1,59 @@
+name: PR_black_flake8_mypy
+on: 
+  pull_request:
+jobs:
+  black_py3:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          ref: ${{ github.head_ref }}
+      - name: setup black
+        id: setup-black
+        run: pip3 install black
+      - name: execute black
+        id: execute-black
+        run: black .
+      - name: check for modified files
+        id: git-check
+        run: echo ::set-output name=modified::$(if git diff-index --quiet HEAD --; then echo "false"; else echo "true"; fi)
+      - name: push changes
+        id: push-changes
+        if: steps.git-check.outputs.modified == 'true'
+        run: |
+          git config --global user.email "qlanet@gmail.com"
+          git config --global user.name "qlanet"
+          git remote set-url origin https://x-access-token:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}
+          git commit -am "Automated changes"
+          git push origin HEAD:${{github.event.pull_request.head.ref}}
+
+  flake8_py3:
+    needs: black_py3
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.9
+          architecture: x64
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install flake8
+        run: pip install flake8
+      - name: Run flake8
+        run: |
+          flake8 . --ignore=E203,E402,F401,E501,W503
+  
+  mypy_py3:
+    needs: black_py3
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          ref: ${{ github.head_ref }}
+      - name: setup mypy
+        id: setup-mypy
+        run: pip3 install mypy
+      - name: execute mypy
+        id: execute-mypy
+        run: mypy .
