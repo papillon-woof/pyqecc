@@ -1,4 +1,4 @@
-from .stabilizer import *
+from .stabilizer import SC
 
 
 class ParaCode(SC):

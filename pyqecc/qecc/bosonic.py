@@ -1,7 +1,7 @@
 import warnings
 import numpy as np
-from .abstruct import *
-from ..util import *
+from .abstruct import CODE
+from ..util import pishifts
 from .stabilizer import SC
 
 
