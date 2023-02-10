@@ -1,6 +1,15 @@
 import numpy as np
 from .abstruct import CODE
-from ..util import bitwise_to_blockwise_error_probability, blockwise_to_bitwise_error_probability,arr2int,symplex_binary_inner_product,any2arr,X_OR_Z
+from ..util import (
+    bitwise_to_blockwise_error_probability,
+    blockwise_to_bitwise_error_probability,
+    arr2int,
+    symplex_binary_inner_product,
+    any2arr,
+    X_OR_Z,
+    gaussjordan,
+    int2arr,
+)
 
 
 class SC(CODE):

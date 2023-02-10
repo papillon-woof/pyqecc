@@ -4,4 +4,4 @@ from .stabilizer import SC
 # from .topological import *
 from .concatenated import ConcCode, ParaCode
 from .bosonic import GKP
-from .toy import SteaneCode,FiveCode,BitFlipCode,PhaseFlipCode,ShorCode
+from .toy import SteaneCode, FiveCode, BitFlipCode, PhaseFlipCode, ShorCode

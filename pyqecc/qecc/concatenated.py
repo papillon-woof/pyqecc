@@ -1,6 +1,13 @@
 import numpy as np
 from .stabilizer import SC
-from ..util import X_OR_Z,any2arr,blockwise_to_bitwise_error_probability,bitwise_to_blockwise_error_probability,any2arr
+from ..util import (
+    X_OR_Z,
+    any2arr,
+    blockwise_to_bitwise_error_probability,
+    bitwise_to_blockwise_error_probability,
+    any2arr,
+)
+
 
 class ParaCode(SC):
     """
