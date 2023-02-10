@@ -1,5 +1,6 @@
+import numpy as np
 from .stabilizer import SC
-
+from ..util import X_OR_Z
 
 class ParaCode(SC):
     """
