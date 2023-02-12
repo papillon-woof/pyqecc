@@ -1,4 +1,5 @@
 import numpy as np
+import numpy.typing as npt
 from .abstruct import CODE
 from ..util import (
     bitwise_to_blockwise_error_probability,
@@ -14,7 +15,26 @@ from ..util import (
 
 class SC(CODE):
     """
-    Stabilizer Code:
+    Class of stabilizer code
+
+    Attributes
+    ----------
+    n: int
+        Codeword length
+    k: int
+        Information length
+    H: numpy.ndarray[numpy.int8]
+        Parity check matrix
+    T: numpy.ndarray[numpy.int8]
+        Recovery operator
+    L: numpy.ndarray[numpy.int8]
+        Logical operator
+    mode: str
+        Mode of decoder
+    BITWISE: bool
+        Calculation by using bitwise or blockwise
+    ANALOG_INFORMATON: str
+        Selector of using Analog information
     """
 
     NAME = "stabilizer code"
@@ -22,11 +42,11 @@ class SC(CODE):
 
     def __init__(
         self,
-        n,
-        k,
-        H=None,
-        T=None,
-        L=None,
+        n: int,
+        k: int,
+        H: npt.NDArray[np.int8],
+        T: npt.NDArray[np.int8],
+        L: npt.NDArray[np.int8],
         P=None,
         mode="HD",
         BITWISE=True,

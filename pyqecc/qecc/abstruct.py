@@ -1,11 +1,13 @@
+from typing import List, Union, Tuple
 from abc import ABCMeta, abstractmethod
 import numpy as np
+import numpy.typing as npt
 
 
 class CODE(metaclass=ABCMeta):
     _name = ""
 
-    def __init__(self, n, k):
+    def __init__(self, n:int, k:int):
         self._n = n
         self._k = k
         self._nk = n - k
@@ -17,6 +19,10 @@ class CODE(metaclass=ABCMeta):
     def enc_circ(self):
         return self._enc_circuit
     """
+
+    @abstractmethod
+    def get_syndrome(self) -> Union[float,List[float],npt.NDArray[np.complex64],Tuple[float,float]]:
+        pass
 
     @abstractmethod
     def decode(self):
