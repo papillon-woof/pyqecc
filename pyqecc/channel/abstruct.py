@@ -1,4 +1,4 @@
-from typing import Dict,List
+from typing import Dict, List
 import itertools
 from abc import ABCMeta, abstractmethod
 import numpy as np
@@ -9,8 +9,8 @@ class Channel(metaclass=ABCMeta):
 
     def __init__(self, n: int, seed: int) -> None:
         self._channel_parameter_name: List[str] = []  # string
-        self._channel_parameter:Dict = {}  # list or np.array
-        self._channel_output:Dict = {"E": None}
+        self._channel_parameter: Dict = {}  # list or np.array
+        self._channel_output: Dict = {"E": None}
         self.n = n
         if seed != -1:
             np.random.seed(seed=seed)

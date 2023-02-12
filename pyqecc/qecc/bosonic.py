@@ -15,8 +15,8 @@ class GKP(CODE):
     def __init__(
         self,
         code_instance: CODE,
-        sigma: float=0.1,
-        mode: str="SYNDROME",
+        sigma: float = 0.1,
+        mode: str = "SYNDROME",
     ) -> None:
         self.decoder_output = {
             "LT": None,
@@ -31,7 +31,7 @@ class GKP(CODE):
     def set_channel_param(self, sigma: float):
         self._sigma = sigma
 
-    def get_syndrome(self, channel_output:Dict) -> Tuple[float,float]:
+    def get_syndrome(self, channel_output: Dict) -> Tuple[float, float]:
         """
         引数: E: アナログ雑音もしくは誤り
         Eは，実際に生じたシフトである．
@@ -103,7 +103,6 @@ class GKP(CODE):
         error = np.zeros(self.n, dtype="i1")
         ma = self.START_MAX
         for i in range(2 * 2**self.k):
-
             # About recovery opelator T
             lt = self.code_instance.get_T(syndrome)
 
@@ -121,7 +120,7 @@ class GKP(CODE):
         self.decoder_output["LT"] = error
         return self.decoder_output
 
-    def decode(self, syndrome: float, mode:str=""):
+    def decode(self, syndrome: float, mode: str = ""):
         if mode is not "":
             self._mode = mode
 

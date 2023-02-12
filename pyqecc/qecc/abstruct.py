@@ -7,14 +7,14 @@ import numpy.typing as npt
 class CODE(metaclass=ABCMeta):
     _name = ""
 
-    def __init__(self, n:int, k:int):
+    def __init__(self, n: int, k: int):
         self._n = n
         self._k = k
         self._nk = n - k
         self._R = self.k / self.n
 
     @abstractmethod
-    def decode(self, *args: Any, **kwargs:Any) -> Any:
+    def decode(self, *args: Any, **kwargs: Any) -> Any:
         pass
 
     @property

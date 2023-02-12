@@ -50,12 +50,12 @@ class SC(CODE):
         T: npt.NDArray[np.int8],
         L: npt.NDArray[np.int8],
         P=None,
-        mode: str="HD",
-        BITWISE: bool=True,
-        ANALOG_INFORMATION: str="No",
+        mode: str = "HD",
+        BITWISE: bool = True,
+        ANALOG_INFORMATION: str = "No",
     ) -> None:
         """Constractor
-        
+
         Parameters
         ----------
         n: int
@@ -68,7 +68,7 @@ class SC(CODE):
             Recovery operator
         _L: numpy.ndarray[numpy.int8]
             Logical operator
-        _LUT: 
+        _LUT:
             Lookup-table for multiplication result of recovery operator and logical operator
         mode: str
             Mode of decoder
@@ -92,13 +92,17 @@ class SC(CODE):
         self._L = L
         self._BITWISE = BITWISE
         self.set_channel_param(P, self.BITWISE)
-        self._LUT: Dict[int,npt.NDArray[np.int8]] = {}
+        self._LUT: Dict[int, npt.NDArray[np.int8]] = {}
         self._blockwise_error_probability = False
         self._bitwise_error_probability = False
 
     def set_channel_param(
-        self, error_probability:npt.NDArray[np.float64], BITWISE: bool=True, iid: bool=True, warnings_ignore: bool=False
-    )  -> None:
+        self,
+        error_probability: npt.NDArray[np.float64],
+        BITWISE: bool = True,
+        iid: bool = True,
+        warnings_ignore: bool = False,
+    ) -> None:
         """
         Parametors
         ----------
@@ -135,7 +139,9 @@ class SC(CODE):
                 )
         else:
             if warnings_ignore:
-                warnings.warn("Warning: The input error probability doesn't set to variable.")
+                warnings.warn(
+                    "Warning: The input error probability doesn't set to variable."
+                )
 
     def get_error_probability(self, E: npt.NDArray[np.int8]):
         """
@@ -155,7 +161,7 @@ class SC(CODE):
         Parameters
         ----------
         channel_output: dict
-            channel 
+            channel
         """
 
         return symplex_binary_inner_product(self._H, channel_output["E"])
@@ -167,7 +173,7 @@ class SC(CODE):
         Parameters
         ----------
         ind: dict
-            channel 
+            channel
         """
         return self.T[arr2int(ind)].astype("i1")  # LUTでの計算? BPでの計算もあり?LDPCについて学ぶ．
 
@@ -185,7 +191,7 @@ class SC(CODE):
         ----------
         alpha: numpy.ndarray of numpy.int8
             Vector_representation of operator
-        
+
         returns
         -------
         L: numpy.ndarray of numpy.int8
@@ -275,7 +281,7 @@ class SC(CODE):
     def decode(
         self,
         syndrome: npt.NDArray[np.int8],
-        mode: str="",
+        mode: str = "",
         **param: Dict,
     ) -> Dict:
         """
@@ -288,7 +294,7 @@ class SC(CODE):
         mode: str
             Mode of decoder
         **param: dict
-            Optional parameter 
+            Optional parameter
         """
         if not mode is False:
             self._mode = mode
@@ -333,7 +339,7 @@ class SC(CODE):
         return self._H
 
     @property
-    def LUT(self) -> Dict[int,npt.NDArray[np.int8]]:
+    def LUT(self) -> Dict[int, npt.NDArray[np.int8]]:
         return self._LUT
 
     @property

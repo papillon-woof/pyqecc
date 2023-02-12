@@ -7,7 +7,7 @@ from ..util import pishifts
 
 class DepolarizingChannel(Channel):
     def __init__(
-        self, n: int, p: Union[List[float], npt.NDArray[np.float64]], seed:int=-1
+        self, n: int, p: Union[List[float], npt.NDArray[np.float64]], seed: int = -1
     ):
         super().__init__(n, seed)
         if not isinstance(p, (list, np.ndarray)):
