@@ -1,3 +1,4 @@
+from typing import List, Dict, Union
 import numpy as np
 import numpy.typing as npt
 from .abstruct import CODE
@@ -48,10 +49,10 @@ class SC(CODE):
         T: npt.NDArray[np.int8],
         L: npt.NDArray[np.int8],
         P=None,
-        mode="HD",
-        BITWISE=True,
-        ANALOG_INFORMATION="No",
-    ):
+        mode: str="HD",
+        BITWISE: bool=True,
+        ANALOG_INFORMATION: str="No",
+    ) -> None:
         self.decoder_output = {
             "LT": None,
             "L": None,
@@ -74,8 +75,8 @@ class SC(CODE):
         # self.dec_circuit = None # future work
 
     def set_channel_param(
-        self, error_probability, BITWISE=True, iid=True, OUTPUT_LOG=False
-    ):
+        self, error_probability:npt.NDArray[np.float64], BITWISE: bool=True, iid: bool=True, OUTPUT_LOG: str=False
+    )  -> None:
         if not error_probability is None:
             if BITWISE:
                 if iid:
@@ -102,16 +103,16 @@ class SC(CODE):
             if OUTPUT_LOG:
                 print("Warning: The input error probability doesn't set to variable.")
 
-    def get_error_probability(self, E):
+    def get_error_probability(self, E: npt.NDArray[np.int8]):
         return self.blockwise_error_probability[arr2int(E)]
 
-    def get_syndrome(self, channel_output):
+    def get_syndrome(self, channel_output: Dict):
         return symplex_binary_inner_product(self._H, channel_output["E"])
 
-    def get_T(self, ind):
+    def get_T(self, ind: int):
         return self.T[arr2int(ind)].astype("i1")  # LUTでの計算? BPでの計算もあり?LDPCについて学ぶ．
 
-    def get_S(self, ind_list):
+    def get_S(self, ind_list: List[int]):
         S = np.zeros(X_OR_Z * self.n, dtype="i1")
         ind_list = any2arr(ind_list, self.nk)
         for i in range(self.nk):
@@ -141,7 +142,7 @@ class SC(CODE):
             == 0
         )
 
-    def set_LUT(self):
+    def set_LUT(self) -> None:
         for i in range(2 ** (self.nk)):
             self._LUT[i] = self.ML_decode(int2arr(i, (self.nk)))
 
@@ -167,10 +168,10 @@ class SC(CODE):
         self.decoder_output["LOGICAL_ERROR_PROBABILITY"] = logical_error_probability
         return self.decoder_output["LT"]
 
-    def hard_decode(self, syndrome):
+    def hard_decode(self, syndrome) -> None:
         self.decoder_output["LT"] = self.get_T(syndrome)
 
-    def LUT_decode(self, syndrome):
+    def LUT_decode(self, syndrome) -> None:
         self.decoder_output["LT"] = self.LUT[arr2int(syndrome)]
 
     def decode(
@@ -178,7 +179,7 @@ class SC(CODE):
         syndrome,
         mode=False,
         **param,
-    ):
+    ) -> Dict:
         if not mode is False:
             self._mode = mode
         if self._mode == "ML":
@@ -210,15 +211,15 @@ class SC(CODE):
         self._bitwise_error_probability = bitwise_error_probability
 
     @property
-    def L(self):
+    def L(self) -> npt.NDArray[np.int8]:
         return self._L
 
     @property
-    def T(self):
+    def T(self) -> npt.NDArray[np.int8]:
         return self._T
 
     @property
-    def H(self):
+    def H(self) -> npt.NDArray[np.int8]:
         return self._H
 
     @property
@@ -226,7 +227,7 @@ class SC(CODE):
         return self._LUT
 
     @property
-    def mode(self):
+    def mode(self) -> str:
         return self._mode
 
     @property
