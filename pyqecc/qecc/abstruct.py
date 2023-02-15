@@ -1,25 +1,20 @@
+from typing import List, Union, Tuple, Any
 from abc import ABCMeta, abstractmethod
 import numpy as np
+import numpy.typing as npt
 
 
 class CODE(metaclass=ABCMeta):
     _name = ""
 
-    def __init__(self, n, k):
+    def __init__(self, n: int, k: int):
         self._n = n
         self._k = k
         self._nk = n - k
         self._R = self.k / self.n
 
-    """
-    #not implimented
-    @property
-    def enc_circ(self):
-        return self._enc_circuit
-    """
-
     @abstractmethod
-    def decode(self):
+    def decode(self, *args: Any, **kwargs: Any) -> Any:
         pass
 
     @property

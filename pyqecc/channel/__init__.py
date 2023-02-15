@@ -1,1 +1,6 @@
-from .channel import *
+from .channel import (
+    DepolarizingChannel,
+    BitFlipChannel,
+    PauliChannel,
+    GaussianQuantumChannel,
+)

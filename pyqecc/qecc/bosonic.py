@@ -1,7 +1,9 @@
 import warnings
+from typing import Union, List, Dict, Tuple
 import numpy as np
-from .abstruct import *
-from ..util import *
+import numpy.typing as npt
+from .abstruct import CODE
+from ..util import pishifts
 from .stabilizer import SC
 
 
@@ -12,10 +14,10 @@ class GKP(CODE):
 
     def __init__(
         self,
-        code_instance,
-        sigma=0.1,
-        mode="SYNDROME",
-    ):
+        code_instance: CODE,
+        sigma: float = 0.1,
+        mode: str = "SYNDROME",
+    ) -> None:
         self.decoder_output = {
             "LT": None,
             "LOGICAL_ERROR_PROBABILITY": None,
@@ -26,10 +28,10 @@ class GKP(CODE):
         super().__init__(self.code_instance.n, self.code_instance.k)
         # self.matrix_for_genarating_LLR = util.gaussjordan(np.concatenate([self.code_instance.H,self.code_instance.L],0),change=True)
 
-    def set_channel_param(self, sigma):
+    def set_channel_param(self, sigma: float):
         self._sigma = sigma
 
-    def get_syndrome(self, channel_output):
+    def get_syndrome(self, channel_output: Dict) -> Tuple[float, float]:
         """
         引数: E: アナログ雑音もしくは誤り
         Eは，実際に生じたシフトである．
@@ -55,10 +57,10 @@ class GKP(CODE):
         delta_m[e_pos] = (np.sqrt(np.pi) - delta_m)[e_pos]
         return syndrome, delta_m
 
-    def in_S(self, s):
+    def in_S(self, s: int):
         return self.code_instance.in_S(s)
 
-    def calc_llr(self, val, sigma):
+    def calc_llr(self, val: npt.NDArray[np.float64], sigma: float):
         return np.log(
             np.exp(-(val**2) / (2 * sigma**2))
             / np.exp(-((np.sqrt(np.pi) - np.abs(val)) ** 2) / (2 * sigma**2))
@@ -101,7 +103,6 @@ class GKP(CODE):
         error = np.zeros(self.n, dtype="i1")
         ma = self.START_MAX
         for i in range(2 * 2**self.k):
-
             # About recovery opelator T
             lt = self.code_instance.get_T(syndrome)
 
@@ -119,8 +120,8 @@ class GKP(CODE):
         self.decoder_output["LT"] = error
         return self.decoder_output
 
-    def decode(self, syndrome, mode=None):
-        if mode is not None:
+    def decode(self, syndrome: float, mode: str = ""):
+        if mode is not "":
             self._mode = mode
 
         # Do not use the analog information
@@ -137,7 +138,7 @@ class GKP(CODE):
             raise ValueError("Chack the decoder mode")
 
     @property
-    def code_instance(self):
+    def code_instance(self) -> CODE:
         return self._code_instance
 
     @property

@@ -1,17 +1,21 @@
+from typing import Union, List, Dict
 import numpy as np
+import numpy.typing as npt
 from .abstruct import Channel
 from ..util import pishifts
 
 
 class DepolarizingChannel(Channel):
-    def __init__(self, n, p, seed=None):
+    def __init__(
+        self, n: int, p: Union[List[float], npt.NDArray[np.float64]], seed: int = -1
+    ):
         super().__init__(n, seed)
         if not isinstance(p, (list, np.ndarray)):
             p = [p]
         self.param_len = len(p)
         self._channel_parameter["p"] = p
 
-    def channel(self, n=-1, ind=0):
+    def channel(self, n: int = -1, ind: int = 0):
         self._channel_output["E"] *= 0
         if n > 0:
             self.n = n
@@ -26,13 +30,19 @@ class DepolarizingChannel(Channel):
         self._channel_output["E"][self.n + y_pos] = 1  # Y
         return self._channel_output
 
-    def get_param(self, ind):
+    def get_param(self, ind: int):
         p = self.channel_parameter["p"][ind]
         return [1 - p, p / 3, p / 3, p / 3]
 
 
 class BitFlipChannel(Channel):
-    def __init__(self, n, tx, tz, seed=None):
+    def __init__(
+        self,
+        n: int,
+        tx: Union[List[float], npt.NDArray[np.float64]],
+        tz: Union[List[float], npt.NDArray[np.float64]],
+        seed: int = -1,
+    ):
         super().__init__(n, seed)
         if not isinstance(tx, (list, np.ndarray)):
             tx = np.array([tx])
@@ -48,7 +58,7 @@ class BitFlipChannel(Channel):
         self.px = self._channel_parameter["tx"] / n
         self.pz = self._channel_parameter["tz"] / n
 
-    def channel(self, n=-1, ind=0):
+    def channel(self, n: int = -1, ind: int = 0):
         self._channel_output["E"] *= 0
         if n > 0:
             self.n = n
@@ -70,7 +80,13 @@ class BitFlipChannel(Channel):
 
 
 class PauliChannel(Channel):
-    def __init__(self, n, px, pz, seed=None):
+    def __init__(
+        self,
+        n: int,
+        px: Union[float, List[float], npt.NDArray[np.complex64]],
+        pz,
+        seed=None,
+    ) -> None:
         super().__init__(n, seed)
         if not isinstance(px, (list, np.ndarray)):
             px = [px]
@@ -84,7 +100,7 @@ class PauliChannel(Channel):
         self.param_len = min(len(px), len(pz))
         self._channel_parameter["pz"] = pz
 
-    def channel(self, n=-1, ind=0):
+    def channel(self, n: int = -1, ind: int = 0) -> Dict:
         self._channel_output["E"] *= 0
         if n > 0:
             self.n = n
@@ -110,7 +126,14 @@ class PauliChannel(Channel):
 
 
 class GaussianQuantumChannel(Channel):
-    def __init__(self, n, sigma, seed=None, bit_flip=True, phase_flip=True):
+    def __init__(
+        self,
+        n: int,
+        sigma: Union[float, npt.NDArray[np.float64], List[float]],
+        seed: int = -1,
+        bit_flip=True,
+        phase_flip=True,
+    ) -> None:
         super().__init__(n, seed)
         if not isinstance(sigma, (list, np.ndarray)):
             sigma = np.array([sigma])
@@ -121,7 +144,7 @@ class GaussianQuantumChannel(Channel):
         self._phase_flip = phase_flip
         self.param_len = len(sigma)
 
-    def channel(self, n=-1, ind=0):
+    def channel(self, n=-1, ind=0) -> Dict:
         """
         Return the ""Analog information""
         """
@@ -143,7 +166,7 @@ class GaussianQuantumChannel(Channel):
 
         return self.channel_output
 
-    def get_param(self, ind):
+    def get_param(self, ind: int) -> npt.NDArray[np.float64]:
         return self._channel_parameter["sigma"][ind]
 
     @property
@@ -159,7 +182,7 @@ class GaussianQuantumChannel(Channel):
         return self._n
 
     @n.setter
-    def n(self, n):
+    def n(self, n: int):
         if n <= 0:
             raise ValueError("PHYSICAL_QUBIT is more than 0")
         self._n = n

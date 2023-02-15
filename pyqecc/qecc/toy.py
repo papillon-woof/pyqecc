@@ -1,6 +1,6 @@
 import numpy as np
-from .stabilizer import *
-from .concatenated import *
+from .stabilizer import SC
+from .concatenated import ConcCode, ParaCode
 
 
 def SteaneCode(mode="ML_LUT"):
